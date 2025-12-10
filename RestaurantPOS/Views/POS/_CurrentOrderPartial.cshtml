@@ -1,0 +1,33 @@
+﻿@model RestaurantPOS.Models.Order
+
+@if (Model?.Items?.Any() == true)
+{
+    @foreach (var item in Model.Items)
+    {
+        <div class="flex justify-between items-center py-2 border-b border-gray-200 last:border-b-0 order-item" id="order-item-@item.MenuItemId">
+            <div class="flex-1">
+                <div class="font-medium text-gray-800">@item.Name</div>
+                <div class="text-sm text-gray-600">$@item.Price.ToString("F2") × @item.Quantity</div>
+            </div>
+            <div class="flex items-center space-x-2 ml-4">
+                <button onclick="updateQuantity(@item.MenuItemId, -1)"
+                        class="bg-red-500 text-white w-6 h-6 rounded-full text-sm hover:bg-red-600 transition-colors flex items-center justify-center">
+                    −
+                </button>
+                <span class="w-8 text-center font-bold text-gray-700">@item.Quantity</span>
+                <button onclick="updateQuantity(@item.MenuItemId, 1)"
+                        class="bg-green-500 text-white w-6 h-6 rounded-full text-sm hover:bg-green-600 transition-colors flex items-center justify-center">
+                    +
+                </button>
+            </div>
+        </div>
+    }
+}
+else
+{
+    <div class="text-center py-8 text-gray-500">
+        <div class="text-4xl mb-2">🛒</div>
+        <p>No items added to order</p>
+        <p class="text-sm mt-1">Add items from the menu</p>
+    </div>
+}
