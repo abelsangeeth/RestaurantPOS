@@ -197,4 +197,18 @@ namespace RestaurantPOS.Models
         public int ReadyOrdersCount { get; set; }
         public int CompletedOrdersCount { get; set; }
     }
+    public class Promotion
+    {
+        [Key]
+        public int Id { get; set; }                     
+        [StringLength(150)]
+        public string Title { get; set; }                
+        [Column(TypeName = "decimal(5,2)")]
+        public decimal DiscountPercentage { get; set; }  
+        [Column(TypeName = "datetime2(7)")]
+        public DateTime StartDate { get; set; }          
+        [Column(TypeName = "datetime2(7)")]
+        public DateTime? EndDate { get; set; }           // nullable datetime2(7)
+        public bool IsActive { get; set; } = true;       // bit
+    }
 }

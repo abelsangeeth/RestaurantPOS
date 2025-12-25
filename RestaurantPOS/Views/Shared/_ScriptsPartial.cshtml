@@ -1,0 +1,208 @@
+﻿<script>
+    // ==================== VIEW NAVIGATION ====================
+    function showView(viewName) {
+        console.log('Switching to view:', viewName);
+        const views = document.querySelectorAll('.view');
+        views.forEach(view => view.classList.add('hidden'));
+        
+        const activeView = document.getElementById(viewName + '-view');
+        if (activeView) {
+            activeView.classList.remove('hidden');
+            
+            // Trigger data load based on view
+            if (viewName === 'orders') loadOrders();
+            if (viewName === 'kitchen') loadKitchenOrders();
+            if (viewName === 'reports') loadReports();
+        }
+
+        // Update navigation buttons
+        document.querySelectorAll('.nav-btn').forEach(btn => {
+            btn.classList.remove('bg-blue-600', 'text-white');
+            btn.classList.add('bg-gray-200', 'text-gray-700');
+        });
+        
+        // Highlight active button
+        if (event && event.target && event.target.classList.contains('nav-btn')) {
+            event.target.classList.remove('bg-gray-200', 'text-gray-700');
+            event.target.classList.add('bg-blue-600', 'text-white');
+        }
+    }
+
+    // ==================== ORDERS LOGIC ====================
+    let allOrders = [];
+
+    async function loadOrders() {
+        try {
+            console.log('Fetching orders...');
+            const response = await fetch('/POS/GetAllOrders');
+            const result = await response.json();
+            
+            if (result.success) {
+                allOrders = result.orders;
+                renderOrders(allOrders);
+                updateStats(allOrders);
+            }
+        } catch (error) {
+            console.error('Error loading orders:', error);
+        }
+    }
+
+    function renderOrders(orders) {
+        const container = document.getElementById('orders-container');
+        if (!container) return; // Guard clause if view not loaded
+
+        container.innerHTML = '';
+        
+        if (orders.length === 0) {
+            document.getElementById('no-orders-message')?.classList.remove('hidden');
+            return;
+        }
+        document.getElementById('no-orders-message')?.classList.add('hidden');
+
+        orders.forEach(order => {
+            const card = document.createElement('div');
+            card.className = 'bg-white rounded-lg shadow-lg p-4 border border-gray-200';
+            
+            // Status styling
+            let statusClass = 'bg-gray-100 text-gray-800';
+            if (order.status === 'pending') statusClass = 'bg-yellow-100 text-yellow-800';
+            if (order.status === 'preparing') statusClass = 'bg-blue-100 text-blue-800';
+            if (order.status === 'ready') statusClass = 'bg-green-100 text-green-800';
+
+            card.innerHTML = `
+                <div class="flex justify-between mb-2">
+                    <h3 class="font-bold text-lg">${order.orderNumber || '#' + order.id}</h3>
+                    <span class="px-2 py-1 rounded-full text-sm ${statusClass}">${order.status}</span>
+                </div>
+                <div class="mb-2">
+                    <p class="text-gray-600">👤 ${order.customerName}</p>
+                    <p class="text-gray-600">🍽️ ${order.orderType}</p>
+                </div>
+                <div class="flex justify-between items-center mt-3 pt-3 border-t">
+                    <span class="font-bold text-green-600">$${order.total.toFixed(2)}</span>
+                    <div class="space-x-1">
+                        ${getActionButtons(order)}
+                    </div>
+                </div>
+            `;
+            container.appendChild(card);
+        });
+    }
+
+    function getActionButtons(order) {
+        if (order.status === 'pending') 
+            return `<button onclick="updateStatus(${order.id}, 'preparing')" class="bg-blue-600 text-white px-3 py-1 rounded text-sm">Start</button>`;
+        if (order.status === 'preparing') 
+            return `<button onclick="updateStatus(${order.id}, 'ready')" class="bg-green-600 text-white px-3 py-1 rounded text-sm">Ready</button>`;
+        if (order.status === 'ready') 
+            return `<button onclick="updateStatus(${order.id}, 'completed')" class="bg-purple-600 text-white px-3 py-1 rounded text-sm">Complete</button>`;
+        return '';
+    }
+
+    async function updateStatus(id, status) {
+        if(!confirm('Update status?')) return;
+        const token = document.querySelector('input[name="__RequestVerificationToken"]')?.value;
+        await fetch('/POS/UpdateOrderStatus', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'RequestVerificationToken': token },
+            body: `orderId=${id}&status=${status}`
+        });
+        loadOrders(); // Refresh
+        if(!document.getElementById('kitchen-view').classList.contains('hidden')) loadKitchenOrders();
+    }
+
+    function updateStats(orders) {
+        document.getElementById('totalOrdersCount').textContent = orders.length;
+        document.getElementById('allOrdersCount').textContent = orders.length;
+        document.getElementById('dineInOrdersCount').textContent = orders.filter(o => o.orderType === 'dine-in').length;
+        document.getElementById('deliveryOrdersCount').textContent = orders.filter(o => o.orderType === 'delivery').length;
+        document.getElementById('takeawayOrdersCount').textContent = orders.filter(o => o.orderType === 'takeaway').length;
+    }
+
+    function filterOrders(type) {
+        if (type === 'all') renderOrders(allOrders);
+        else renderOrders(allOrders.filter(o => o.orderType === type));
+    }
+    
+    function refreshOrders() { loadOrders(); }
+
+    // ==================== KITCHEN LOGIC ====================
+    async function loadKitchenOrders() {
+        try {
+            const response = await fetch('/POS/GetKitchenOrders');
+            const orders = await response.json();
+            const container = document.getElementById('kitchen-orders-container');
+            
+            if (!container) return;
+            container.innerHTML = '';
+
+            if (orders.length === 0) {
+                container.innerHTML = '<div class="col-span-full text-center py-10 text-gray-500">No active orders</div>';
+                return;
+            }
+
+            orders.forEach(order => {
+                const card = document.createElement('div');
+                card.className = 'bg-white border-l-4 border-blue-500 shadow-md rounded p-4';
+                card.innerHTML = `
+                    <div class="flex justify-between font-bold text-xl mb-2">
+                        <span>${order.ticket}</span>
+                        <span class="text-blue-600">${order.time}</span>
+                    </div>
+                    <div class="mb-4">
+                        <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded text-sm uppercase">${order.status}</span>
+                    </div>
+                    <button onclick="updateStatus(${order.id}, 'ready')" class="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700">
+                        ✅ Mark Ready
+                    </button>
+                `;
+                container.appendChild(card);
+            });
+        } catch (e) { console.error(e); }
+    }
+
+    // ==================== REPORTS LOGIC ====================
+    async function loadReports() {
+        try {
+            const response = await fetch('/POS/GetReports');
+            const data = await response.json();
+            
+            // Update Cards
+            if(document.querySelector('.reports-today-sales')) {
+                document.querySelector('.reports-today-sales').textContent = '$' + data.todaySales.toFixed(2);
+                document.querySelector('.reports-completed').textContent = data.completed;
+                document.querySelector('.reports-pending').textContent = data.pending;
+                document.querySelector('.reports-total').textContent = data.total;
+            }
+
+            // Update Table
+            const tbody = document.getElementById('reports-table-body');
+            if (tbody && data.recent) {
+                tbody.innerHTML = data.recent.map(o => `
+                    <tr class="border-b hover:bg-gray-50">
+                        <td class="p-3">${o.id}</td>
+                        <td class="p-3">${o.customer}</td>
+                        <td class="p-3">${o.type}</td>
+                        <td class="p-3">$${o.total.toFixed(2)}</td>
+                        <td class="p-3"><span class="bg-gray-200 px-2 py-1 rounded text-sm">${o.status}</span></td>
+                        <td class="p-3">${o.time}</td>
+                    </tr>
+                `).join('');
+            }
+        } catch (e) { console.error(e); }
+    }
+
+    // ==================== COMMON ====================
+    function showNotification(msg, type) {
+        const div = document.createElement('div');
+        div.className = `fixed top-5 right-5 p-4 rounded text-white z-50 ${type === 'success' ? 'bg-green-500' : 'bg-red-500'}`;
+        div.textContent = msg;
+        document.body.appendChild(div);
+        setTimeout(() => div.remove(), 3000);
+    }
+    
+    // Initial load check
+    document.addEventListener('DOMContentLoaded', () => {
+        if(!document.getElementById('orders-view').classList.contains('hidden')) loadOrders();
+    });
+</script>

@@ -1,0 +1,106 @@
+<div id="editTableFormModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+    <div class="bg-white p-8 rounded-xl max-w-md w-full mx-4 shadow-2xl">
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-2xl font-bold text-gray-800">?? Edit Table</h2>
+            <button type="button" onclick="closeModal('editTableFormModal')" class="text-gray-500 hover:text-gray-700 text-2xl">?</button>
+        </div>
+
+        <form id="editTableForm" class="space-y-4">
+            @Html.AntiForgeryToken()
+            
+            <input type="hidden" id="editTableId" name="tableId">
+
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">?? Table Capacity</label>
+                <select id="editTableCapacity" name="capacity" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required>
+                    <option value="2">2 seats</option>
+                    <option value="4">4 seats</option>
+                    <option value="6">6 seats</option>
+                    <option value="8">8 seats</option>
+                    <option value="10">10 seats</option>
+                    <option value="12">12 seats</option>
+                </select>
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">?? Location</label>
+                <select id="editTableLocation" name="location" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    <option value="Main Dining">Main Dining</option>
+                    <option value="Window Side">Window Side</option>
+                    <option value="Patio">Patio</option>
+                    <option value="Private Room">Private Room</option>
+                    <option value="Bar Area">Bar Area</option>
+                </select>
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">??? Table Type</label>
+                <select id="editTableType" name="type" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    <option value="Regular">Regular Table</option>
+                    <option value="Booth">Booth</option>
+                    <option value="High Top">High Top</option>
+                    <option value="Round">Round Table</option>
+                    <option value="Communal">Communal Table</option>
+                </select>
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">?? Notes</label>
+                <textarea id="editTableNotes" name="notes" placeholder="Any special notes about this table..." class="w-full p-3 border rounded-lg h-20 resize-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"></textarea>
+            </div>
+
+            <div class="flex space-x-4 mt-6">
+                <button type="submit" class="flex-1 bg-gradient-to-r from-blue-500 to-blue-600 text-white py-3 rounded-lg hover:from-blue-600 hover:to-blue-700 font-bold shadow-lg transform hover:scale-105 transition-all">
+                    ? Save Changes
+                </button>
+                <button type="button" onclick="closeModal('editTableFormModal')" class="flex-1 bg-gray-500 text-white py-3 rounded-lg hover:bg-gray-600 font-bold transition-all">
+                    ? Cancel
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    // Handle Edit Table Form Submission
+    document.getElementById('editTableForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        const tableId = document.getElementById('editTableId').value;
+        const capacity = document.getElementById('editTableCapacity').value;
+        const location = document.getElementById('editTableLocation').value;
+        const type = document.getElementById('editTableType').value;
+        const notes = document.getElementById('editTableNotes').value;
+
+        try {
+            const response = await fetch('/POS/UpdateTableSettings', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                },
+                body: JSON.stringify({
+                    tableId: parseInt(tableId),
+                    capacity: parseInt(capacity),
+                    location: location,
+                    type: type,
+                    notes: notes
+                })
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                showNotification('? ' + result.message, 'success');
+                closeModal('editTableFormModal');
+                closeModal('editTableSettingsModal');
+                setTimeout(() => window.location.reload(), 1500);
+            } else {
+                showNotification('? ' + result.message, 'error');
+            }
+        } catch (error) {
+            console.error('Error updating table:', error);
+            showNotification('Error updating table: ' + error.message, 'error');
+        }
+    });
+</script>

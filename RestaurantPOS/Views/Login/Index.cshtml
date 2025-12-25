@@ -6,1724 +6,652 @@
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"]</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Poppins', sans-serif;
-        }
-
-        :root {
-            --primary: #4f46e5;
-            --primary-dark: #4338ca;
-            --secondary: #10b981;
-            --danger: #ef4444;
-            --warning: #f59e0b;
-            --success: #10b981;
-            --dark: #1f2937;
-            --light: #f9fafb;
-        }
-
-        body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-        }
-
-        /* Glass card effect */
-        .glass-card {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-radius: 16px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .glass-card-hover:hover {
-            background: rgba(255, 255, 255, 0.98);
-            transform: translateY(-2px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-        }
-
-        /* Gradient backgrounds */
-        .gradient-primary {
-            background: linear-gradient(135deg, var(--primary) 0%, #7c3aed 100%);
-        }
-
-        .gradient-success {
-            background: linear-gradient(135deg, var(--success) 0%, #34d399 100%);
-        }
-
-        .gradient-warning {
-            background: linear-gradient(135deg, var(--warning) 0%, #fbbf24 100%);
-        }
-
-        .gradient-danger {
-            background: linear-gradient(135deg, var(--danger) 0%, #f87171 100%);
-        }
-
-        .gradient-dark {
-            background: linear-gradient(135deg, var(--dark) 0%, #374151 100%);
-        }
-
-        /* Shadows */
-        .shadow-soft {
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
-        }
-
-        .shadow-hover {
-            transition: all 0.3s ease;
-        }
-
-        .shadow-hover:hover {
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
-            transform: translateY(-4px);
-        }
-
-        /* Table styles */
-        .table-card {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            cursor: pointer;
-        }
-
-        .table-card:hover {
-            transform: translateY(-5px) scale(1.02);
-        }
-
         .table-occupied {
-            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-            color: white;
+            background-color: #ef4444;
         }
 
         .table-available {
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-            color: white;
+            background-color: #10b981;
         }
 
         .table-reserved {
-            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-            color: white;
+            background-color: #f59e0b;
         }
 
-        /* Buttons */
-        .btn-primary {
-            background: linear-gradient(135deg, var(--primary) 0%, #7c3aed 100%);
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 10px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-        }
-
-        .btn-primary:hover {
-            background: linear-gradient(135deg, var(--primary-dark) 0%, #6d28d9 100%);
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(79, 70, 229, 0.3);
-        }
-
-        .btn-success {
-            background: linear-gradient(135deg, var(--success) 0%, #34d399 100%);
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 10px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-        }
-
-        .btn-success:hover {
-            background: linear-gradient(135deg, #059669 0%, #10b981 100%);
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(16, 185, 129, 0.3);
-        }
-
-        /* Custom scrollbar */
-        .custom-scrollbar::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
-        }
-
-        .custom-scrollbar::-webkit-scrollbar-track {
-            background: rgba(0, 0, 0, 0.05);
-            border-radius: 10px;
-        }
-
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-            background: rgba(79, 70, 229, 0.3);
-            border-radius: 10px;
-        }
-
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-            background: rgba(79, 70, 229, 0.5);
-        }
-
-        /* Notifications */
         .notification {
             position: fixed;
             top: 20px;
             right: 20px;
-            padding: 16px 24px;
-            border-radius: 12px;
+            padding: 15px 20px;
+            border-radius: 8px;
             color: white;
             z-index: 1000;
-            animation: slideInRight 0.3s ease-out, fadeOut 0.3s ease-out 2.7s forwards;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            animation: slideIn 0.3s ease-out;
         }
 
         .notification.success {
-            background: linear-gradient(135deg, rgba(16, 185, 129, 0.95) 0%, rgba(5, 150, 105, 0.95) 100%);
+            background-color: #10b981;
         }
 
         .notification.error {
-            background: linear-gradient(135deg, rgba(239, 68, 68, 0.95) 0%, rgba(220, 38, 38, 0.95) 100%);
+            background-color: #ef4444;
         }
-        @@keyframes slideInRight {
+
+        @@keyframes slideIn {
             from {
                 transform: translateX(100%);
                 opacity: 0;
             }
+
             to {
                 transform: translateX(0);
                 opacity: 1;
             }
         }
-
-        @@keyframes fadeOut {
-            to {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-        }
-
-        /* Pulse animation */
-        .pulse {
-            animation: pulse 2s infinite;
-        }
-
-        @@keyframes pulse {
-            0% {
-                box-shadow: 0 0 0 0 rgba(79, 70, 229, 0.4);
-            }
-            70% {
-                box-shadow: 0 0 0 10px rgba(79, 70, 229, 0);
-            }
-            100% {
-                box-shadow: 0 0 0 0 rgba(79, 70, 229, 0);
-            }
-        }
-
-        /* Navigation */
-        .nav-item {
-            position: relative;
-            overflow: hidden;
-            transition: all 0.3s ease;
-        }
-
-        .nav-item.active {
-            background: linear-gradient(135deg, var(--primary) 0%, #7c3aed 100%);
-            color: white;
-        }
-
-        .nav-item.active::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 3px;
-            background: white;
-            border-radius: 3px;
-        }
-
-        /* Menu items */
-        .menu-item-card {
-            transition: all 0.3s ease;
-            border: 2px solid transparent;
-        }
-
-        .menu-item-card:hover {
-            border-color: var(--primary);
-            transform: translateY(-4px);
-        }
-
-        /* Order items */
-        .order-item {
-            transition: all 0.3s ease;
-        }
-
-        .order-item:hover {
-            background: rgba(79, 70, 229, 0.05);
-            transform: translateX(4px);
-        }
-
-        /* Stat cards */
-        .stat-card {
-            position: relative;
-            overflow: hidden;
-        }
-
-        .stat-card::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            right: -50%;
-            width: 100%;
-            height: 200%;
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
-            transform: rotate(45deg);
-        }
-
-        /* Modal styles */
-        .modal-overlay {
-            background: rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(5px);
-        }
-
-        .modal-content {
-            animation: modalSlideUp 0.3s ease-out;
-        }
-
-        @@keyframes modalSlideUp {
-            from {
-                transform: translateY(20px);
-                opacity: 0;
-            }
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
-        }
-
-        /* Floating button */
-        .floating-btn {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--primary) 0%, #7c3aed 100%);
-            color: white;
-            border: none;
-            font-size: 24px;
-            cursor: pointer;
-            box-shadow: 0 10px 25px rgba(79, 70, 229, 0.3);
-            transition: all 0.3s ease;
-            z-index: 100;
-        }
-
-         .floating-btn:hover {
-                transform: scale(1.1) rotate(90deg);
-                box-shadow: 0 15px 35px rgba(79, 70, 229, 0.4);
-         }
-        .loading-spinner {
-            border: 3px solid rgba(79, 70, 229, 0.1);
-            border-radius: 50%;
-            border-top: 3px solid var(--primary);
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-        }
-
-        @@keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        /* Badges */
-        .badge {
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-        }
-
-        .badge-primary {
-            background: rgba(79, 70, 229, 0.1);
-            color: var(--primary);
-        }
-
-        .badge-success {
-            background: rgba(16, 185, 129, 0.1);
-            color: var(--success);
-        }
-
-        .badge-warning {
-            background: rgba(245, 158, 11, 0.1);
-            color: var(--warning);
-        }
-
-        .badge-danger {
-            background: rgba(239, 68, 68, 0.1);
-            color: var(--danger);
-        }
-
-        /* Empty state */
-        .empty-state {
-            text-align: center;
-            padding: 40px 20px;
-            color: #6b7280;
-        }
-
-        .empty-state i {
-            font-size: 48px;
-            margin-bottom: 16px;
-            opacity: 0.5;
-        }
-
-        .empty-state h3 {
-            font-size: 18px;
-            font-weight: 600;
-            margin-bottom: 8px;
-        }
-
-        .empty-state p {
-            font-size: 14px;
-            opacity: 0.7;
-        }
-
-        /* Status indicators */
-        .status-indicator {
-            display: inline-block;
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            margin-right: 8px;
-        }
-
-        .status-active {
-            background-color: var(--success);
-            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
-        }
-
-        .status-inactive {
-            background-color: var(--danger);
-            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2);
-        }
-
-        .status-pending {
-            background-color: var(--warning);
-            box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.2);
-        }
-
-        /* Print styles */
-        @@media print {
-            .no-print {
-                display: none !important;
-            }
-            
-            .print-only {
-                display: block !important;
-            }
-            
-            body {
-                background: white !important;
-            }
-        }
-
-        /* Hide class */
-        .hidden {
-            display: none !important;
-        }
-
-        /* View classes */
-        .view {
-            display: block;
-        }
-
-        .view.hidden {
-            display: none;
-        }
-
-        /* Form styles */
-        input, select, textarea {
-            transition: all 0.3s ease;
-        }
-
-        input:focus, select:focus, textarea:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
-        }
     </style>
 </head>
-<body class="min-h-screen">
+
+<body class="bg-gray-100 min-h-screen">
     @if (Model.CurrentUser == null)
     {
-        <!-- Enhanced Login View -->
-        <div class="min-h-screen flex items-center justify-center p-4">
-            <div class="max-w-6xl w-full grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
-                <!-- Left Panel - Brand & Info -->
-                <div class="hidden lg:block">
-                    <div class="glass-card p-12 rounded-3xl shadow-2xl">
-                        <div class="text-center mb-12">
-                            <div class="inline-flex items-center justify-center w-32 h-32 gradient-primary rounded-full mb-8 shadow-2xl">
-                                <i class="fas fa-utensils text-5xl text-white"></i>
-                            </div>
-                            <h1 class="text-5xl font-bold text-gray-800 mb-4">@Model.RestaurantName</h1>
-                            <p class="text-xl text-gray-600 mb-8">Premium Restaurant Management System</p>
-                            <div class="inline-flex items-center space-x-2 bg-gradient-to-r from-green-500 to-emerald-600 text-white px-6 py-3 rounded-full">
-                                <i class="fas fa-star"></i>
-                                <span class="font-semibold">Trusted by 500+ Restaurants</span>
-                            </div>
-                        </div>
-
-                        <div class="grid grid-cols-3 gap-6">
-                            <div class="text-center">
-                                <div class="text-3xl font-bold gradient-primary bg-clip-text text-transparent">24/7</div>
-                                <div class="text-sm text-gray-600">Support</div>
-                            </div>
-                            <div class="text-center">
-                                <div class="text-3xl font-bold gradient-success bg-clip-text text-transparent">99.9%</div>
-                                <div class="text-sm text-gray-600">Uptime</div>
-                            </div>
-                            <div class="text-center">
-                                <div class="text-3xl font-bold gradient-warning bg-clip-text text-transparent">5★</div>
-                                <div class="text-sm text-gray-600">Rating</div>
-                            </div>
-                        </div>
+    <!-- Login View -->
+    <div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-800">
+        <div class="max-w-md w-full space-y-8 p-8">
+            <div class="text-center">
+                <div class="text-6xl mb-4">🏪</div>
+                <h2 class="text-4xl font-bold text-white mb-2">@Model.RestaurantName</h2>
+                <p class="text-xl text-blue-100 mb-8">POS System Login</p>
+            </div>
+            <div class="bg-white rounded-xl shadow-2xl p-8">
+                <form method="post" action="/Login/Login" class="space-y-6" id="loginForm">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">👤 Username</label>
+                        <input type="text" name="username" id="usernameInput" 
+                               class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" 
+                               placeholder="Enter username" 
+                               value="@(ViewBag.RememberedUsername ?? "")" required>
                     </div>
-                </div>
-
-                <!-- Right Panel - Login Form -->
-                <div class="glass-card p-12 rounded-3xl shadow-2xl">
-                    <div class="text-center mb-10">
-                        <h2 class="text-4xl font-bold text-gray-800 mb-3">Welcome Back 👋</h2>
-                        <p class="text-gray-600">Sign in to access your restaurant dashboard</p>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">🔒 Password</label>
+                        <input type="password" name="password" id="passwordInput" 
+                               class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" 
+                               placeholder="Enter password" required>
                     </div>
-
-                    <form method="post" action="/Login/Login" class="space-y-8">
-                        <div class="space-y-6">
-                            <!-- Username Field -->
-                            <div class="relative group">
-                                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                                    <i class="fas fa-user text-gray-400 group-focus-within:text-primary"></i>
-                                </div>
-                                <input type="text" name="username" 
-                                       class="w-full pl-12 pr-4 py-4 bg-gray-50 border-2 border-gray-200 rounded-xl 
-                                              focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none
-                                              transition-all duration-300 placeholder-gray-500"
-                                       placeholder="Enter username or email" required>
-                            </div>
-
-                            <!-- Password Field -->
-                            <div class="relative group">
-                                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                                    <i class="fas fa-lock text-gray-400 group-focus-within:text-primary"></i>
-                                </div>
-                                <input type="password" name="password" 
-                                       class="w-full pl-12 pr-12 py-4 bg-gray-50 border-2 border-gray-200 rounded-xl 
-                                              focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none
-                                              transition-all duration-300 placeholder-gray-500"
-                                       placeholder="Enter password" required>
-                                <button type="button" 
-                                        class="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-primary"
-                                        onclick="togglePassword(this)">
-                                    <i class="far fa-eye"></i>
-                                </button>
-                            </div>
-                        </div>
-
-                        <div class="flex items-center justify-between">
-                            <label class="flex items-center space-x-3 cursor-pointer">
-                                <div class="relative">
-                                    <input type="checkbox" name="remember" class="sr-only peer">
-                                    <div class="w-5 h-5 bg-gray-200 rounded border-2 border-gray-300 
-                                                peer-checked:bg-primary peer-checked:border-primary 
-                                                transition-all duration-300"></div>
-                                    <div class="absolute inset-0 flex items-center justify-center opacity-0 
-                                                peer-checked:opacity-100 transition-opacity duration-300">
-                                        <i class="fas fa-check text-white text-xs"></i>
-                                    </div>
-                                </div>
-                                <span class="text-gray-700 font-medium">Remember me</span>
+                    
+                    <!-- Remember Me Checkbox -->
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center">
+                            <input type="checkbox" name="rememberMe" id="rememberMe" value="true"
+                                   class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded cursor-pointer"
+                                   @(ViewBag.RememberMe == true ? "checked" : "")>
+                            <label for="rememberMe" class="ml-2 block text-sm text-gray-700 cursor-pointer">
+                                Remember me
                             </label>
-                            <a href="#" class="text-primary font-semibold hover:text-primary-dark transition-colors">
-                                Forgot password?
-                            </a>
                         </div>
+                        <div class="text-sm">
+                            <span class="text-gray-500">for 30 days</span>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 rounded-lg hover:from-blue-700 hover:to-purple-700 font-bold shadow-lg transform hover:scale-105 transition-all">
+                        🚀 Login to POS System
+                    </button>
+                </form>
 
-                        <button type="submit" 
-                                class="w-full gradient-primary text-white py-4 rounded-xl font-semibold text-lg
-                                       hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300
-                                       focus:outline-none focus:ring-4 focus:ring-primary/30">
-                            Sign In to Dashboard
-                        </button>
-
-                        <div class="text-center">
-                            <p class="text-gray-600">Don't have an account? 
-                                <a href="#" class="text-primary font-semibold hover:text-primary-dark">Contact admin</a>
-                            </p>
-                        </div>
-                    </form>
-
-                    <!-- Demo Credentials -->
-                    <div class="mt-10 pt-8 border-t border-gray-200">
-                        <div class="text-center mb-4">
-                            <h4 class="font-semibold text-gray-800 mb-2">📋 Demo Accounts</h4>
-                            <p class="text-sm text-gray-600">Try these credentials to explore different roles</p>
-                        </div>
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-                            <div class="gradient-primary text-white p-4 rounded-xl text-center">
-                                <div class="font-bold mb-1">👑 Admin</div>
-                                <div class="text-sm">admin / admin123</div>
-                            </div>
-                            <div class="gradient-success text-white p-4 rounded-xl text-center">
-                                <div class="font-bold mb-1">💰 Manager</div>
-                                <div class="text-sm">manager / manager123</div>
-                            </div>
-                            <div class="gradient-warning text-white p-4 rounded-xl text-center">
-                                <div class="font-bold mb-1">👨‍🍳 Staff</div>
-                                <div class="text-sm">staff / staff123</div>
-                            </div>
-                        </div>
+                <div class="mt-6 p-4 bg-gray-50 rounded-lg">
+                    <h4 class="font-bold text-gray-700 mb-2">Demo Credentials:</h4>
+                    <div class="text-sm text-gray-600 space-y-1">
+                        <p><strong>Admin:</strong> admin / admin123</p>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
+    
+    <script>
+        // Check if username was remembered and focus on password field
+        document.addEventListener('DOMContentLoaded', function() {
+            const usernameInput = document.getElementById('usernameInput');
+            const passwordInput = document.getElementById('passwordInput');
+            
+            if (usernameInput.value) {
+                // Username is pre-filled, focus on password
+                passwordInput.focus();
+            } else {
+                usernameInput.focus();
+            }
+        });
+    </script>
     }
     else
     {
-        <!-- Main Application -->
-        <div class="min-h-screen flex flex-col">
-            <!-- Enhanced Header -->
-            <header class="gradient-dark text-white shadow-xl">
-                <div class="container mx-auto px-6 py-4">
-                    <div class="flex items-center justify-between">
-                        <!-- Brand -->
-                        <div class="flex items-center space-x-6">
-                            <div class="flex items-center space-x-4">
-                                <div class="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center">
-                                    <i class="fas fa-utensils text-2xl"></i>
-                                </div>
-                                <div>
-                                    <h1 class="text-2xl font-bold">@Model.RestaurantName</h1>
-                                    <div class="text-sm opacity-80 flex items-center space-x-2">
-                                        <span class="status-indicator status-active"></span>
-                                        <span>POS System Active</span>
-                                    </div>
-                                </div>
+    <!-- Main Application -->
+    <div class="min-h-screen flex flex-col">
+        <!-- Header -->
+        <header class="bg-gray-800 text-white p-4">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center space-x-4">
+                    <h1 class="text-2xl font-bold">@Model.RestaurantName</h1>
+                    <div class="text-sm opacity-75">@Model.ContactInfo</div>
+                </div>
+                <div class="flex items-center space-x-6">
+                    <div class="text-right">
+                        <div class="text-sm opacity-75">Current User</div>
+                        <div class="font-bold">@Model.CurrentUser.Name (@Model.CurrentUser.Role)</div>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-sm opacity-75">Date & Time</div>
+                        <div class="font-bold" id="currentDateTime">@DateTime.Now.ToString("f")</div>
+                    </div>
+                    <form method="post" action="/Login/Logout">
+                        <button type="submit"
+                            class="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg font-medium">
+                            🚪 Logout
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </header>
+
+        <!-- Navigation -->
+        <nav class="bg-white shadow-sm border-b">
+            <div class="flex space-x-1 p-4 overflow-x-auto">
+                <button onclick="showView('dashboard')"
+                    class="nav-btn px-4 py-2 rounded-lg bg-blue-600 text-white font-medium">Dashboard</button>
+                <button onclick="showView('tables')"
+                    class="nav-btn px-4 py-2 rounded-lg bg-gray-200 text-gray-700 font-medium">Tables</button>
+                <button onclick="showView('orders')"
+                    class="nav-btn px-4 py-2 rounded-lg bg-gray-200 text-gray-700 font-medium">Orders</button>
+                <button onclick="showView('menu')"
+                    class="nav-btn px-4 py-2 rounded-lg bg-gray-200 text-gray-700 font-medium">Menu & Orders</button>
+                <button onclick="showView('kitchen')"
+                    class="nav-btn px-4 py-2 rounded-lg bg-gray-200 text-gray-700 font-medium">Kitchen</button>
+                <button onclick="showView('reports')"
+                    class="nav-btn px-4 py-2 rounded-lg bg-gray-200 text-gray-700 font-medium">Reports</button>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="flex-1 p-6">
+
+            <!-- ==================== DASHBOARD VIEW ==================== -->
+            <div id="dashboard-view" class="view">
+                <div class="bg-gradient-to-r from-blue-600 to-purple-700 text-white p-8 rounded-xl shadow-xl mb-8">
+                    <h2 class="text-4xl font-bold mb-2">🏪 Welcome to Dashboard</h2>
+                    <p class="text-xl opacity-90">Real-time restaurant analytics</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                    <div class="bg-gradient-to-br from-green-500 to-green-600 text-white p-6 rounded-xl shadow-xl">
+                        <p class="text-green-100 text-sm">💰 Today's Sales</p>
+                        <p class="text-4xl font-bold">$@Model.TodaySales.ToString("F2")</p>
+                    </div>
+                    <div class="bg-gradient-to-br from-orange-500 to-orange-600 text-white p-6 rounded-xl shadow-xl">
+                        <p class="text-orange-100 text-sm">🔥 Active Orders</p>
+                        <p class="text-4xl font-bold">@Model.ActiveOrdersCount</p>
+                    </div>
+                    <div class="bg-gradient-to-br from-blue-500 to-blue-600 text-white p-6 rounded-xl shadow-xl">
+                        <p class="text-blue-100 text-sm">🪑 Table Status</p>
+                        <p class="text-4xl font-bold">@Model.OccupiedTablesCount/@Model.Tables.Count</p>
+                    </div>
+                    <div class="bg-gradient-to-br from-purple-500 to-purple-600 text-white p-6 rounded-xl shadow-xl">
+                        <p class="text-purple-100 text-sm">🍽️ Menu Items</p>
+                        <p class="text-4xl font-bold">@Model.MenuItems.Count</p>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-xl">
+                    <h3 class="text-2xl font-bold mb-6 text-gray-800">⚡ Quick Actions</h3>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <button onclick="showView('tables')"
+                            class="bg-blue-500 text-white p-4 rounded-lg hover:bg-blue-600">🪑 Manage Tables</button>
+                        <button onclick="showView('orders')"
+                            class="bg-orange-500 text-white p-4 rounded-lg hover:bg-orange-600">📋 View Orders</button>
+                        <button onclick="showView('menu')"
+                            class="bg-green-500 text-white p-4 rounded-lg hover:bg-green-600">🍽️ Manage Menu</button>
+                        <button onclick="showView('kitchen')"
+                            class="bg-purple-500 text-white p-4 rounded-lg hover:bg-purple-600">👨‍🍳 Kitchen View</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ==================== TABLES VIEW ==================== -->
+            <div id="tables-view" class="view hidden">
+                <div class="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-6 rounded-xl shadow-xl mb-6">
+                    <h2 class="text-3xl font-bold mb-2">🪑 Table Management</h2>
+                    <p class="text-blue-100">Click on a table to manage it</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                    <div class="bg-white p-4 rounded-lg shadow text-center">
+                        <div class="text-2xl font-bold text-gray-800">@Model.Tables.Count</div>
+                        <div class="text-sm text-gray-600">Total Tables</div>
+                    </div>
+                    <div class="bg-white p-4 rounded-lg shadow text-center">
+                        <div class="text-2xl font-bold text-green-600">@Model.Tables.Count(t => t.Status == "available")</div>
+                        <div class="text-sm text-gray-600">Available</div>
+                    </div>
+                    <div class="bg-white p-4 rounded-lg shadow text-center">
+                        <div class="text-2xl font-bold text-red-600">@Model.Tables.Count(t => t.Status == "occupied")</div>
+                        <div class="text-sm text-gray-600">Occupied</div>
+                    </div>
+                    <div class="bg-white p-4 rounded-lg shadow text-center">
+                        <div class="text-2xl font-bold text-yellow-600">@Model.Tables.Count(t => t.Status == "reserved")</div>
+                        <div class="text-sm text-gray-600">Reserved</div>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+                    @foreach (var table in Model.Tables)
+                    {
+                    <div onclick="handleTableClick(@table.Id, '@table.Status')"
+                        class="table-item p-4 rounded-lg cursor-pointer transition-all hover:shadow-lg text-white
+                                @(table.Status == "occupied" ? "table-occupied" : table.Status == "reserved" ? "table-reserved" : "table-available")">
+                        <div class="text-center">
+                            <div class="text-2xl font-bold">T@(table.Id)</div>
+                            <div class="text-sm capitalize">@table.Status</div>
+                            @if (table.Capacity.HasValue)
+                            {
+                            <div class="text-xs">👥 @table.Capacity seats</div>
+                            }
+                            @if (table.CurrentOrder != null)
+                            {
+                            <div class="text-xs mt-1 font-semibold">$@table.CurrentOrder.Total.ToString("F2")</div>
+                            }
+                        </div>
+                    </div>
+                    }
+                </div>
+            </div>
+
+            <!-- ==================== ORDERS VIEW ==================== -->
+            <div id="orders-view" class="view hidden">
+                <div class="bg-gradient-to-r from-orange-600 to-orange-700 text-white p-6 rounded-xl shadow-xl mb-6">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <h2 class="text-3xl font-bold mb-2">📋 Order Management</h2>
+                            <p class="text-orange-100">Manage all restaurant orders</p>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-sm opacity-90">Total Orders: <span id="totalOrdersCount">0</span></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                    <div class="bg-white p-4 rounded-lg shadow text-center cursor-pointer" onclick="filterOrders('all')">
+                        <div class="text-2xl font-bold text-gray-800" id="allOrdersCount">0</div>
+                        <div class="text-sm text-gray-600">All Orders</div>
+                    </div>
+                    <div class="bg-white p-4 rounded-lg shadow text-center cursor-pointer" onclick="filterOrders('dine-in')">
+                        <div class="text-2xl font-bold text-green-600" id="dineInOrdersCount">0</div>
+                        <div class="text-sm text-gray-600">Dine In</div>
+                    </div>
+                    <div class="bg-white p-4 rounded-lg shadow text-center cursor-pointer" onclick="filterOrders('delivery')">
+                        <div class="text-2xl font-bold text-purple-600" id="deliveryOrdersCount">0</div>
+                        <div class="text-sm text-gray-600">Delivery</div>
+                    </div>
+                    <div class="bg-white p-4 rounded-lg shadow text-center cursor-pointer" onclick="filterOrders('takeaway')">
+                        <div class="text-2xl font-bold text-orange-600" id="takeawayOrdersCount">0</div>
+                        <div class="text-sm text-gray-600">Take Away</div>
+                    </div>
+                </div>
+                <div class="bg-white p-4 rounded-lg shadow-lg mb-6">
+                    <div class="flex flex-wrap gap-4 items-center">
+                        <select id="orderTypeFilter" onchange="applyFilters()" class="p-2 border rounded-lg">
+                            <option value="all">All Types</option>
+                            <option value="dine-in">Dine In</option>
+                            <option value="delivery">Delivery</option>
+                            <option value="takeaway">Take Away</option>
+                        </select>
+                        <select id="orderStatusFilter" onchange="applyFilters()" class="p-2 border rounded-lg">
+                            <option value="all">All Statuses</option>
+                            <option value="pending">Pending</option>
+                            <option value="preparing">Preparing</option>
+                            <option value="ready">Ready</option>
+                            <option value="completed">Completed</option>
+                        </select>
+                        <button onclick="loadOrders()"
+                            class="bg-orange-600 text-white px-4 py-2 rounded-lg hover:bg-orange-700">🔄 Refresh
+                        </button>
+                    </div>
+                </div>
+                <!-- ORDERS CONTAINER - THIS ID IS CRITICAL -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6" id="orders-container">
+                    <div class="text-center py-12 col-span-full">
+                        <div class="text-4xl mb-4">⏳</div>
+                        <p class="text-gray-500">Loading orders...</p>
+                    </div>
+                </div>
+                <div id="no-orders-message" class="hidden text-center py-12">
+                    <div class="text-6xl mb-4">📋</div>
+                    <h3 class="text-2xl font-bold text-gray-600 mb-2">No Orders Found</h3>
+                </div>
+            </div>
+
+            <!-- ==================== MENU VIEW ==================== -->
+            <div id="menu-view" class="view hidden">
+                <div class="bg-gradient-to-r from-purple-600 to-purple-700 text-white p-6 rounded-xl shadow-xl mb-6">
+                    <h3 class="text-2xl font-bold mb-2">🍽️ Menu & Orders</h3>
+                </div>
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4">
+                        @foreach (var item in Model.MenuItems)
+                        {
+                        <div class="bg-white p-4 rounded-lg shadow hover:shadow-lg border border-gray-200">
+                            <div class="flex justify-between items-start mb-3">
+                                <h4 class="font-bold text-lg text-gray-800">@item.Name</h4>
+                                <span class="text-sm text-gray-500 bg-gray-100 px-2 py-1 rounded">@item.Category</span>
                             </div>
-                            
-                            <!-- Quick Stats -->
-                            <div class="hidden lg:flex items-center space-x-6">
-                                <div class="text-center">
-                                    <div class="text-sm opacity-80">Today's Sales</div>
-                                    <div class="text-xl font-bold">$@Model.TodaySales.ToString("F2")</div>
-                                </div>
-                                <div class="h-8 w-px bg-white/20"></div>
-                                <div class="text-center">
-                                    <div class="text-sm opacity-80">Active Orders</div>
-                                    <div class="text-xl font-bold">@Model.ActiveOrdersCount</div>
-                                </div>
+                            <div class="flex justify-between items-center">
+                                <p class="text-xl font-bold text-green-600">$@item.Price.ToString("F2")</p>
+                                <button onclick="addToOrder(@item.Id, '@item.Name')"
+                                    class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700">➕ Add
+                                </button>
                             </div>
                         </div>
-
-                        <!-- User Info & Controls -->
-                        <div class="flex items-center space-x-6">
-                            <!-- DateTime Display -->
-                            <div class="hidden lg:block text-right">
-                                <div id="currentDateTime" class="text-sm font-medium"></div>
-                                <div class="text-xs opacity-80">@Model.ContactInfo</div>
-                            </div>
-
-                            <!-- User Profile -->
-                            <div class="flex items-center space-x-3">
-                                <div class="w-10 h-10 gradient-primary rounded-full flex items-center justify-center">
-                                    <span class="font-bold">@Model.CurrentUser.Name[0]</span>
+                        }
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-lg sticky top-4">
+                        <h3 class="text-xl font-bold mb-4">🛒 Current Order</h3>
+                        <div class="mb-4 border border-gray-200 rounded-lg p-3 bg-gray-50 min-h-[100px]"
+                            id="current-order-items">
+                            @if (Model.CurrentOrder?.Items?.Any() == true)
+                            {
+                            @foreach (var item in Model.CurrentOrder.Items)
+                            {
+                            <div class="flex justify-between items-center py-2 border-b last:border-b-0">
+                                <div>
+                                    <div class="font-medium">@item.Name</div>
+                                    <div class="text-sm text-gray-600">$@item.Price.ToString("F2") × @item.Quantity
+                                    </div>
                                 </div>
-                                <div class="hidden md:block">
-                                    <div class="font-semibold">@Model.CurrentUser.Name</div>
-                                    <div class="text-xs opacity-80">@Model.CurrentUser.Role</div>
+                                <div class="flex items-center space-x-2">
+                                    <button onclick="updateQuantity(@item.MenuItemId, -1)"
+                                        class="bg-red-500 text-white w-6 h-6 rounded-full">−</button>
+                                    <span class="font-bold">@item.Quantity</span>
+                                    <button onclick="updateQuantity(@item.MenuItemId, 1)"
+                                        class="bg-green-500 text-white w-6 h-6 rounded-full">+</button>
                                 </div>
                             </div>
-
-                            <!-- Logout -->
-                            <form method="post" action="/POS/Logout">
-                                <button type="submit" 
-                                        class="px-6 py-2 bg-white/10 hover:bg-white/20 rounded-xl font-medium
-                                               transition-all duration-300 hover:scale-105">
-                                    <i class="fas fa-sign-out-alt mr-2"></i>
-                                    Logout
+                            }
+                            }
+                            else
+                            {
+                            <div class="text-center py-4 text-gray-500">No items added</div>
+                            }
+                        </div>
+                        <div class="border-t pt-4">
+                            <div class="flex justify-between text-xl font-bold mb-4">
+                                <span>Total:</span>
+                                <span class="text-green-600">$@(Model.CurrentOrder?.Total.ToString("F2") ?? "0.00")</span>
+                            </div>
+                            <form id="process-order-form" class="space-y-3">
+                                @Html.AntiForgeryToken()
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Order Type</label>
+                                    <select name="orderType" id="orderTypeSelect" onchange="toggleTableSelection()"
+                                        class="w-full p-2 border rounded-lg" required>
+                                        <option value="">Select order type</option>
+                                        <option value="dine-in">🍽️ Dine In</option>
+                                        <option value="takeaway">🥡 Takeaway</option>
+                                        <option value="delivery">🚚 Delivery</option>
+                                    </select>
+                                </div>
+                                <!-- TABLE SELECTION FOR DINE-IN -->
+                                <div id="tableSelectionDiv" class="hidden">
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Select Table</label>
+                                    <select name="tableId" id="tableSelect" class="w-full p-2 border rounded-lg">
+                                        <option value="">Select a table</option>
+                                        @foreach (var table in Model.Tables.Where(t => t.Status == "available"))
+                                        {
+                                        <option value="@table.Id">Table @table.Id (@table.Capacity seats)</option>
+                                        }
+                                    </select>
+                                    <p class="text-xs text-gray-500 mt-1">Only available tables are shown</p>
+                                </div>
+                                <input type="text" name="customerName" placeholder="Customer Name"
+                                    class="w-full p-2 border rounded-lg" required>
+                                <input type="text" name="customerPhone" placeholder="Phone (optional)"
+                                    class="w-full p-2 border rounded-lg">
+                                <button type="submit"
+                                    class="w-full bg-green-600 text-white py-3 rounded-lg font-bold"
+                                    @(Model.CurrentOrder?.Items?.Any() != true ? "disabled" : "")>
+                                    💳 Process Order
                                 </button>
                             </form>
                         </div>
                     </div>
                 </div>
-            </header>
+            </div>
 
-            <!-- Enhanced Navigation -->
-            <nav class="bg-white shadow-lg">
-                <div class="container mx-auto px-6">
-                    <div class="flex overflow-x-auto space-x-1 py-3 custom-scrollbar">
-                        <button onclick="showView('dashboard')" 
-                                class="nav-item px-6 py-3 rounded-xl font-medium whitespace-nowrap transition-all duration-300 bg-gray-100 text-gray-700">
-                            <i class="fas fa-chart-line mr-3"></i>
-                            Dashboard
-                        </button>
-                        <button onclick="showView('tables')" 
-                                class="nav-item px-6 py-3 rounded-xl font-medium whitespace-nowrap transition-all duration-300 bg-gray-100 text-gray-700">
-                            <i class="fas fa-chair mr-3"></i>
-                            Tables
-                            <span class="ml-2 badge badge-primary">@Model.Tables.Count</span>
-                        </button>
-                        <button onclick="showView('orders')" 
-                                class="nav-item px-6 py-3 rounded-xl font-medium whitespace-nowrap transition-all duration-300 bg-gray-100 text-gray-700">
-                            <i class="fas fa-receipt mr-3"></i>
-                            Orders
-                            <span class="ml-2 badge badge-primary">@Model.Orders.Count</span>
-                        </button>
-                        <button onclick="showView('menu')" 
-                                class="nav-item px-6 py-3 rounded-xl font-medium whitespace-nowrap transition-all duration-300 bg-gray-100 text-gray-700">
-                            <i class="fas fa-utensils mr-3"></i>
-                            Menu & Orders
-                            <span class="ml-2 badge badge-primary">@Model.MenuItems.Count</span>
-                        </button>
-                        <button onclick="showView('kitchen')" 
-                                class="nav-item px-6 py-3 rounded-xl font-medium whitespace-nowrap transition-all duration-300 bg-gray-100 text-gray-700">
-                            <i class="fas fa-blender mr-3"></i>
-                            Kitchen
-                            <span class="ml-2 badge badge-warning">@Model.Orders.Count(o => o.Status == "preparing")</span>
-                        </button>
-                        <button onclick="showView('reports')" 
-                                class="nav-item px-6 py-3 rounded-xl font-medium whitespace-nowrap transition-all duration-300 bg-gray-100 text-gray-700">
-                            <i class="fas fa-chart-pie mr-3"></i>
-                            Reports
-                        </button>
+            <!-- ==================== KITCHEN VIEW ==================== -->
+            <div id="kitchen-view" class="view hidden">
+                <div class="bg-gradient-to-r from-orange-600 to-orange-700 text-white p-6 rounded-xl shadow-xl mb-6">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <h2 class="text-3xl font-bold mb-2">👨‍🍳 Kitchen Display System</h2>
+                            <p class="text-orange-100">Pending and preparing orders</p>
+                        </div>
+                        <button onclick="loadKitchenOrders()"
+                            class="bg-white text-orange-600 px-6 py-3 rounded-lg font-bold">🔄 Refresh</button>
                     </div>
                 </div>
-            </nav>
-
-            <!-- Main Content -->
-            <main class="flex-1 container mx-auto px-6 py-8">
-                <!-- Dashboard View -->
-                <div id="dashboard-view" class="view">
-                    <!-- Welcome Card -->
-                    <div class="gradient-primary text-white p-8 rounded-3xl shadow-2xl mb-8">
-                        <div class="flex flex-col lg:flex-row items-center justify-between">
-                            <div class="mb-6 lg:mb-0">
-                                <h2 class="text-4xl font-bold mb-3">Welcome, @Model.CurrentUser.Name! 👋</h2>
-                                <p class="text-xl opacity-90">Here's what's happening in your restaurant today.</p>
-                                <div class="mt-4 flex items-center space-x-4">
-                                    <div class="flex items-center space-x-2">
-                                        <i class="far fa-calendar"></i>
-                                        <span>@DateTime.Now.ToString("dddd, MMMM dd")</span>
-                                    </div>
-                                    <div class="flex items-center space-x-2">
-                                        <i class="far fa-clock"></i>
-                                        <span id="liveTime">@DateTime.Now.ToString("hh:mm:ss tt")</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="text-center">
-                                <div class="text-6xl mb-4">📊</div>
-                                <div class="text-2xl font-bold">Live Dashboard</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Key Metrics -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                        <div class="stat-card glass-card p-6 rounded-2xl shadow-soft hover:shadow-xl transition-all duration-300">
-                            <div class="flex items-center justify-between">
-                                <div>
-                                    <p class="text-gray-600 text-sm font-medium mb-2">Today's Revenue</p>
-                                    <p class="text-3xl font-bold text-gray-800">$@Model.TodaySales.ToString("F2")</p>
-                                    <div class="mt-2 flex items-center text-green-600 text-sm">
-                                        <i class="fas fa-arrow-up mr-1"></i>
-                                        <span>12.5% from yesterday</span>
-                                    </div>
-                                </div>
-                                <div class="w-16 h-16 gradient-success rounded-2xl flex items-center justify-center">
-                                    <i class="fas fa-dollar-sign text-2xl text-white"></i>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="stat-card glass-card p-6 rounded-2xl shadow-soft hover:shadow-xl transition-all duration-300">
-                            <div class="flex items-center justify-between">
-                                <div>
-                                    <p class="text-gray-600 text-sm font-medium mb-2">Active Orders</p>
-                                    <p class="text-3xl font-bold text-gray-800">@Model.ActiveOrdersCount</p>
-                                    <div class="mt-2 flex items-center text-blue-600 text-sm">
-                                        <i class="fas fa-clock mr-1"></i>
-                                        <span>In progress</span>
-                                    </div>
-                                </div>
-                                <div class="w-16 h-16 gradient-warning rounded-2xl flex items-center justify-center">
-                                    <i class="fas fa-receipt text-2xl text-white"></i>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="stat-card glass-card p-6 rounded-2xl shadow-soft hover:shadow-xl transition-all duration-300">
-                            <div class="flex items-center justify-between">
-                                <div>
-                                    <p class="text-gray-600 text-sm font-medium mb-2">Table Occupancy</p>
-                                    <p class="text-3xl font-bold text-gray-800">@Model.OccupiedTablesCount/@Model.Tables.Count</p>
-                                    <div class="mt-2 flex items-center text-purple-600 text-sm">
-                                        <i class="fas fa-percentage mr-1"></i>
-                                        <span>@(Model.Tables.Count > 0 ? Math.Round((Model.OccupiedTablesCount / (double)Model.Tables.Count) * 100) : 0)% occupied</span>
-                                    </div>
-                                </div>
-                                <div class="w-16 h-16 gradient-primary rounded-2xl flex items-center justify-center">
-                                    <i class="fas fa-chair text-2xl text-white"></i>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="stat-card glass-card p-6 rounded-2xl shadow-soft hover:shadow-xl transition-all duration-300">
-                            <div class="flex items-center justify-between">
-                                <div>
-                                    <p class="text-gray-600 text-sm font-medium mb-2">Menu Items</p>
-                                    <p class="text-3xl font-bold text-gray-800">@Model.MenuItems.Count</p>
-                                    <div class="mt-2 flex items-center text-orange-600 text-sm">
-                                        <i class="fas fa-utensils mr-1"></i>
-                                        <span>Active items</span>
-                                    </div>
-                                </div>
-                                <div class="w-16 h-16 gradient-danger rounded-2xl flex items-center justify-center">
-                                    <i class="fas fa-hamburger text-2xl text-white"></i>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Quick Actions -->
-                    <div class="glass-card p-6 rounded-2xl shadow-soft mb-8">
-                        <h3 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
-                            <i class="fas fa-bolt text-yellow-500 mr-3"></i>
-                            Quick Actions
-                        </h3>
-                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                            <button onclick="showView('tables')" 
-                                    class="gradient-primary text-white p-6 rounded-2xl text-center shadow-hover transform transition-all duration-300">
-                                <div class="text-4xl mb-3">🪑</div>
-                                <div class="font-bold text-lg">Manage Tables</div>
-                                <div class="text-sm opacity-90 mt-1">View & assign tables</div>
-                            </button>
-                            <button onclick="showView('orders')" 
-                                    class="gradient-success text-white p-6 rounded-2xl text-center shadow-hover transform transition-all duration-300">
-                                <div class="text-4xl mb-3">📋</div>
-                                <div class="font-bold text-lg">Take Order</div>
-                                <div class="text-sm opacity-90 mt-1">Create new order</div>
-                            </button>
-                            <button onclick="showView('menu')" 
-                                    class="gradient-warning text-white p-6 rounded-2xl text-center shadow-hover transform transition-all duration-300">
-                                <div class="text-4xl mb-3">🍽️</div>
-                                <div class="font-bold text-lg">Menu Items</div>
-                                <div class="text-sm opacity-90 mt-1">Add/Edit items</div>
-                            </button>
-                            <button onclick="showView('reports')" 
-                                    class="gradient-danger text-white p-6 rounded-2xl text-center shadow-hover transform transition-all duration-300">
-                                <div class="text-4xl mb-3">📊</div>
-                                <div class="font-bold text-lg">Daily Report</div>
-                                <div class="text-sm opacity-90 mt-1">View analytics</div>
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Recent Orders -->
-                    <div class="glass-card p-6 rounded-2xl shadow-soft">
-                        <div class="flex items-center justify-between mb-6">
-                            <h3 class="text-2xl font-bold text-gray-800 flex items-center">
-                                <i class="fas fa-history text-primary mr-3"></i>
-                                Recent Orders
-                            </h3>
-                            <button onclick="showView('orders')" 
-                                    class="btn-primary">
-                                View All
-                            </button>
-                        </div>
-                        <div class="overflow-x-auto">
-                            <table class="w-full">
-                                <thead>
-                                    <tr class="border-b-2 border-gray-100">
-                                        <th class="text-left py-3 px-4 text-gray-600 font-semibold">Order #</th>
-                                        <th class="text-left py-3 px-4 text-gray-600 font-semibold">Customer</th>
-                                        <th class="text-left py-3 px-4 text-gray-600 font-semibold">Type</th>
-                                        <th class="text-left py-3 px-4 text-gray-600 font-semibold">Amount</th>
-                                        <th class="text-left py-3 px-4 text-gray-600 font-semibold">Status</th>
-                                        <th class="text-left py-3 px-4 text-gray-600 font-semibold">Time</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach (var order in Model.Orders.OrderByDescending(o => o.CreatedAt).Take(5))
-                                    {
-                                        <tr class="border-b border-gray-50 hover:bg-gray-50 transition-colors">
-                                            <td class="py-3 px-4">
-                                                <span class="font-bold text-primary">#@order.OrderNumber</span>
-                                            </td>
-                                            <td class="py-3 px-4 font-medium">@order.CustomerName</td>
-                                            <td class="py-3 px-4">
-                                                <span class="badge @(order.OrderType == "dine-in" ? "badge-success" : 
-                                                                   order.OrderType == "delivery" ? "badge-primary" : 
-                                                                   "badge-warning")">
-                                                    @(order.OrderType == "dine-in" ? "🍽️ Dine-in" : 
-                                                     order.OrderType == "delivery" ? "🚚 Delivery" : 
-                                                     "🥡 Takeaway")
-                                                </span>
-                                            </td>
-                                            <td class="py-3 px-4 font-bold">$@order.Total.ToString("F2")</td>
-                                            <td class="py-3 px-4">
-                                                <span class="badge @(order.Status == "completed" ? "badge-success" :
-                                                                   order.Status == "preparing" ? "badge-warning" :
-                                                                   "badge-primary")">
-                                                    @order.Status
-                                                </span>
-                                            </td>
-                                            <td class="py-3 px-4 text-gray-600">@order.CreatedAt.ToString("hh:mm tt")</td>
-                                        </tr>
-                                    }
-                                </tbody>
-                            </table>
-                        </div>
+                <div id="kitchen-orders-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div class="col-span-full text-center py-12">
+                        <div class="text-4xl mb-4">⏳</div>
+                        <p class="text-gray-500">Loading kitchen orders...</p>
                     </div>
                 </div>
+            </div>
 
-                <!-- Tables View -->
-                <div id="tables-view" class="view hidden">
-                    <!-- Enhanced Tables Header -->
-                    <div class="mb-8">
-                        <div class="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
-                            <div>
-                                <h2 class="text-3xl font-bold text-gray-800 mb-2">🪑 Table Management</h2>
-                                <p class="text-gray-600">Monitor and manage all restaurant tables in real-time</p>
-                            </div>
-                            <button onclick="showAddTableForm()" 
-                                    class="gradient-primary text-white px-8 py-3 rounded-xl font-bold shadow-lg
-                                           hover:shadow-xl transform hover:scale-105 transition-all duration-300
-                                           flex items-center space-x-2">
-                                <i class="fas fa-plus"></i>
-                                <span>Add New Table</span>
-                            </button>
+            <!-- ==================== REPORTS VIEW ==================== -->
+            <div id="reports-view" class="view hidden">
+                <div class="bg-gradient-to-r from-green-600 to-green-700 text-white p-6 rounded-xl shadow-xl mb-6">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <h2 class="text-3xl font-bold mb-2">📊 Daily Reports</h2>
+                            <p class="text-green-100">Real-time sales analytics</p>
                         </div>
-
-                        <!-- Table Statistics Cards -->
-                        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mt-6">
-                            <div class="glass-card p-4 rounded-2xl shadow-soft hover:shadow-xl transition-all duration-300">
-                                <div class="text-center">
-                                    <div class="text-3xl font-bold text-gray-800">@Model.Tables.Count</div>
-                                    <div class="text-sm text-gray-600">Total Tables</div>
-                                </div>
-                            </div>
-                            <div class="glass-card p-4 rounded-2xl shadow-soft hover:shadow-xl transition-all duration-300">
-                                <div class="text-center">
-                                    <div class="text-3xl font-bold text-green-600">@Model.Tables.Count(t => t.Status == "available")</div>
-                                    <div class="text-sm text-gray-600">Available</div>
-                                </div>
-                            </div>
-                            <div class="glass-card p-4 rounded-2xl shadow-soft hover:shadow-xl transition-all duration-300">
-                                <div class="text-center">
-                                    <div class="text-3xl font-bold text-red-600">@Model.Tables.Count(t => t.Status == "occupied")</div>
-                                    <div class="text-sm text-gray-600">Occupied</div>
-                                </div>
-                            </div>
-                            <div class="glass-card p-4 rounded-2xl shadow-soft hover:shadow-xl transition-all duration-300">
-                                <div class="text-center">
-                                    <div class="text-3xl font-bold text-yellow-600">@Model.Tables.Count(t => t.Status == "reserved")</div>
-                                    <div class="text-sm text-gray-600">Reserved</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Tables Grid -->
-                    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
-                        @foreach (var table in Model.Tables)
-                        {
-                            <div onclick="handleTableClick(@table.Id, '@table.Status')"
-                                 class="table-card glass-card p-4 rounded-2xl shadow-soft relative group cursor-pointer
-                                        @(table.Status == "occupied" ? "table-occupied" :
-                                          table.Status == "reserved" ? "table-reserved" : "table-available")">
-                                
-                                <!-- Table Header -->
-                                <div class="flex items-center justify-between mb-3">
-                                    <div class="flex items-center space-x-2">
-                                        <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
-                                            <span class="font-bold text-lg">T@(table.Id)</span>
-                                        </div>
-                                        <div>
-                                            <div class="text-sm opacity-90">@table.Location</div>
-                                            <div class="text-xs opacity-75">@table.Capacity seats</div>
-                                        </div>
-                                    </div>
-                                    <div class="opacity-0 group-hover:opacity-100 transition-opacity">
-                                        <button onclick="event.stopPropagation(); showTableOptions(@table.Id)"
-                                                class="w-8 h-8 bg-black/20 rounded-full flex items-center justify-center
-                                                       hover:bg-black/30 transition-colors">
-                                            <i class="fas fa-ellipsis-v text-white text-sm"></i>
-                                        </button>
-                                    </div>
-                                </div>
-
-                                <!-- Table Status -->
-                                <div class="text-center mb-2">
-                                    <div class="text-lg font-bold capitalize">@table.Status</div>
-                                    @if (table.CurrentOrder != null)
-                                    {
-                                        <div class="text-sm opacity-90">Order: $@table.CurrentOrder.Total.ToString("F2")</div>
-                                    }
-                                </div>
-
-                                <!-- Table Icon -->
-                                <div class="text-center text-4xl mb-2">
-                                    @if (table.Status == "available")
-                                    {
-                                        <i class="fas fa-chair"></i>
-                                    }
-                                    else if (table.Status == "occupied")
-                                    {
-                                        <i class="fas fa-users"></i>
-                                    }
-                                    else
-                                    {
-                                        <i class="far fa-clock"></i>
-                                    }
-                                </div>
-
-                                <!-- Table Info -->
-                                <div class="text-center text-xs opacity-80">
-                                    @if (!string.IsNullOrEmpty(table.Notes))
-                                    {
-                                        <div class="truncate" title="@table.Notes">@table.Notes</div>
-                                    }
-                                    else
-                                    {
-                                        <div>@table.Type</div>
-                                    }
-                                </div>
-                            </div>
-                        }
-                    </div>
-
-                    <!-- Empty State -->
-                    @if (!Model.Tables.Any())
-                    {
-                        <div class="empty-state">
-                            <i class="fas fa-chair text-gray-400"></i>
-                            <h3>No Tables Found</h3>
-                            <p>Start by adding your first table to the restaurant</p>
-                            <button onclick="showAddTableForm()" class="btn-primary mt-4">
-                                <i class="fas fa-plus mr-2"></i>
-                                Add First Table
-                            </button>
-                        </div>
-                    }
-                </div>
-
-                <!-- Orders View -->
-                <div id="orders-view" class="view hidden">
-                    <div class="mb-8">
-                        <div class="gradient-primary text-white p-8 rounded-3xl shadow-2xl">
-                            <div class="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
-                                <div>
-                                    <h2 class="text-3xl font-bold mb-3">📋 Order Management</h2>
-                                    <p class="text-xl opacity-90">Manage all restaurant orders efficiently</p>
-                                </div>
-                                <div class="flex items-center space-x-4">
-                                    <div class="text-center">
-                                        <div class="text-5xl">🛒</div>
-                                        <div class="text-sm opacity-90">Total Orders: <span class="font-bold">@Model.Orders.Count</span></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Order Statistics -->
-                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-                        <div onclick="filterOrders('all')" 
-                             class="glass-card p-6 rounded-2xl shadow-soft hover:shadow-xl transition-all duration-300 
-                                    cursor-pointer transform hover:scale-[1.02]">
-                            <div class="text-center">
-                                <div class="text-4xl font-bold text-gray-800" id="allOrdersCount">@Model.Orders.Count</div>
-                                <div class="text-lg text-gray-600 mt-2">All Orders</div>
-                                <div class="mt-3 text-sm text-primary font-medium">📋 View All</div>
-                            </div>
-                        </div>
-                        <div onclick="filterOrders('dine-in')" 
-                             class="glass-card p-6 rounded-2xl shadow-soft hover:shadow-xl transition-all duration-300 
-                                    cursor-pointer transform hover:scale-[1.02]">
-                            <div class="text-center">
-                                <div class="text-4xl font-bold text-green-600" id="dineInOrdersCount">@Model.Orders.Count(o => o.OrderType == "dine-in")</div>
-                                <div class="text-lg text-gray-600 mt-2">Dine In</div>
-                                <div class="mt-3 text-sm text-green-600 font-medium">🍽️ Restaurant</div>
-                            </div>
-                        </div>
-                        <div onclick="filterOrders('delivery')" 
-                             class="glass-card p-6 rounded-2xl shadow-soft hover:shadow-xl transition-all duration-300 
-                                    cursor-pointer transform hover:scale-[1.02]">
-                            <div class="text-center">
-                                <div class="text-4xl font-bold text-purple-600" id="deliveryOrdersCount">@Model.Orders.Count(o => o.OrderType == "delivery")</div>
-                                <div class="text-lg text-gray-600 mt-2">Delivery</div>
-                                <div class="mt-3 text-sm text-purple-600 font-medium">🚚 Home Delivery</div>
-                            </div>
-                        </div>
-                        <div onclick="filterOrders('takeaway')" 
-                             class="glass-card p-6 rounded-2xl shadow-soft hover:shadow-xl transition-all duration-300 
-                                    cursor-pointer transform hover:scale-[1.02]">
-                            <div class="text-center">
-                                <div class="text-4xl font-bold text-orange-600" id="takeawayOrdersCount">@Model.Orders.Count(o => o.OrderType == "takeaway")</div>
-                                <div class="text-lg text-gray-600 mt-2">Take Away</div>
-                                <div class="mt-3 text-sm text-orange-600 font-medium">🥡 Pickup</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Filters -->
-                    <div class="glass-card p-6 rounded-2xl shadow-soft mb-8">
-                        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                            <div>
-                                <label class="block text-sm font-semibold text-gray-700 mb-2">Filter by Type</label>
-                                <select id="orderTypeFilter" onchange="filterOrders(this.value)" 
-                                        class="w-full px-4 py-3 bg-gray-50 border-2 border-gray-200 rounded-xl 
-                                               focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none
-                                               transition-all duration-300">
-                                    <option value="all">📋 All Order Types</option>
-                                    <option value="dine-in">🍽️ Dine In</option>
-                                    <option value="delivery">🚚 Delivery</option>
-                                    <option value="takeaway">🥡 Take Away</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-semibold text-gray-700 mb-2">Filter by Status</label>
-                                <select id="orderStatusFilter" onchange="filterOrdersByStatus(this.value)" 
-                                        class="w-full px-4 py-3 bg-gray-50 border-2 border-gray-200 rounded-xl 
-                                               focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none
-                                               transition-all duration-300">
-                                    <option value="all">📊 All Statuses</option>
-                                    <option value="pending">⏳ Pending</option>
-                                    <option value="preparing">👨‍🍳 Preparing</option>
-                                    <option value="ready">✅ Ready</option>
-                                    <option value="completed">📦 Completed</option>
-                                    <option value="cancelled">❌ Cancelled</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-semibold text-gray-700 mb-2">Date Range</label>
-                                <input type="date" id="orderDateFilter" onchange="filterOrdersByDate()" 
-                                       class="w-full px-4 py-3 bg-gray-50 border-2 border-gray-200 rounded-xl 
-                                              focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none
-                                              transition-all duration-300">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-semibold text-gray-700 mb-2">Search Orders</label>
-                                <input type="text" id="orderSearch" placeholder="Search by order #, customer..."
-                                       onkeyup="searchOrders()" 
-                                       class="w-full px-4 py-3 bg-gray-50 border-2 border-gray-200 rounded-xl 
-                                              focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none
-                                              transition-all duration-300">
-                            </div>
-                        </div>
-                        <div class="mt-4 flex justify-end">
-                            <button onclick="refreshOrders()" 
-                                    class="gradient-primary text-white px-6 py-3 rounded-xl font-semibold
-                                           hover:shadow-xl transform hover:scale-105 transition-all duration-300
-                                           flex items-center space-x-2">
-                                <i class="fas fa-sync-alt"></i>
-                                <span>Refresh Orders</span>
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Orders Grid -->
-                    <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6" id="orders-container">
-                        @foreach (var order in Model.Orders.OrderByDescending(o => o.CreatedAt))
-                        {
-                            <div class="glass-card rounded-2xl shadow-soft hover:shadow-xl transition-all duration-300 
-                                        transform hover:-translate-y-1 overflow-hidden">
-                                <!-- Order Header -->
-                                <div class="gradient-primary text-white p-6">
-                                    <div class="flex items-center justify-between">
-                                        <div>
-                                            <h3 class="text-xl font-bold">#@order.OrderNumber</h3>
-                                            <div class="text-sm opacity-90 mt-1">@order.OrderType.ToUpper()</div>
-                                        </div>
-                                        <span class="px-3 py-1 bg-white/20 rounded-full text-sm font-bold">
-                                            @order.Status.ToUpper()
-                                        </span>
-                                    </div>
-                                </div>
-
-                                <!-- Order Details -->
-                                <div class="p-6">
-                                    <div class="space-y-3 mb-6">
-                                        <div class="flex items-center justify-between">
-                                            <span class="font-semibold text-gray-700">Customer</span>
-                                            <span class="font-medium">@order.CustomerName</span>
-                                        </div>
-                                        @if (!string.IsNullOrEmpty(order.CustomerPhone))
-                                        {
-                                            <div class="flex items-center justify-between">
-                                                <span class="font-semibold text-gray-700">Phone</span>
-                                                <span>@order.CustomerPhone</span>
-                                            </div>
-                                        }
-                                        @if (order.TableId > 0)
-                                        {
-                                            <div class="flex items-center justify-between">
-                                                <span class="font-semibold text-gray-700">Table</span>
-                                                <span class="font-bold">T@(order.TableId)</span>
-                                            </div>
-                                        }
-                                        <div class="flex items-center justify-between">
-                                            <span class="font-semibold text-gray-700">Time</span>
-                                            <span>@order.CreatedAt.ToString("hh:mm tt")</span>
-                                        </div>
-                                    </div>
-
-                                    <!-- Order Items -->
-                                    <div class="mb-6">
-                                        <h4 class="font-semibold text-gray-700 mb-3">Items (@order.Items.Count)</h4>
-                                        <div class="space-y-2 max-h-40 overflow-y-auto custom-scrollbar">
-                                            @foreach (var item in order.Items)
-                                            {
-                                                <div class="flex items-center justify-between p-2 bg-gray-50 rounded-lg">
-                                                    <div class="flex-1">
-                                                        <div class="font-medium">@item.Name</div>
-                                                        <div class="text-sm text-gray-600">x@(item.Quantity)</div>
-                                                    </div>
-                                                    <div class="font-semibold">$@((item.Price * item.Quantity).ToString("F2"))</div>
-                                                </div>
-                                            }
-                                        </div>
-                                    </div>
-
-                                    <!-- Order Total -->
-                                    <div class="border-t border-gray-200 pt-4">
-                                        <div class="flex items-center justify-between text-xl font-bold">
-                                            <span class="text-gray-800">Total</span>
-                                            <span class="text-primary">$@order.Total.ToString("F2")</span>
-                                        </div>
-                                    </div>
-
-                                    <!-- Actions -->
-                                    <div class="mt-6 space-y-2">
-                                        @if (order.Status == "pending")
-                                        {
-                                            <button onclick="updateOrderStatus(@order.Id, 'preparing')"
-                                                    class="w-full gradient-warning text-white py-3 rounded-xl font-semibold
-                                                           hover:shadow-xl transition-all duration-300">
-                                                <i class="fas fa-blender mr-2"></i>
-                                                Start Preparing
-                                            </button>
-                                        }
-                                        else if (order.Status == "preparing")
-                                        {
-                                            <button onclick="updateOrderStatus(@order.Id, 'ready')"
-                                                    class="w-full gradient-success text-white py-3 rounded-xl font-semibold
-                                                           hover:shadow-xl transition-all duration-300">
-                                                <i class="fas fa-check mr-2"></i>
-                                                Mark Ready
-                                            </button>
-                                        }
-                                        else if (order.Status == "ready")
-                                        {
-                                            <button onclick="completeOrder(@order.Id)"
-                                                    class="w-full gradient-primary text-white py-3 rounded-xl font-semibold
-                                                           hover:shadow-xl transition-all duration-300">
-                                                <i class="fas fa-credit-card mr-2"></i>
-                                                Complete Order
-                                            </button>
-                                        }
-                                    </div>
-                                </div>
-                            </div>
-                        }
-                    </div>
-
-                    <!-- No Orders Message -->
-                    <div id="no-orders-message" class="hidden">
-                        <div class="empty-state">
-                            <i class="fas fa-receipt text-gray-400"></i>
-                            <h3>No Orders Found</h3>
-                            <p>There are no orders matching your current filters</p>
-                        </div>
+                        <button onclick="loadReports()"
+                            class="bg-white text-green-600 px-6 py-3 rounded-lg font-bold">🔄 Refresh</button>
                     </div>
                 </div>
-
-                <!-- Menu View -->
-                <div id="menu-view" class="view hidden">
-                    <div class="mb-8">
-                        <div class="gradient-primary text-white p-8 rounded-3xl shadow-2xl">
-                            <div class="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
-                                <div>
-                                    <h2 class="text-3xl font-bold mb-3">🍽️ Menu Management</h2>
-                                    <p class="text-xl opacity-90">Manage your restaurant menu and create orders</p>
-                                </div>
-                                <button onclick="showAddMenuItemForm()" 
-                                        class="bg-white text-primary px-8 py-3 rounded-xl font-bold shadow-lg
-                                               hover:shadow-xl transform hover:scale-105 transition-all duration-300
-                                               flex items-center space-x-2">
-                                    <i class="fas fa-plus"></i>
-                                    <span>Add New Item</span>
-                                </button>
-                            </div>
-                        </div>
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                    <div class="bg-white p-6 rounded-lg shadow-lg text-center">
+                        <h3 class="text-lg font-semibold text-gray-600">Today's Sales</h3>
+                        <p class="text-3xl font-bold text-green-600" id="reports-today-sales">$0.00</p>
                     </div>
-
-                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                        <!-- Menu Items -->
-                        <div class="lg:col-span-2">
-                            <div class="glass-card p-6 rounded-2xl shadow-soft mb-6">
-                                <h4 class="text-xl font-bold text-gray-800 mb-4">📋 Menu Categories</h4>
-                                <div class="flex flex-wrap gap-2">
-                                    <button onclick="filterMenu('all')" 
-                                            class="px-4 py-2 gradient-primary text-white rounded-xl font-medium">
-                                        All Items
-                                    </button>
-                                    @foreach (var category in Model.MenuItems.Select(m => m.Category).Distinct())
-                                    {
-                                        <button onclick="filterMenu('@category')" 
-                                                class="px-4 py-2 bg-gray-100 text-gray-700 rounded-xl font-medium
-                                                       hover:bg-gray-200 transition-colors">
-                                            @category
-                                        </button>
-                                    }
-                                </div>
-                            </div>
-
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="menu-items-container">
-                                @foreach (var item in Model.MenuItems)
-                                {
-                                    <div class="menu-item-card glass-card p-5 rounded-2xl shadow-soft" data-category="@item.Category">
-                                        <div class="flex items-start justify-between mb-3">
-                                            <div class="flex-1">
-                                                <h4 class="font-bold text-lg text-gray-800 mb-1">@item.Name</h4>
-                                                <span class="badge badge-primary text-xs">@item.Category</span>
-                                            </div>
-                                            <div class="text-right">
-                                                <div class="text-2xl font-bold text-primary">$@item.Price.ToString("F2")</div>
-                                            </div>
-                                        </div>
-                                        
-                                        @if (!string.IsNullOrEmpty(item.Description))
-                                        {
-                                            <p class="text-sm text-gray-600 mb-4 line-clamp-2">@item.Description</p>
-                                        }
-
-                                        <div class="flex items-center justify-between">
-                                            <div class="flex items-center space-x-2">
-                                                <span class="text-xs text-gray-500">Available</span>
-                                                <span class="status-indicator status-active"></span>
-                                            </div>
-                                            <button onclick="addToOrder(@item.Id, '@item.Name.Replace("'", "\\'")')"
-                                                    class="gradient-success text-white px-5 py-2 rounded-lg font-semibold
-                                                           hover:shadow-lg transform hover:scale-105 transition-all duration-300
-                                                           flex items-center space-x-2">
-                                                <i class="fas fa-plus"></i>
-                                                <span>Add to Order</span>
-                                            </button>
-                                        </div>
-                                    </div>
-                                }
-                            </div>
-                        </div>
-
-                        <!-- Order Panel -->
-                        <div class="glass-card p-6 rounded-2xl shadow-soft sticky top-6">
-                            <h3 class="text-xl font-bold text-gray-800 mb-6 flex items-center">
-                                <i class="fas fa-shopping-cart text-primary mr-3"></i>
-                                Current Order
-                            </h3>
-
-                            <!-- Order Items -->
-                            <div class="mb-6 max-h-80 overflow-y-auto custom-scrollbar" id="current-order-items">
-                                @if (Model.CurrentOrder?.Items?.Any() == true)
-                                {
-                                    @foreach (var item in Model.CurrentOrder.Items)
-                                    {
-                                        <div class="order-item bg-gray-50 p-4 rounded-xl mb-3" id="order-item-@item.MenuItemId">
-                                            <div class="flex items-center justify-between">
-                                                <div class="flex-1">
-                                                    <div class="font-semibold text-gray-800">@item.Name</div>
-                                                    <div class="text-sm text-gray-600 mt-1">$@item.Price.ToString("F2") each</div>
-                                                </div>
-                                                <div class="flex items-center space-x-3 ml-4">
-                                                    <button onclick="updateQuantity(@item.MenuItemId, -1)"
-                                                            class="w-8 h-8 bg-red-100 text-red-600 rounded-full 
-                                                                   hover:bg-red-200 transition-colors flex items-center justify-center">
-                                                        <i class="fas fa-minus text-xs"></i>
-                                                    </button>
-                                                    <span class="w-10 text-center font-bold text-gray-800 text-lg">@item.Quantity</span>
-                                                    <button onclick="updateQuantity(@item.MenuItemId, 1)"
-                                                            class="w-8 h-8 bg-green-100 text-green-600 rounded-full 
-                                                                   hover:bg-green-200 transition-colors flex items-center justify-center">
-                                                        <i class="fas fa-plus text-xs"></i>
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    }
-                                }
-                                else
-                                {
-                                    <div class="empty-state py-8">
-                                        <i class="fas fa-shopping-cart text-gray-300"></i>
-                                        <h3>No Items Added</h3>
-                                        <p>Add items from the menu</p>
-                                    </div>
-                                }
-                            </div>
-
-                            <!-- Order Summary -->
-                            <div class="border-t border-gray-200 pt-6">
-                                <div class="space-y-3 mb-6">
-                                    <div class="flex items-center justify-between">
-                                        <span class="text-gray-600">Subtotal:</span>
-                                        <span class="font-medium" id="subtotal-amount">$@(Model.CurrentOrder?.Items?.Sum(i => i.Price * i.Quantity).ToString("F2") ?? "0.00")</span>
-                                    </div>
-                                    <div class="flex items-center justify-between">
-                                        <span class="text-gray-600">Tax (10%):</span>
-                                        <span class="font-medium" id="tax-amount">$@((Model.CurrentOrder?.Items?.Sum(i => i.Price * i.Quantity) * 0.10m ?? 0).ToString("F2"))</span>
-                                    </div>
-                                    <div class="flex items-center justify-between text-xl font-bold pt-3 border-t border-gray-200">
-                                        <span class="text-gray-800">Total:</span>
-                                        <span class="text-primary" id="total-amount">$@(Model.CurrentOrder?.Total.ToString("F2") ?? "0.00")</span>
-                                    </div>
-                                </div>
-
-                                <!-- Order Form -->
-                                <form method="post" asp-action="ProcessOrder" asp-controller="POS" id="process-order-form" class="space-y-4">
-                                    @Html.AntiForgeryToken()
-
-                                    <div>
-                                        <label class="block text-sm font-semibold text-gray-700 mb-2">Order Type</label>
-                                        <select name="orderType" 
-                                                class="w-full px-4 py-3 bg-gray-50 border-2 border-gray-200 rounded-xl 
-                                                       focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none
-                                                       transition-all duration-300" required>
-                                            <option value="">Select order type</option>
-                                            <option value="dine-in">🍽️ Dine In</option>
-                                            <option value="takeaway">🥡 Takeaway</option>
-                                            <option value="delivery">🚚 Delivery</option>
-                                        </select>
-                                    </div>
-
-                                    <div>
-                                        <label class="block text-sm font-semibold text-gray-700 mb-2">Customer Name</label>
-                                        <input type="text" name="customerName" placeholder="Enter customer name"
-                                               class="w-full px-4 py-3 bg-gray-50 border-2 border-gray-200 rounded-xl 
-                                                      focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none
-                                                      transition-all duration-300"
-                                               required value="@(Model.CurrentOrder?.CustomerName ?? "")">
-                                    </div>
-
-                                    <div>
-                                        <label class="block text-sm font-semibold text-gray-700 mb-2">Customer Phone</label>
-                                        <input type="text" name="customerPhone" placeholder="Enter phone number"
-                                               class="w-full px-4 py-3 bg-gray-50 border-2 border-gray-200 rounded-xl 
-                                                      focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none
-                                                      transition-all duration-300"
-                                               value="@(Model.CurrentOrder?.CustomerPhone ?? "")">
-                                    </div>
-
-                                    <div id="table-input-container" class="hidden">
-                                        <label class="block text-sm font-semibold text-gray-700 mb-2">Table Number</label>
-                                        <select name="tableId" 
-                                                class="w-full px-4 py-3 bg-gray-50 border-2 border-gray-200 rounded-xl 
-                                                       focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none
-                                                       transition-all duration-300">
-                                            <option value="">Select table</option>
-                                            @foreach (var table in Model.Tables.Where(t => t.Status == "available"))
-                                            {
-                                                <option value="@table.Id">Table @table.Id (@table.Capacity seats)</option>
-                                            }
-                                        </select>
-                                    </div>
-
-                                    <div class="pt-2">
-                                        <button type="submit"
-                                                id="process-order-btn"
-                                                class="w-full gradient-primary text-white py-4 rounded-xl font-bold text-lg
-                                                       hover:shadow-xl transform hover:scale-105 transition-all duration-300
-                                                       disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
-                                                @(Model.CurrentOrder?.Items?.Any() != true ? "disabled" : "")>
-                                            <span id="process-order-text" class="flex items-center justify-center space-x-2">
-                                                <i class="fas fa-credit-card"></i>
-                                                <span>Process Order</span>
-                                            </span>
-                                            <span id="process-order-loading" class="hidden">
-                                                <i class="fas fa-spinner fa-spin"></i>
-                                                <span>Processing...</span>
-                                            </span>
-                                        </button>
-
-                                        @if (Model.CurrentOrder?.Items?.Any() != true)
-                                        {
-                                            <p class="text-sm text-red-500 text-center mt-2">Add items to order first</p>
-                                        }
-                                    </div>
-                                </form>
-
-                                <!-- Clear Order Button -->
-                                @if (Model.CurrentOrder?.Items?.Any() == true)
-                                {
-                                    <div class="mt-6 pt-6 border-t border-gray-200">
-                                        <button onclick="clearOrder()"
-                                                class="w-full bg-red-500 text-white py-3 rounded-xl font-semibold
-                                                       hover:bg-red-600 transition-all duration-300
-                                                       flex items-center justify-center space-x-2">
-                                            <i class="fas fa-trash"></i>
-                                            <span>Clear Order</span>
-                                        </button>
-                                    </div>
-                                }
-                            </div>
-                        </div>
+                    <div class="bg-white p-6 rounded-lg shadow-lg text-center">
+                        <h3 class="text-lg font-semibold text-gray-600">Completed Orders</h3>
+                        <p class="text-3xl font-bold text-blue-600" id="reports-completed">0</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-lg text-center">
+                        <h3 class="text-lg font-semibold text-gray-600">Pending Orders</h3>
+                        <p class="text-3xl font-bold text-orange-600" id="reports-pending">0</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-lg text-center">
+                        <h3 class="text-lg font-semibold text-gray-600">Total Orders</h3>
+                        <p class="text-3xl font-bold text-purple-600" id="reports-total">0</p>
                     </div>
                 </div>
-
-                <!-- Kitchen View -->
-                <div id="kitchen-view" class="view hidden">
-                    <div class="mb-8">
-                        <div class="gradient-warning text-white p-8 rounded-3xl shadow-2xl">
-                            <h2 class="text-3xl font-bold mb-3">👨‍🍳 Kitchen Display</h2>
-                            <p class="text-xl opacity-90">Monitor and manage all kitchen orders in real-time</p>
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        @foreach (var order in Model.Orders.Where(o => o.Status == "pending" || o.Status == "preparing"))
-                        {
-                            <div class="glass-card rounded-2xl shadow-soft hover:shadow-xl transition-all duration-300">
-                                <div class="gradient-warning text-white p-6 rounded-t-2xl">
-                                    <div class="flex items-center justify-between">
-                                        <div>
-                                            <h3 class="text-xl font-bold">KOT #@order.OrderNumber</h3>
-                                            <div class="text-sm opacity-90 mt-1">Table @order.TableId</div>
-                                        </div>
-                                        <span class="px-3 py-1 bg-white/20 rounded-full text-sm font-bold">
-                                            @order.Status.ToUpper()
-                                        </span>
-                                    </div>
-                                </div>
-                                
-                                <div class="p-6">
-                                    <div class="space-y-4 mb-6">
-                                        <div class="flex items-center justify-between">
-                                            <span class="font-semibold text-gray-700">Customer:</span>
-                                            <span class="font-medium">@order.CustomerName</span>
-                                        </div>
-                                        <div class="flex items-center justify-between">
-                                            <span class="font-semibold text-gray-700">Type:</span>
-                                            <span class="badge @(order.OrderType == "dine-in" ? "badge-success" : "badge-primary")">
-                                                @order.OrderType
-                                            </span>
-                                        </div>
-                                        <div class="flex items-center justify-between">
-                                            <span class="font-semibold text-gray-700">Time:</span>
-                                            <span>@order.CreatedAt.ToString("hh:mm tt")</span>
-                                        </div>
-                                    </div>
-
-                                    <div class="mb-6">
-                                        <h4 class="font-semibold text-gray-700 mb-3">Order Items:</h4>
-                                        <div class="space-y-2">
-                                            @foreach (var item in order.Items)
-                                            {
-                                                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-xl">
-                                                    <div>
-                                                        <div class="font-medium">@item.Name</div>
-                                                        <div class="text-sm text-gray-600">Special notes here</div>
-                                                    </div>
-                                                    <div class="text-right">
-                                                        <div class="font-bold">x@(item.Quantity)</div>
-                                                        <div class="text-sm text-gray-600">$@item.Price.ToString("F2")</div>
-                                                    </div>
-                                                </div>
-                                            }
-                                        </div>
-                                    </div>
-
-                                    <div class="space-y-2">
-                                        @if (order.Status == "pending")
-                                        {
-                                            <form method="post" action="/POS/UpdateOrderStatus" class="space-y-2">
-                                                @Html.AntiForgeryToken()
-                                                <input type="hidden" name="orderId" value="@order.Id" />
-                                                <input type="hidden" name="status" value="preparing" />
-                                                <button type="submit" 
-                                                        class="w-full gradient-primary text-white py-3 rounded-xl font-semibold
-                                                               hover:shadow-xl transition-all duration-300">
-                                                    <i class="fas fa-play mr-2"></i>
-                                                    Start Cooking
-                                                </button>
-                                            </form>
-                                        }
-                                        else if (order.Status == "preparing")
-                                        {
-                                            <form method="post" action="/POS/UpdateOrderStatus" class="space-y-2">
-                                                @Html.AntiForgeryToken()
-                                                <input type="hidden" name="orderId" value="@order.Id" />
-                                                <input type="hidden" name="status" value="ready" />
-                                                <button type="submit" 
-                                                        class="w-full gradient-success text-white py-3 rounded-xl font-semibold
-                                                               hover:shadow-xl transition-all duration-300">
-                                                    <i class="fas fa-check mr-2"></i>
-                                                    Mark Ready
-                                                </button>
-                                            </form>
-                                        }
-                                    </div>
-                                </div>
-                            </div>
-                        }
-                    </div>
-
-                    <!-- Empty Kitchen State -->
-                    @if (!Model.Orders.Any(o => o.Status == "pending" || o.Status == "preparing"))
-                    {
-                        <div class="empty-state">
-                            <i class="fas fa-blender text-gray-400"></i>
-                            <h3>No Kitchen Orders</h3>
-                            <p>All orders are prepared or there are no pending orders</p>
-                        </div>
-                    }
-                </div>
-
-                <!-- Reports View -->
-                <div id="reports-view" class="view hidden">
-                    <div class="mb-8">
-                        <div class="gradient-primary text-white p-8 rounded-3xl shadow-2xl">
-                            <h2 class="text-3xl font-bold mb-3">📊 Daily Reports</h2>
-                            <p class="text-xl opacity-90">Detailed analytics and insights for your restaurant</p>
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-                        <div class="stat-card glass-card p-6 rounded-2xl shadow-soft hover:shadow-xl transition-all duration-300">
-                            <div class="text-center">
-                                <div class="text-4xl font-bold text-primary">$@Model.TodaySales.ToString("F2")</div>
-                                <div class="text-lg text-gray-600 mt-2">Today's Sales</div>
-                                <div class="mt-3 text-sm text-green-600">
-                                    <i class="fas fa-arrow-up mr-1"></i>
-                                    <span>12.5% from yesterday</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="stat-card glass-card p-6 rounded-2xl shadow-soft hover:shadow-xl transition-all duration-300">
-                            <div class="text-center">
-                                <div class="text-4xl font-bold text-blue-600">@Model.Orders.Count</div>
-                                <div class="text-lg text-gray-600 mt-2">Total Orders</div>
-                                <div class="mt-3 text-sm text-blue-600">
-                                    <i class="fas fa-chart-line mr-1"></i>
-                                    <span>Daily average</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="stat-card glass-card p-6 rounded-2xl shadow-soft hover:shadow-xl transition-all duration-300">
-                            <div class="text-center">
-                                <div class="text-4xl font-bold text-green-600">@Model.Orders.Count(o => o.Status == "completed")</div>
-                                <div class="text-lg text-gray-600 mt-2">Completed</div>
-                                <div class="mt-3 text-sm text-green-600">
-                                    <i class="fas fa-check-circle mr-1"></i>
-                                    <span>Success rate</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="stat-card glass-card p-6 rounded-2xl shadow-soft hover:shadow-xl transition-all duration-300">
-                            <div class="text-center">
-                                <div class="text-4xl font-bold text-orange-600">@Model.ActiveOrdersCount</div>
-                                <div class="text-lg text-gray-600 mt-2">Active Orders</div>
-                                <div class="mt-3 text-sm text-orange-600">
-                                    <i class="fas fa-clock mr-1"></i>
-                                    <span>In progress</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Recent Orders Table -->
-                    <div class="glass-card p-6 rounded-2xl shadow-soft">
-                        <h3 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
-                            <i class="fas fa-history text-primary mr-3"></i>
-                            Recent Orders
-                        </h3>
-                        <div class="overflow-x-auto">
-                            <table class="w-full">
-                                <thead>
-                                    <tr class="border-b-2 border-gray-100">
-                                        <th class="text-left py-3 px-4 text-gray-600 font-semibold">Order #</th>
-                                        <th class="text-left py-3 px-4 text-gray-600 font-semibold">Customer</th>
-                                        <th class="text-left py-3 px-4 text-gray-600 font-semibold">Type</th>
-                                        <th class="text-left py-3 px-4 text-gray-600 font-semibold">Total</th>
-                                        <th class="text-left py-3 px-4 text-gray-600 font-semibold">Status</th>
-                                        <th class="text-left py-3 px-4 text-gray-600 font-semibold">Time</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach (var order in Model.Orders.OrderByDescending(o => o.CreatedAt).Take(10))
-                                    {
-                                        <tr class="border-b border-gray-50 hover:bg-gray-50 transition-colors">
-                                            <td class="py-3 px-4">
-                                                <span class="font-bold text-primary">#@order.OrderNumber</span>
-                                            </td>
-                                            <td class="py-3 px-4 font-medium">@order.CustomerName</td>
-                                            <td class="py-3 px-4">
-                                                <span class="badge @(order.OrderType == "dine-in" ? "badge-success" : 
-                                                                   order.OrderType == "delivery" ? "badge-primary" : 
-                                                                   "badge-warning")">
-                                                    @order.OrderType
-                                                </span>
-                                            </td>
-                                            <td class="py-3 px-4 font-bold">$@order.Total.ToString("F2")</td>
-                                            <td class="py-3 px-4">
-                                                <span class="badge @(order.Status == "completed" ? "badge-success" :
-                                                                   order.Status == "preparing" ? "badge-warning" :
-                                                                   "badge-primary")">
-                                                    @order.Status
-                                                </span>
-                                            </td>
-                                            <td class="py-3 px-4 text-gray-600">@order.CreatedAt.ToString("t")</td>
-                                        </tr>
-                                    }
-                                </tbody>
-                            </table>
-                        </div>
+                <div class="bg-white p-6 rounded-lg shadow-lg">
+                    <h3 class="text-xl font-bold mb-6">📋 Recent Orders</h3>
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead>
+                                <tr class="border-b-2">
+                                    <th class="text-left py-3 px-4 font-bold">ID</th>
+                                    <th class="text-left py-3 px-4 font-bold">Customer</th>
+                                    <th class="text-left py-3 px-4 font-bold">Type</th>
+                                    <th class="text-left py-3 px-4 font-bold">Total</th>
+                                    <th class="text-left py-3 px-4 font-bold">Status</th>
+                                    <th class="text-left py-3 px-4 font-bold">Time</th>
+                                </tr>
+                            </thead>
+                            <tbody id="reports-table-body">
+                                <tr>
+                                    <td colspan="6" class="text-center py-8 text-gray-500">Loading...</td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
-            </main>
-        </div>
+            </div>
 
-        <!-- Enhanced Modals -->
-        <!-- Add Table Modal -->
-        <div id="addTableModal" class="fixed inset-0 modal-overlay flex items-center justify-center z-50 hidden">
-            <div class="modal-content glass-card p-8 rounded-3xl max-w-md w-full mx-4 shadow-2xl">
-                <div class="flex justify-between items-center mb-8">
-                    <h2 class="text-2xl font-bold text-gray-800 flex items-center">
-                        <i class="fas fa-plus text-primary mr-3"></i>
-                        Add New Table
-                    </h2>
-                    <button type="button" onclick="closeModal('addTableModal')" 
-                            class="text-gray-500 hover:text-gray-700 text-2xl transition-colors">
-                        ✕
+        </main>
+    </div>
+
+    <!-- ==================== TABLE OPTIONS MODAL ==================== -->
+    <div id="tableOptionsModal"
+        class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-xl shadow-2xl max-w-md w-full mx-4">
+            <div class="bg-blue-600 text-white p-6 rounded-t-xl">
+                <div class="flex justify-between items-center">
+                    <h2 class="text-2xl font-bold">Table <span id="tableOptionsNumber">1</span></h2>
+                    <button onclick="closeModal('tableOptionsModal')"
+                        class="text-white text-2xl">✕</button>
+                </div>
+                <div class="mt-2">
+                    <span class="text-blue-100">Status: </span>
+                    <span id="tableCurrentStatus"
+                        class="bg-white text-blue-700 px-2 py-1 rounded text-sm font-bold">Available</span>
+                </div>
+            </div>
+            <div class="p-6">
+                <input type="hidden" id="tableOptionsTableId" value="">
+                <input type="hidden" id="tableOptionsStatus" value="">
+
+                <!-- Action Buttons -->
+                <div class="grid grid-cols-2 gap-3 mb-4">
+                    <button onclick="startTableOrder()" id="startOrderBtn"
+                        class="bg-green-600 text-white py-3 rounded-lg font-bold hover:bg-green-700">
+                        🛒 Start Order
+                    </button>
+                    <button onclick="openTableSettings()"
+                        class="bg-purple-600 text-white py-3 rounded-lg font-bold hover:bg-purple-700">
+                        ⚙️ Settings
                     </button>
                 </div>
-                <form id="addTableForm" class="space-y-6">
-                    @Html.AntiForgeryToken()
+
+                <!-- Set Available Button (shown for occupied tables) -->
+                <div id="setAvailableSection" class="hidden mb-4">
+                    <button onclick="setTableAvailable()"
+                        class="w-full bg-yellow-500 text-white py-3 rounded-lg font-bold hover:bg-yellow-600">
+                        ✅ Set Table Available
+                    </button>
+                    <p class="text-xs text-gray-500 mt-1 text-center">This will free up the table for new customers
+                    </p>
+                </div>
+
+                <button onclick="closeModal('tableOptionsModal')"
+                    class="w-full bg-gray-500 text-white py-3 rounded-lg font-bold hover:bg-gray-600">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== TABLE SETTINGS MODAL ==================== -->
+    <div id="tableSettingsModal"
+        class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-xl shadow-2xl max-w-md w-full mx-4">
+            <div class="bg-purple-600 text-white p-6 rounded-t-xl">
+                <div class="flex justify-between items-center">
+                    <h2 class="text-2xl font-bold">⚙️ Table Settings</h2>
+                    <button onclick="closeModal('tableSettingsModal')"
+                        class="text-white text-2xl">✕</button>
+                </div>
+            </div>
+            <div class="p-6">
+                <form id="tableSettingsForm" class="space-y-4">
+                    <input type="hidden" id="settingsTableId" value="">
+
                     <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-2">Table Number</label>
-                        <input type="number" id="newTableNumber" name="tableNumber" min="1" 
-                               class="w-full px-4 py-3 bg-gray-50 border-2 border-gray-200 rounded-xl 
-                                      focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none
-                                      transition-all duration-300" required>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Capacity</label>
+                        <select id="settingsCapacity" class="w-full p-2 border rounded-lg">
+                            <option value="2">2 seats</option>
+                            <option value="4" selected>4 seats</option>
+                            <option value="6">6 seats</option>
+                            <option value="8">8 seats</option>
+                            <option value="10">10 seats</option>
+                            <option value="12">12 seats</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Location</label>
+                        <select id="settingsLocation" class="w-full p-2 border rounded-lg">
+                            <option value="Main Dining">Main Dining</option>
+                            <option value="Window Side">Window Side</option>
+                            <option value="Patio">Patio</option>
+                            <option value="Private Room">Private Room</option>
+                            <option value="Bar Area">Bar Area</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Type</label>
+                        <select id="settingsType" class="w-full p-2 border rounded-lg">
+                            <option value="Regular">Regular Table</option>
+                            <option value="Booth">Booth</option>
+                            <option value="High Top">High Top</option>
+                            <option value="Round">Round Table</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Status</label>
+                        <select id="settingsStatus" class="w-full p-2 border rounded-lg">
+                            <option value="available">Available</option>
+                            <option value="occupied">Occupied</option>
+                            <option value="reserved">Reserved</option>
+                        </select>
+                        <p id="statusWarning" class="text-xs text-red-500 mt-1 hidden">⚠️ Table has active order</p>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Notes</label>
+                        <textarea id="settingsNotes" class="w-full p-2 border rounded-lg" rows="2"
+                            placeholder="Any special notes..."></textarea>
+                    </div>
+
+                    <div class="flex space-x-3 pt-4">
+                        <button type="submit"
+                            class="flex-1 bg-purple-600 text-white py-3 rounded-lg font-bold hover:bg-purple-700">
+                            💾 Save Changes
+                        </button>
+                        <button type="button" onclick="closeModal('tableSettingsModal')"
+                            class="flex-1 bg-gray-500 text-white py-3 rounded-lg font-bold hover:bg-gray-600">
+                            Cancel
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== ADD TABLE MODAL ==================== -->
+    <div id="addTableModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-xl shadow-2xl max-w-md w-full mx-4">
+            <div class="bg-green-600 text-white p-6 rounded-t-xl">
+                <div class="flex justify-between items-center">
+                    <h2 class="text-2xl font-bold">➕ Add New Table</h2>
+                    <button onclick="closeModal('addTableModal')" class="text-white text-2xl">✕</button>
+                </div>
+            </div>
+            <div class="p-6">
+                <form id="addTableForm" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Table Number *</label>
+                        <input type="number" id="newTableNumber" min="1" class="w-full p-2 border rounded-lg"
+                            placeholder="e.g., 15" required>
                     </div>
                     <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-2">Table Capacity</label>
-                        <select name="capacity" 
-                                class="w-full px-4 py-3 bg-gray-50 border-2 border-gray-200 rounded-xl 
-                                       focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none
-                                       transition-all duration-300" required>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Capacity *</label>
+                        <select id="newTableCapacity" class="w-full p-2 border rounded-lg" required>
                             <option value="2">2 seats</option>
                             <option value="4" selected>4 seats</option>
                             <option value="6">6 seats</option>
@@ -1733,11 +661,8 @@
                         </select>
                     </div>
                     <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-2">Location</label>
-                        <select name="location" 
-                                class="w-full px-4 py-3 bg-gray-50 border-2 border-gray-200 rounded-xl 
-                                       focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none
-                                       transition-all duration-300">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Location</label>
+                        <select id="newTableLocation" class="w-full p-2 border rounded-lg">
                             <option value="Main Dining">Main Dining</option>
                             <option value="Window Side">Window Side</option>
                             <option value="Patio">Patio</option>
@@ -1746,433 +671,595 @@
                         </select>
                     </div>
                     <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-2">Table Type</label>
-                        <select name="type" 
-                                class="w-full px-4 py-3 bg-gray-50 border-2 border-gray-200 rounded-xl 
-                                       focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none
-                                       transition-all duration-300">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Table Type</label>
+                        <select id="newTableType" class="w-full p-2 border rounded-lg">
                             <option value="Regular">Regular Table</option>
                             <option value="Booth">Booth</option>
                             <option value="High Top">High Top</option>
                             <option value="Round">Round Table</option>
-                            <option value="Communal">Communal Table</option>
                         </select>
                     </div>
                     <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-2">Notes (Optional)</label>
-                        <textarea name="notes" placeholder="Any special notes about this table..." 
-                                  class="w-full px-4 py-3 bg-gray-50 border-2 border-gray-200 rounded-xl 
-                                         focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none
-                                         transition-all duration-300 h-32 resize-none"></textarea>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Notes (Optional)</label>
+                        <textarea id="newTableNotes" class="w-full p-2 border rounded-lg" rows="2"
+                            placeholder="Any special notes..."></textarea>
                     </div>
-                    <div class="flex space-x-4 mt-8">
-                        <button type="submit" 
-                                class="flex-1 gradient-primary text-white py-4 rounded-xl font-bold
-                                       hover:shadow-xl transform hover:scale-105 transition-all duration-300">
-                            <i class="fas fa-check mr-2"></i>
-                            Create Table
+                    <div class="flex space-x-3 pt-4">
+                        <button type="submit"
+                            class="flex-1 bg-green-600 text-white py-3 rounded-lg font-bold hover:bg-green-700">
+                            ✅ Create Table
                         </button>
-                        <button type="button" onclick="closeModal('addTableModal')" 
-                                class="flex-1 bg-gray-500 text-white py-4 rounded-xl font-bold
-                                       hover:bg-gray-600 transition-all duration-300">
-                            <i class="fas fa-times mr-2"></i>
+                        <button type="button" onclick="closeModal('addTableModal')"
+                            class="flex-1 bg-gray-500 text-white py-3 rounded-lg font-bold hover:bg-gray-600">
                             Cancel
                         </button>
                     </div>
                 </form>
             </div>
         </div>
+    </div>
+    }
+    <script>
+        // ==================== GLOBAL VARIABLES ====================
+        let allOrders = [];
 
-        <!-- Table Options Modal -->
-        <div id="tableOptionsModal" class="fixed inset-0 modal-overlay flex items-center justify-center z-50 hidden">
-            <div class="modal-content glass-card rounded-3xl max-w-lg w-full mx-4 max-h-[90vh] overflow-y-auto shadow-2xl">
-                <div class="gradient-primary text-white p-8 rounded-t-3xl sticky top-0 z-10">
-                    <div class="flex justify-between items-center">
-                        <h2 class="text-2xl font-bold">Table Options</h2>
-                        <button type="button" onclick="closeModal('tableOptionsModal')"
-                                class="text-white hover:text-gray-200 text-2xl transition-colors">
-                            ✕
-                        </button>
-                    </div>
-                    <div class="mt-4">
-                        <div class="flex items-center space-x-3">
-                            <span class="text-white/90">Status:</span>
-                            <span id="tableCurrentStatus" class="px-4 py-1 rounded-full text-sm font-bold bg-white text-primary">
-                                Available
-                            </span>
+        // ==================== VIEW NAVIGATION ====================
+        function showView(viewName) {
+            console.log('Switching to:', viewName);
+            document.querySelectorAll('.view').forEach(v => v.classList.add('hidden'));
+            const view = document.getElementById(viewName + '-view');
+            if (view) view.classList.remove('hidden');
+
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('bg-blue-600', 'text-white');
+                btn.classList.add('bg-gray-200', 'text-gray-700');
+            });
+            if (viewName === 'orders') loadOrders();
+            if (viewName === 'kitchen') loadKitchenOrders();
+            if (viewName === 'reports') loadReports();
+        }
+
+        // ==================== TABLE FUNCTIONS ====================
+        function handleTableClick(tableId, status) {
+            document.getElementById('tableOptionsTableId').value = tableId;
+            document.getElementById('tableOptionsStatus').value = status;
+            document.getElementById('tableOptionsNumber').textContent = tableId;
+            document.getElementById('tableCurrentStatus').textContent = status.charAt(0).toUpperCase() + status.slice(1);
+
+            // Show/hide set available button based on status
+            const setAvailableSection = document.getElementById('setAvailableSection');
+            const startOrderBtn = document.getElementById('startOrderBtn');
+
+            if (status === 'occupied' || status === 'reserved') {
+                setAvailableSection.classList.remove('hidden');
+                startOrderBtn.disabled = true;
+                startOrderBtn.classList.add('opacity-50', 'cursor-not-allowed');
+            } else {
+                setAvailableSection.classList.add('hidden');
+                startOrderBtn.disabled = false;
+                startOrderBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+            }
+
+            document.getElementById('tableOptionsModal').classList.remove('hidden');
+        }
+
+        async function startTableOrder() {
+            const tableId = document.getElementById('tableOptionsTableId').value;
+            const status = document.getElementById('tableOptionsStatus').value;
+
+            if (status !== 'available') {
+                showNotification('Table is not available', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch('/POS/StartTableOrder', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ tableId: parseInt(tableId) })
+                });
+                const result = await response.json();
+                if (result.success) {
+                    showNotification(result.message, 'success');
+                    closeModal('tableOptionsModal');
+                    showView('menu');
+                } else {
+                    showNotification(result.message, 'error');
+                }
+            } catch (error) {
+                showNotification('Error: ' + error.message, 'error');
+            }
+        }
+
+        async function setTableAvailable() {
+            const tableId = document.getElementById('tableOptionsTableId').value;
+
+            if (!confirm('Are you sure you want to set this table as available? This will free up the table.')) return;
+
+            try {
+                const response = await fetch('/POS/SetTableAvailable', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ tableId: parseInt(tableId) })
+                });
+                const result = await response.json();
+                if (result.success) {
+                    showNotification(result.message, 'success');
+                    closeModal('tableOptionsModal');
+                    setTimeout(() => window.location.reload(), 1000);
+                } else {
+                    showNotification(result.message, 'error');
+                }
+            } catch (error) {
+                showNotification('Error: ' + error.message, 'error');
+            }
+        }
+
+        async function openTableSettings() {
+            const tableId = document.getElementById('tableOptionsTableId').value;
+
+            try {
+                const response = await fetch(`/POS/GetTableDetails?tableId=${tableId}`);
+                const result = await response.json();
+
+                if (result.success) {
+                    const table = result.table;
+                    document.getElementById('settingsTableId').value = table.id;
+                    document.getElementById('settingsCapacity').value = table.capacity || 4;
+                    document.getElementById('settingsLocation').value = table.location || 'Main Dining';
+                    document.getElementById('settingsType').value = table.type || 'Regular';
+                    document.getElementById('settingsStatus').value = table.status || 'available';
+                    document.getElementById('settingsNotes').value = table.notes || '';
+
+                    // Show warning if table has active order
+                    const statusWarning = document.getElementById('statusWarning');
+                    if (table.currentOrderId) {
+                        statusWarning.classList.remove('hidden');
+                    } else {
+                        statusWarning.classList.add('hidden');
+                    }
+
+                    closeModal('tableOptionsModal');
+                    document.getElementById('tableSettingsModal').classList.remove('hidden');
+                } else {
+                    showNotification(result.message || 'Failed to load table details', 'error');
+                }
+            } catch (error) {
+                showNotification('Error: ' + error.message, 'error');
+            }
+        }
+
+        function openAddTableModal() {
+            document.getElementById('newTableNumber').value = '';
+            document.getElementById('newTableCapacity').value = '4';
+            document.getElementById('newTableLocation').value = 'Main Dining';
+            document.getElementById('newTableType').value = 'Regular';
+            document.getElementById('newTableNotes').value = '';
+            document.getElementById('addTableModal').classList.remove('hidden');
+        }
+
+        // ==================== TOGGLE TABLE SELECTION ====================
+        function toggleTableSelection() {
+            const orderType = document.getElementById('orderTypeSelect').value;
+            const tableDiv = document.getElementById('tableSelectionDiv');
+            const tableSelect = document.getElementById('tableSelect');
+
+            if (orderType === 'dine-in') {
+                tableDiv.classList.remove('hidden');
+                tableSelect.required = true;
+            } else {
+                tableDiv.classList.add('hidden');
+                tableSelect.required = false;
+                tableSelect.value = '';
+            }
+        }
+
+        // ==================== ORDERS FUNCTIONS ====================
+        async function loadOrders() {
+            console.log('Loading orders...');
+            try {
+                const response = await fetch('/POS/GetAllOrders');
+                const result = await response.json();
+                console.log('Orders result:', result);
+
+                if (result.success && result.orders) {
+                    allOrders = result.orders;
+                    updateOrderStats();
+                    renderOrders(allOrders);
+                } else {
+                    console.error('Failed to load orders:', result.message);
+                    document.getElementById('orders-container').innerHTML = '<div class="col-span-full text-center py-12 text-red-500">Error loading orders</div>';
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('orders-container').innerHTML = '<div class="col-span-full text-center py-12 text-red-500">Error: ' + error.message + '</div>';
+            }
+        }
+
+        function updateOrderStats() {
+            document.getElementById('totalOrdersCount').textContent = allOrders.length;
+            document.getElementById('allOrdersCount').textContent = allOrders.length;
+            document.getElementById('dineInOrdersCount').textContent = allOrders.filter(o => o.orderType === 'dine-in').length;
+            document.getElementById('deliveryOrdersCount').textContent = allOrders.filter(o => o.orderType === 'delivery').length;
+            document.getElementById('takeawayOrdersCount').textContent = allOrders.filter(o => o.orderType === 'takeaway').length;
+        }
+
+        function filterOrders(type) {
+            document.getElementById('orderTypeFilter').value = type;
+            applyFilters();
+        }
+
+        function applyFilters() {
+            const typeFilter = document.getElementById('orderTypeFilter').value;
+            const statusFilter = document.getElementById('orderStatusFilter').value;
+
+            let filtered = allOrders;
+            if (typeFilter !== 'all') filtered = filtered.filter(o => o.orderType === typeFilter);
+            if (statusFilter !== 'all') filtered = filtered.filter(o => o.status === statusFilter);
+
+            renderOrders(filtered);
+        }
+
+        function renderOrders(orders) {
+            const container = document.getElementById('orders-container');
+            const noOrdersMsg = document.getElementById('no-orders-message');
+
+            if (!container) return;
+
+            if (orders.length === 0) {
+                container.innerHTML = '';
+                noOrdersMsg?.classList.remove('hidden');
+                return;
+            }
+
+            noOrdersMsg?.classList.add('hidden');
+            container.innerHTML = orders.map(order => {
+                let statusClass = 'bg-gray-100 text-gray-800';
+                if (order.status === 'pending') statusClass = 'bg-yellow-100 text-yellow-800';
+                if (order.status === 'preparing') statusClass = 'bg-blue-100 text-blue-800';
+                if (order.status === 'ready') statusClass = 'bg-green-100 text-green-800';
+
+                return `
+                    <div class="bg-white rounded-lg shadow-lg p-4 border border-gray-200">
+                        <div class="flex justify-between mb-2">
+                            <h3 class="font-bold text-lg">${order.orderNumber || '#' + order.id}</h3>
+                            <span class="px-2 py-1 rounded-full text-sm ${statusClass}">${order.status}</span>
+                        </div>
+                        <div class="mb-2">
+                            <p class="text-gray-600">👤 ${order.customerName || 'Walk-in'}</p>
+                            <p class="text-gray-600">🍽️ ${order.orderType || 'N/A'}</p>
+                            ${order.tableId ? `<p class="text-gray-600">🪑 Table ${order.tableId}</p>` : ''}
+                        </div>
+                        <div class="flex justify-between items-center mt-3 pt-3 border-t">
+                            <span class="font-bold text-green-600">$${(order.total || 0).toFixed(2)}</span>
+                            <div class="space-x-1">
+                                ${order.status === 'pending' ? `<button onclick="updateOrderStatus(${order.id}, 'preparing')" class="bg-blue-600 text-white px-3 py-1 rounded text-sm">Start</button>` : ''}
+                                ${order.status === 'preparing' ? `<button onclick="updateOrderStatus(${order.id}, 'ready')" class="bg-green-600 text-white px-3 py-1 rounded text-sm">Ready</button>` : ''}
+                                ${order.status === 'ready' ? `<button onclick="updateOrderStatus(${order.id}, 'completed')" class="bg-purple-600 text-white px-3 py-1 rounded text-sm">Complete</button>` : ''}
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="p-8">
-                    <input type="hidden" id="tableOptionsTableId" value="">
-                    
-                    <!-- Action Grid -->
-                    <div class="grid grid-cols-2 gap-4 mb-8">
-                        <button onclick="startTableOrder()"
-                                class="gradient-success text-white p-6 rounded-2xl text-center shadow-hover
-                                       hover:shadow-xl transition-all duration-300">
-                            <div class="text-3xl mb-3">🛒</div>
-                            <div class="font-bold">Start Order</div>
-                            <div class="text-sm opacity-90 mt-1">Quickly start a new order for this table</div>
-                        </button>
-                        <button onclick="showReservationForm()"
-                                class="gradient-warning text-white p-6 rounded-2xl text-center shadow-hover
-                                       hover:shadow-xl transition-all duration-300">
-                            <div class="text-3xl mb-3">📅</div>
-                            <div class="font-bold">Reserve</div>
-                            <div class="text-sm opacity-90 mt-1">Reserve this table for a specific time</div>
-                        </button>
-                        <button onclick="editTableSettings()"
-                                class="gradient-primary text-white p-6 rounded-2xl text-center shadow-hover
-                                       hover:shadow-xl transition-all duration-300">
-                            <div class="text-3xl mb-3">⚙️</div>
-                            <div class="font-bold">Settings</div>
-                            <div class="text-sm opacity-90 mt-1">Adjust table settings and details</div>
-                        </button>
-                        <button onclick="viewTableHistory()"
-                                class="gradient-dark text-white p-6 rounded-2xl text-center shadow-hover
-                                       hover:shadow-xl transition-all duration-300">
-                            <div class="text-3xl mb-3">📊</div>
-                            <div class="font-bold">History</div>
-                            <div class="text-sm opacity-90 mt-1">View past orders and activities for this table</div>
-                        </button>
-                    </div>
-
-                    <!-- Reservation Form -->
-                    <div id="reservationForm" class="hidden bg-yellow-50 border border-yellow-200 rounded-2xl p-6 mb-6">
-                        <h3 class="text-xl font-bold text-yellow-800 mb-4">📅 Reserve Table</h3>
-                        <form id="reservationFormData" class="space-y-4">
-                            <div>
-                                <label class="block text-sm font-medium text-yellow-700 mb-1">Customer Name *</label>
-                                <input type="text" name="customerName" required
-                                       class="w-full p-3 border border-yellow-300 rounded-xl focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
-                                       placeholder="Enter customer name">
-                            </div>
-
-                            <div>
-                                <label class="block text-sm font-medium text-yellow-700 mb-1">Phone Number *</label>
-                                <input type="tel" name="customerPhone" required
-                                       class="w-full p-3 border border-yellow-300 rounded-xl focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
-                                       placeholder="Enter phone number">
-                            </div>
-
-                            <div class="grid grid-cols-2 gap-3">
-                                <div>
-                                    <label class="block text-sm font-medium text-yellow-700 mb-1">Reservation Date *</label>
-                                    <input type="date" name="reservationDate" required
-                                           class="w-full p-3 border border-yellow-300 rounded-xl focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500">
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-yellow-700 mb-1">Time *</label>
-                                    <input type="time" name="reservationTime" required
-                                           class="w-full p-3 border border-yellow-300 rounded-xl focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500">
-                                </div>
-                            </div>
-
-                            <div>
-                                <label class="block text-sm font-medium text-yellow-700 mb-1">Party Size *</label>
-                                <select name="partySize" required
-                                        class="w-full p-3 border border-yellow-300 rounded-xl focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500">
-                                    <option value="">Select party size</option>
-                                    <option value="1">1 person</option>
-                                    <option value="2">2 people</option>
-                                    <option value="3">3 people</option>
-                                    <option value="4">4 people</option>
-                                    <option value="5">5 people</option>
-                                    <option value="6">6 people</option>
-                                    <option value="7">7 people</option>
-                                    <option value="8">8 people</option>
-                                    <option value="9">9 people</option>
-                                    <option value="10">10+ people</option>
-                                </select>
-                            </div>
-
-                            <div>
-                                <label class="block text-sm font-medium text-yellow-700 mb-1">Special Requests</label>
-                                <textarea name="specialRequests" rows="2"
-                                          class="w-full p-3 border border-yellow-300 rounded-xl focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
-                                          placeholder="Any special requirements..."></textarea>
-                            </div>
-
-                            <div class="flex space-x-3 pt-2">
-                                <button type="submit"
-                                        class="flex-1 bg-yellow-600 text-white py-3 rounded-xl hover:bg-yellow-700 font-bold transition-all">
-                                    ✅ Confirm Reservation
-                                </button>
-                                <button type="button" onclick="hideReservationForm()"
-                                        class="flex-1 bg-gray-500 text-white py-3 rounded-xl hover:bg-gray-600 font-bold transition-all">
-                                    ❌ Cancel
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-
-                    <div class="mt-8">
-                        <button type="button" onclick="closeModal('tableOptionsModal')"
-                                class="w-full bg-gray-500 text-white py-4 rounded-xl font-bold
-                                       hover:bg-gray-600 transition-all duration-300">
-                            Close
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Payment Modal -->
-        <div id="paymentModal" class="fixed inset-0 modal-overlay flex items-center justify-center z-50 hidden">
-            <div class="modal-content glass-card p-8 rounded-3xl max-w-md w-full mx-4 shadow-2xl">
-                <h2 class="text-2xl font-bold text-gray-800 mb-8">💳 Process Payment</h2>
-                <form method="post" action="/POS/CompletePayment" id="paymentForm" class="space-y-6">
-                    <input type="hidden" name="orderId" id="paymentOrderId" />
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-2">Payment Method</label>
-                        <select name="paymentMethod" 
-                                class="w-full px-4 py-3 bg-gray-50 border-2 border-gray-200 rounded-xl 
-                                       focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none
-                                       transition-all duration-300">
-                            <option value="cash">💵 Cash</option>
-                            <option value="card">💳 Credit/Debit Card</option>
-                            <option value="digital">📱 Digital Wallet</option>
-                        </select>
-                    </div>
-                    <div class="flex space-x-4">
-                        <button type="submit" 
-                                class="flex-1 gradient-success text-white py-4 rounded-xl font-bold
-                                       hover:shadow-xl transform hover:scale-105 transition-all duration-300">
-                            Complete Payment
-                        </button>
-                        <button type="button" onclick="closeModal('paymentModal')" 
-                                class="flex-1 bg-gray-500 text-white py-4 rounded-xl font-bold
-                                       hover:bg-gray-600 transition-all duration-300">
-                            Cancel
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    }
-
-    <!-- Notifications -->
-    @if (TempData["Success"] != null)
-    {
-        <div class="notification success">@TempData["Success"]</div>
-    }
-    @if (TempData["Error"] != null)
-    {
-        <div class="notification error">@TempData["Error"]</div>
-    }
-
-    <!-- Floating Action Button -->
-    <button class="floating-btn no-print" onclick="showView('menu')">
-        <i class="fas fa-plus"></i>
-    </button>
-
-    <script>
-        // Centralized anti-forgery + fetch helper
-        function getAntiForgeryToken() {
-            const tokenInput = document.querySelector('input[name="__RequestVerificationToken"]');
-            return tokenInput ? tokenInput.value : null;
+                `;
+            }).join('');
         }
 
-        async function fetchWithVerification(url, options = {}) {
-            options = Object.assign({}, options);
-            options.headers = Object.assign({}, options.headers || {});
-            const token = getAntiForgeryToken();
-            if (token) {
-                options.headers['RequestVerificationToken'] = token;
-                options.headers['X-CSRF-TOKEN'] = token;
-            }
-            options.headers['X-Requested-With'] = 'XMLHttpRequest';
-
+        async function updateOrderStatus(orderId, status) {
+            if (!confirm('Update order status to ' + status + '?')) return;
             try {
-                const resp = await fetch(url, options);
-                if (!resp.ok) {
-                    const body = await resp.text().catch(() => null);
-                    const err = new Error(`HTTP ${resp.status} ${resp.statusText}`);
-                    err.body = body;
-                    throw err;
+                const token = document.querySelector('input[name="__RequestVerificationToken"]')?.value;
+                const response = await fetch('/POS/UpdateOrderStatus', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'RequestVerificationToken': token || '' },
+                    body: `orderId=${orderId}&status=${status}`
+                });
+                const result = await response.json();
+                if (result.success) {
+                    showNotification(result.message, 'success');
+                    loadOrders();
+                    loadKitchenOrders();
+                } else {
+                    showNotification(result.message, 'error');
                 }
-                return resp;
-            } catch (ex) {
-                console.error('fetchWithVerification error:', ex);
-                throw ex;
+            } catch (error) {
+                showNotification('Error: ' + error.message, 'error');
             }
         }
 
-        // Safe server -> client JSON: list of existing table IDs
-        const existingTables = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.Tables.Select(t => t.Id).ToList()));
+        // ==================== KITCHEN FUNCTIONS ====================
+        async function loadKitchenOrders() {
+            console.log('Loading kitchen orders...');
+            const container = document.getElementById('kitchen-orders-container');
+            if (!container) return;
 
-        // UI: show / hide views and modals (kept minimal, reuse existing)
-        document.addEventListener('DOMContentLoaded', function () {
-            showView('dashboard');
-
-            // live time
-            const liveTimeEl = document.getElementById('liveTime');
-            if (liveTimeEl) {
-                setInterval(() => {
-                    liveTimeEl.textContent = new Date().toLocaleTimeString('en-US', { hour12: true });
-                }, 1000);
-            }
-
-            // datetime
-            const dtEl = document.getElementById('currentDateTime');
-            function updateDateTime() {
-                if (!dtEl) return;
-                const now = new Date();
-                const opts = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
-                dtEl.textContent = now.toLocaleDateString('en-US', opts);
-            }
-            updateDateTime();
-            setInterval(updateDateTime, 60000);
-
-            // auto-hide TempData notifications already rendered by server
-            setTimeout(() => document.querySelectorAll('.notification').forEach(n => n.remove()), 3000);
-        });
-
-        function showView(viewName) {
-            document.querySelectorAll('.view').forEach(v => v.classList.add('hidden'));
-            const sv = document.getElementById(viewName + '-view');
-            if (sv) sv.classList.remove('hidden');
-
-            document.querySelectorAll('.nav-item').forEach(item => {
-                item.classList.remove('active', 'gradient-primary', 'text-white');
-                item.classList.add('bg-gray-100', 'text-gray-700');
-            });
-
-            const viewIndex = ['dashboard', 'tables', 'orders', 'menu', 'kitchen', 'reports'].indexOf(viewName);
-            const navItems = document.querySelectorAll('.nav-item');
-            if (navItems[viewIndex]) {
-                navItems[viewIndex].classList.remove('bg-gray-100', 'text-gray-700');
-                navItems[viewIndex].classList.add('active', 'gradient-primary', 'text-white');
-            }
-        }
-
-        // Modal helpers
-        function showModal(id) {
-            const m = document.getElementById(id);
-            if (m) {
-                m.classList.remove('hidden');
-                document.body.style.overflow = 'hidden';
-            }
-        }
-        function closeModal(id) {
-            const m = document.getElementById(id);
-            if (m) {
-                m.classList.add('hidden');
-                document.body.style.overflow = 'auto';
-            }
-        }
-
-        // showAddTableForm - use safe existingTables
-        function showAddTableForm() {
-            const nextNumber = (Array.isArray(existingTables) && existingTables.length) ? Math.max(...existingTables) + 1 : 1;
-            const numberInput = document.getElementById('newTableNumber');
-            if (numberInput) numberInput.value = nextNumber;
-            showModal('addTableModal');
-        }
-
-        // load table details
-        async function loadTableDetails(tableId) {
             try {
-                const resp = await fetch(`/POS/GetTableDetails?tableId=${tableId}`, { headers: { 'X-Requested-With': 'XMLHttpRequest' } });
-                if (!resp.ok) throw new Error('Failed to load table details');
-                const json = await resp.json();
-                if (json.success) {
-                    const table = json.table;
-                    const statusEl = document.getElementById('tableCurrentStatus');
-                    if (statusEl) {
-                        statusEl.textContent = table.status.charAt(0).toUpperCase() + table.status.slice(1);
-                        statusEl.className = 'px-4 py-1 rounded-full text-sm font-bold ';
-                        if (table.status === 'available') statusEl.className += 'bg-green-100 text-green-800';
-                        else if (table.status === 'occupied') statusEl.className += 'bg-red-100 text-red-800';
-                        else if (table.status === 'reserved') statusEl.className += 'bg-yellow-100 text-yellow-800';
+                const response = await fetch('/POS/GetKitchenOrders');
+                const orders = await response.json();
+                console.log('Kitchen orders:', orders);
+
+                if (orders.length === 0) {
+                    container.innerHTML = `
+                        <div class="col-span-full text-center py-12">
+                            <div class="text-6xl mb-4">👨‍🍳</div>
+                            <h3 class="text-2xl font-bold text-gray-600 mb-2">All Caught Up!</h3>
+                            <p class="text-gray-500">No orders to prepare</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                container.innerHTML = orders.map(order => {
+                    const isPending = order.status === 'pending';
+                    return `
+                        <div class="${isPending ? 'bg-red-50 border-red-300' : 'bg-blue-50 border-blue-300'} border-4 rounded-lg p-6 shadow-lg">
+                            <div class="flex justify-between items-start mb-4">
+                                <div>
+                                    <h3 class="text-3xl font-bold text-gray-800">${order.ticket}</h3>
+                                    <p class="text-sm ${isPending ? 'text-red-600' : 'text-blue-600'} font-bold mt-1">
+                                        ${isPending ? '🚨 PENDING' : '⏳ PREPARING'}
+                                    </p>
+                                </div>
+                                <div class="text-right">
+                                    <p class="text-sm text-gray-600">🕐 ${order.time}</p>
+                                </div>
+                            </div>
+                            <div class="border-t pt-4">
+                                <button onclick="updateOrderStatus(${order.id}, 'ready')" class="w-full bg-green-600 text-white py-3 rounded font-bold hover:bg-green-700">
+                                    ✅ Mark Ready
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            } catch (error) {
+                console.error('Error:', error);
+                container.innerHTML = '<div class="col-span-full text-center py-12 text-red-500">Error loading kitchen orders</div>';
+            }
+        }
+
+        // ==================== REPORTS FUNCTIONS ====================
+        async function loadReports() {
+            console.log('Loading reports...');
+            try {
+                const response = await fetch('/POS/GetReports');
+                const data = await response.json();
+                console.log('Reports data:', data);
+
+                document.getElementById('reports-today-sales').textContent = '$' + (data.todaySales || 0).toFixed(2);
+                document.getElementById('reports-completed').textContent = data.completed || 0;
+                document.getElementById('reports-pending').textContent = data.pending || 0;
+                document.getElementById('reports-total').textContent = data.total || 0;
+
+                const tbody = document.getElementById('reports-table-body');
+                if (tbody && data.recent?.length > 0) {
+                    tbody.innerHTML = data.recent.map(order => `
+                        <tr class="border-b hover:bg-gray-50">
+                            <td class="py-3 px-4">${order.id}</td>
+                            <td class="py-3 px-4">${order.customer}</td>
+                            <td class="py-3 px-4">${order.type}</td>
+                            <td class="py-3 px-4">$${(order.total || 0).toFixed(2)}</td>
+                            <td class="py-3 px-4"><span class="bg-gray-200 px-2 py-1 rounded text-sm">${order.status}</span></td>
+                            <td class="py-3 px-4">${order.time}</td>
+                        </tr>
+                    `).join('');
+                } else {
+                    tbody.innerHTML = '<tr><td colspan="6" class="text-center py-8 text-gray-500">No orders today</td></tr>';
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        // ==================== MENU FUNCTIONS ====================
+        async function addToOrder(itemId, itemName) {
+            try {
+                const token = document.querySelector('input[name="__RequestVerificationToken"]')?.value;
+                const response = await fetch('/POS/AddToOrder', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'RequestVerificationToken': token || '' },
+                    body: `itemId=${itemId}`
+                });
+                const result = await response.json();
+                if (result.success) {
+                    showNotification(result.message, 'success');
+                    // Update order panel dynamically instead of reloading
+                    await refreshCurrentOrder();
+                } else {
+                    showNotification(result.message || 'Failed to add item', 'error');
+                }
+            } catch (error) {
+                showNotification('Error: ' + error.message, 'error');
+            }
+        }
+
+        async function updateQuantity(itemId, change) {
+            try {
+                const token = document.querySelector('input[name="__RequestVerificationToken"]')?.value;
+                const response = await fetch('/POS/UpdateOrderQuantity', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'RequestVerificationToken': token || '' },
+                    body: `itemId=${itemId}&change=${change}`
+                });
+                const result = await response.json();
+                if (result.success) {
+                    // Update order panel dynamically instead of reloading
+                    await refreshCurrentOrder();
+                } else {
+                    showNotification(result.message || 'Failed to update', 'error');
+                }
+            } catch (error) {
+                showNotification('Error: ' + error.message, 'error');
+            }
+        }
+
+        // Refresh the current order panel without reloading the page
+        async function refreshCurrentOrder() {
+            try {
+                const response = await fetch('/POS/GetCurrentOrderPartial');
+                if (response.ok) {
+                    const html = await response.text();
+                    const orderContainer = document.getElementById('current-order-items');
+                    if (orderContainer) {
+                        orderContainer.innerHTML = html;
+                    }
+                    // Also update total
+                    await updateOrderTotal();
+                }
+            } catch (error) {
+                console.error('Error refreshing order:', error);
+                // Fallback: reload keeping the menu view active
+                sessionStorage.setItem('activeView', 'menu');
+                window.location.reload();
+            }
+        }
+
+        // Update the order total display
+        async function updateOrderTotal() {
+            try {
+                const response = await fetch('/POS/GetCurrentOrderTotal');
+                const result = await response.json();
+                if (result.success) {
+                    const totalEl = document.querySelector('.text-green-600.text-xl, [id*="total"]');
+                    if (totalEl) {
+                        totalEl.textContent = '$' + (result.total || 0).toFixed(2);
+                    }
+                    // Enable/disable process button
+                    const processBtn = document.querySelector('#process-order-form button[type="submit"]');
+                    if (processBtn) {
+                        processBtn.disabled = result.itemCount === 0;
                     }
                 }
-            } catch (err) {
-                console.error(err);
-                showNotification('Error loading table details', 'error');
+            } catch (error) {
+                console.error('Error updating total:', error);
             }
         }
 
-        function showTableOptions(tableId) {
-            const tableIdInput = document.getElementById('tableOptionsTableId');
-            if (tableIdInput) tableIdInput.value = tableId;
-            showModal('tableOptionsModal');
-            loadTableDetails(tableId);
-        }
+        // ==================== FORM SUBMISSIONS ====================
+        document.addEventListener('DOMContentLoaded', function () {
+            // Order form submission
+            const orderForm = document.getElementById('process-order-form');
+            if (orderForm) {
+                orderForm.addEventListener('submit', async function (e) {
+                    e.preventDefault();
+                    const formData = new FormData(this);
+                    const orderType = formData.get('orderType');
+                    const tableId = formData.get('tableId');
 
-        // Missing function implementations
-        function handleTableClick(tableId, tableStatus) {
-            showTableOptions(tableId);
-        }
+                    // Validate table selection for dine-in
+                    if (orderType === 'dine-in' && !tableId) {
+                        showNotification('Please select a table for dine-in orders', 'error');
+                        return;
+                    }
 
-        function completeOrder(orderId) {
-            showPaymentModal(orderId);
-        }
-
-        function showPaymentModal(orderId) {
-            const orderIdInput = document.getElementById('paymentOrderId');
-            if (orderIdInput) orderIdInput.value = orderId;
-            showModal('paymentModal');
-        }
-
-        function startTableOrder() {
-            const tableId = document.getElementById('tableOptionsTableId')?.value;
-            if (tableId) {
-                showNotification(`Starting order for Table ${tableId}...`, 'success');
-                closeModal('tableOptionsModal');
-                showView('menu');
+                    try {
+                        const token = document.querySelector('input[name="__RequestVerificationToken"]')?.value;
+                        const response = await fetch('/POS/ProcessOrder', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'RequestVerificationToken': token || '' },
+                            body: `orderType=${encodeURIComponent(orderType)}&customerName=${encodeURIComponent(formData.get('customerName'))}&customerPhone=${encodeURIComponent(formData.get('customerPhone') || '')}&tableId=${tableId || ''}`
+                        });
+                        const result = await response.json();
+                        if (result.success) {
+                            showNotification(result.message, 'success');
+                            setTimeout(() => window.location.reload(), 1000);
+                        } else {
+                            showNotification(result.message, 'error');
+                        }
+                    } catch (error) {
+                        showNotification('Error: ' + error.message, 'error');
+                    }
+                });
             }
+
+            // Table settings form submission
+            const settingsForm = document.getElementById('tableSettingsForm');
+            if (settingsForm) {
+                settingsForm.addEventListener('submit', async function (e) {
+                    e.preventDefault();
+
+                    const tableData = {
+                        tableId: parseInt(document.getElementById('settingsTableId').value),
+                        capacity: parseInt(document.getElementById('settingsCapacity').value),
+                        location: document.getElementById('settingsLocation').value,
+                        type: document.getElementById('settingsType').value,
+                        status: document.getElementById('settingsStatus').value,
+                        notes: document.getElementById('settingsNotes').value
+                    };
+
+                    try {
+                        const response = await fetch('/POS/UpdateTable', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(tableData)
+                        });
+                        const result = await response.json();
+
+                        if (result.success) {
+                            showNotification(result.message, 'success');
+                            closeModal('tableSettingsModal');
+                            setTimeout(() => window.location.reload(), 1000);
+                        } else {
+                            showNotification(result.message, 'error');
+                        }
+                    } catch (error) {
+                        showNotification('Error: ' + error.message, 'error');
+                    }
+                });
+            }
+
+            // Add table form submission
+            const addTableForm = document.getElementById('addTableForm');
+            if (addTableForm) {
+                addTableForm.addEventListener('submit', async function (e) {
+                    e.preventDefault();
+
+                    const tableData = {
+                        tableNumber: parseInt(document.getElementById('newTableNumber').value),
+                        capacity: parseInt(document.getElementById('newTableCapacity').value),
+                        location: document.getElementById('newTableLocation').value,
+                        type: document.getElementById('newTableType').value,
+                        notes: document.getElementById('newTableNotes').value
+                    };
+
+                    if (!tableData.tableNumber || tableData.tableNumber < 1) {
+                        showNotification('Please enter a valid table number', 'error');
+                        return;
+                    }
+
+                    try {
+                        const response = await fetch('/POS/AddTable', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(tableData)
+                        });
+                        const result = await response.json();
+
+                        if (result.success) {
+                            showNotification(result.message, 'success');
+                            closeModal('addTableModal');
+                            setTimeout(() => window.location.reload(), 1000);
+                        } else {
+                            showNotification(result.message, 'error');
+                        }
+                    } catch (error) {
+                        showNotification('Error: ' + error.message, 'error');
+                    }
+                });
+            }
+        });
+
+        // ==================== UTILITY FUNCTIONS ====================
+        function closeModal(modalId) {
+            document.getElementById(modalId)?.classList.add('hidden');
         }
 
-        function showReservationForm() {
-            const form = document.getElementById('reservationForm');
-            if (form) form.classList.toggle('hidden');
-        }
-
-        function hideReservationForm() {
-            const form = document.getElementById('reservationForm');
-            if (form) form.classList.add('hidden');
-        }
-
-        function editTableSettings() {
-            showNotification('Edit table settings - Coming soon!', 'success');
-        }
-
-        function viewTableHistory() {
-            showNotification('Table history - Coming soon!', 'success');
-        }
-
-        function filterMenu(category) {
-            document.querySelectorAll('.menu-item-card').forEach(item => {
-                if (category === 'all' || item.dataset.category === category) {
-                    item.style.display = 'block';
-                } else {
-                    item.style.display = 'none';
-                }
-            });
-        }
-
-        function filterOrders(orderType) {
-            showNotification(`Filter: ${orderType}`, 'success');
-        }
-
-        function filterOrdersByStatus(status) {
-            showNotification(`Filter by status: ${status}`, 'success');
-        }
-
-        function filterOrdersByDate() {
-            showNotification('Filtering by date...', 'success');
-        }
-
-        function searchOrders() {
-            showNotification('Searching orders...', 'success');
-        }
-
-        function refreshOrders() {
-            showNotification('Refreshing orders...', 'success');
-            setTimeout(() => window.location.reload(), 500);
+        function showNotification(message, type) {
+            const div = document.createElement('div');
+            div.className = `notification ${type}`;
+            div.textContent = message;
+            document.body.appendChild(div);
+            setTimeout(() => div.remove(), 3000);
         }
     </script>
 </body>
+
 </html>

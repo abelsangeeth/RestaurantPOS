@@ -1,0 +1,58 @@
+﻿<!-- Reports View -->
+<div id="reports-view" class="view hidden">
+    <!-- Reports Header -->
+    <div class="bg-gradient-to-r from-green-600 to-green-700 text-white p-6 rounded-xl shadow-xl mb-6">
+        <div class="flex justify-between items-center">
+            <div>
+                <h2 class="text-3xl font-bold mb-2">📊 Daily Reports</h2>
+                <p class="text-green-100">Real-time sales analytics</p>
+            </div>
+            <button onclick="loadReports()" class="bg-white text-green-600 px-6 py-3 rounded-lg hover:bg-green-50 font-bold shadow-lg transition-all">
+                🔄 Refresh
+            </button>
+        </div>
+    </div>
+
+    <!-- Key Metrics -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <div class="bg-white p-6 rounded-lg shadow-lg text-center">
+            <h3 class="text-lg font-semibold text-gray-600">Today's Sales</h3>
+            <p class="text-3xl font-bold text-green-600 reports-today-sales">$0.00</p>
+        </div>
+        <div class="bg-white p-6 rounded-lg shadow-lg text-center">
+            <h3 class="text-lg font-semibold text-gray-600">Completed</h3>
+            <p class="text-3xl font-bold text-blue-600 reports-completed">0</p>
+        </div>
+        <div class="bg-white p-6 rounded-lg shadow-lg text-center">
+            <h3 class="text-lg font-semibold text-gray-600">Pending</h3>
+            <p class="text-3xl font-bold text-orange-600 reports-pending">0</p>
+        </div>
+        <div class="bg-white p-6 rounded-lg shadow-lg text-center">
+            <h3 class="text-lg font-semibold text-gray-600">Total</h3>
+            <p class="text-3xl font-bold text-purple-600 reports-total">0</p>
+        </div>
+    </div>
+
+    <!-- Recent Orders Table -->
+    <div class="bg-white p-6 rounded-lg shadow-lg">
+        <h3 class="text-xl font-bold mb-6">📋 Recent Orders</h3>
+        <div class="overflow-x-auto">
+            <table class="w-full">
+                <thead>
+                    <tr class="border-b-2">
+                        <th class="text-left py-3 px-4 font-bold">ID</th>
+                        <th class="text-left py-3 px-4 font-bold">Customer</th>
+                        <th class="text-left py-3 px-4 font-bold">Type</th>
+                        <th class="text-left py-3 px-4 font-bold">Total</th>
+                        <th class="text-left py-3 px-4 font-bold">Status</th>
+                        <th class="text-left py-3 px-4 font-bold">Time</th>
+                    </tr>
+                </thead>
+                <!-- Table Body ID MUST MATCH SCRIPT -->
+                <tbody id="reports-table-body">
+                    <!-- Rows will be populated by JS -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

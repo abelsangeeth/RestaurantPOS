@@ -21,12 +21,22 @@ namespace RestaurantPOS.Controllers
 
         public IActionResult Login()
         {
+            // Check if user has "Remember Me" cookie
+            var rememberedUsername = Request.Cookies["RememberUsername"];
+
             var viewModel = new POSViewModel();
+
+            if (!string.IsNullOrEmpty(rememberedUsername))
+            {
+                ViewBag.RememberedUsername = rememberedUsername;
+                ViewBag.RememberMe = true;
+            }
+
             return View(viewModel);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Login(string username, string password)
+        public async Task<IActionResult> Login(string username, string password, bool rememberMe = false)
         {
             if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
             {
@@ -38,6 +48,27 @@ namespace RestaurantPOS.Controllers
             if (user != null)
             {
                 _httpContextAccessor.HttpContext.Session.SetInt32("UserId", user.Id);
+
+                // Handle Remember Me
+                if (rememberMe)
+                {
+                    var cookieOptions = new CookieOptions
+                    {
+                        Expires = DateTime.Now.AddDays(30),
+                        HttpOnly = true,
+                        Secure = false, // Set to true in production with HTTPS
+                        SameSite = SameSiteMode.Lax
+                    };
+
+                    Response.Cookies.Append("RememberUsername", username, cookieOptions);
+                    Response.Cookies.Append("RememberToken", Convert.ToBase64String(Guid.NewGuid().ToByteArray()), cookieOptions);
+                }
+                else
+                {
+                    Response.Cookies.Delete("RememberUsername");
+                    Response.Cookies.Delete("RememberToken");
+                }
+
                 TempData["Success"] = $"Welcome back, {user.Name}!";
                 return RedirectToAction("Index");
             }
@@ -51,8 +82,9 @@ namespace RestaurantPOS.Controllers
         {
             _httpContextAccessor.HttpContext.Session.Remove("UserId");
             _httpContextAccessor.HttpContext.Session.Remove("CurrentOrder");
+            
             TempData["Success"] = "Logged out successfully";
-            return RedirectToAction("Login");
+            return RedirectToAction("Index");
         }
 
         private async Task<User> GetUserByCredentials(string username, string password)
@@ -85,20 +117,39 @@ namespace RestaurantPOS.Controllers
         public async Task<IActionResult> Index()
         {
             var userId = _httpContextAccessor.HttpContext.Session.GetInt32("UserId");
+            
             if (userId == null)
             {
-                return RedirectToAction("Login");
+                // User not logged in - show login form
+                // Check for remembered username
+                var rememberedUsername = Request.Cookies["RememberUsername"];
+                if (!string.IsNullOrEmpty(rememberedUsername))
+                {
+                    ViewBag.RememberedUsername = rememberedUsername;
+                    ViewBag.RememberMe = true;
+                }
+                
+                return View(new POSViewModel());
             }
 
             var user = await GetUserById(userId.Value);
             if (user == null)
             {
-                return RedirectToAction("Login");
+                // Check for remembered username
+                var rememberedUsername = Request.Cookies["RememberUsername"];
+                if (!string.IsNullOrEmpty(rememberedUsername))
+                {
+                    ViewBag.RememberedUsername = rememberedUsername;
+                    ViewBag.RememberMe = true;
+                }
+                
+                return View(new POSViewModel());
             }
 
             var viewModel = await CreatePOSViewModel(user);
             return View(viewModel);
         }
+
         private async Task<User> GetUserById(int id)
         {
             using var connection = new SqlConnection(_connectionString);
@@ -124,18 +175,17 @@ namespace RestaurantPOS.Controllers
 
             return null;
         }
+
         private async Task<POSViewModel> CreatePOSViewModel(User user)
         {
             var today = DateTime.Today;
 
-            // Get data from database using raw ADO.NET
             var menuItems = await GetMenuItems();
             var tables = await GetTables();
             var orders = await GetOrders();
 
             var todayOrders = orders.Where(o => o.CreatedAt.Date == today).ToList();
 
-            // Calculate dashboard statistics
             var viewModel = new POSViewModel
             {
                 CurrentUser = user,
@@ -155,16 +205,15 @@ namespace RestaurantPOS.Controllers
 
             return viewModel;
         }
+
         private async Task<List<Order>> GetOrders()
         {
             var orders = new List<Order>();
             var orderItems = new Dictionary<int, List<OrderItem>>();
 
-            // First get all orders
             using var connection = new SqlConnection(_connectionString);
             await connection.OpenAsync();
 
-            // Get orders
             var ordersSql = @"
                 SELECT o.*, t.Id as TableId, t.Status as TableStatus, t.Capacity, t.Location
                 FROM Orders o 
@@ -192,7 +241,6 @@ namespace RestaurantPOS.Controllers
                     CompletedAt = ordersReader.IsDBNull("CompletedAt") ? null : ordersReader.GetDateTime("CompletedAt")
                 };
 
-                // Create table if exists
                 if (!ordersReader.IsDBNull("TableId"))
                 {
                     order.Table = new Table
@@ -209,7 +257,6 @@ namespace RestaurantPOS.Controllers
             }
             ordersReader.Close();
 
-            // Now get all order items
             var itemsSql = "SELECT * FROM OrderItems WHERE OrderId IN (SELECT Id FROM Orders)";
             using var itemsCommand = new SqlCommand(itemsSql, connection);
             using var itemsReader = await itemsCommand.ExecuteReaderAsync();
@@ -233,7 +280,6 @@ namespace RestaurantPOS.Controllers
                 }
             }
 
-            // Assign items to orders
             foreach (var order in orders)
             {
                 if (orderItems.ContainsKey(order.Id))
@@ -244,6 +290,7 @@ namespace RestaurantPOS.Controllers
 
             return orders;
         }
+
         private async Task<List<MenuItem>> GetMenuItems()
         {
             var menuItems = new List<MenuItem>();
@@ -271,6 +318,7 @@ namespace RestaurantPOS.Controllers
 
             return menuItems;
         }
+
         private Order GetCurrentOrder()
         {
             var session = _httpContextAccessor.HttpContext.Session;
@@ -283,6 +331,7 @@ namespace RestaurantPOS.Controllers
 
             return new Order { Items = new List<OrderItem>() };
         }
+
         private async Task<List<Table>> GetTables()
         {
             var tables = new List<Table>();
@@ -314,7 +363,6 @@ namespace RestaurantPOS.Controllers
                     UpdatedAt = reader.IsDBNull("UpdatedAt") ? null : reader.GetDateTime("UpdatedAt")
                 };
 
-                // Create current order if exists
                 if (!reader.IsDBNull("OrderId"))
                 {
                     table.CurrentOrder = new Order
@@ -331,6 +379,5 @@ namespace RestaurantPOS.Controllers
 
             return tables;
         }
-
     }
 }
