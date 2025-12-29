@@ -105,10 +105,23 @@
                     </button>
                 </form>
 
+                <!-- Customer Order Delivery Section -->
+                <div class="mt-6 pt-6 border-t border-gray-200">
+                    <div class="text-center mb-4">
+                        <p class="text-gray-600 text-sm">Want to place a delivery order?</p>
+                    </div>
+                    <a href="@Url.Action("Index", "Delivery")" 
+                       class="block w-full bg-gradient-to-r from-green-500 to-teal-500 text-white py-3 rounded-lg hover:from-green-600 hover:to-teal-600 font-bold shadow-lg transform hover:scale-105 transition-all text-center">
+                        🛵 Order Delivery
+                    </a>
+                </div>
+
                 <div class="mt-6 p-4 bg-gray-50 rounded-lg">
                     <h4 class="font-bold text-gray-700 mb-2">Demo Credentials:</h4>
                     <div class="text-sm text-gray-600 space-y-1">
                         <p><strong>Admin:</strong> admin / admin123</p>
+                        <p><strong>Manager:</strong> manager / manager123</p>
+                        <p><strong>Owner:</strong> owner / owner123</p>
                     </div>
                 </div>
             </div>
@@ -386,7 +399,7 @@
                         <div class="border-t pt-4">
                             <div class="flex justify-between text-xl font-bold mb-4">
                                 <span>Total:</span>
-                                <span class="text-green-600">$@(Model.CurrentOrder?.Total.ToString("F2") ?? "0.00")</span>
+                                <span id="current-order-total" class="text-green-600">$@(Model.CurrentOrder?.Total.ToString("F2") ?? "0.00")</span>
                             </div>
                             <form id="process-order-form" class="space-y-3">
                                 @Html.AntiForgeryToken()
@@ -1118,7 +1131,7 @@
                 const response = await fetch('/POS/GetCurrentOrderTotal');
                 const result = await response.json();
                 if (result.success) {
-                    const totalEl = document.querySelector('.text-green-600.text-xl, [id*="total"]');
+                    const totalEl = document.getElementById('current-order-total');
                     if (totalEl) {
                         totalEl.textContent = '$' + (result.total || 0).toFixed(2);
                     }
@@ -1155,7 +1168,7 @@
                         const response = await fetch('/POS/ProcessOrder', {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'RequestVerificationToken': token || '' },
-                            body: `orderType=${encodeURIComponent(orderType)}&customerName=${encodeURIComponent(formData.get('customerName'))}&customerPhone=${encodeURIComponent(formData.get('customerPhone') || '')}&tableId=${tableId || ''}`
+                            body: new URLSearchParams(formData).toString()
                         });
                         const result = await response.json();
                         if (result.success) {
@@ -1260,6 +1273,8 @@
             setTimeout(() => div.remove(), 3000);
         }
     </script>
+
+    <!-- Customer Order Delivery Section -->
 </body>
 
 </html>

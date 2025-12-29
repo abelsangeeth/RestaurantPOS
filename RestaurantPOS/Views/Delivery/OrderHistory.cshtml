@@ -1,0 +1,50 @@
+﻿@model List<RestaurantPOS.Models.Order>
+
+@{
+    ViewData["Title"] = "Order History";
+}
+
+<div class="min-h-screen bg-gray-100">
+    <header class="bg-gradient-to-r from-green-600 to-teal-600 text-white p-4 shadow-lg">
+        <div class="container mx-auto flex justify-between items-center">
+            <h1 class="text-2xl font-bold">📋 My Order History</h1>
+            <a href="@Url.Action("Index")" class="bg-white/20 hover:bg-white/30 px-4 py-2 rounded-lg transition">
+                ← Back to Menu
+            </a>
+        </div>
+    </header>
+
+    <div class="container mx-auto p-4">
+        @if (Model.Any())
+        {
+            <div class="space-y-4">
+                @foreach (var order in Model)
+                {
+                    <div class="bg-white rounded-lg shadow p-4">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <span class="font-bold text-lg">@order.OrderNumber</span>
+                                <span class="ml-2 px-2 py-1 rounded text-sm @(order.Status == "completed" ? "bg-green-100 text-green-700" : order.Status == "pending" ? "bg-yellow-100 text-yellow-700" : "bg-blue-100 text-blue-700")">
+                                    @order.Status.ToUpper()
+                                </span>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-green-600 font-bold text-lg">$@order.Total.ToString("F2")</p>
+                                <p class="text-gray-500 text-sm">@order.CreatedAt.ToString("MMM dd, yyyy HH:mm")</p>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <div class="bg-white rounded-lg shadow p-8 text-center">
+                <p class="text-gray-500 text-lg">No orders yet. Start ordering!</p>
+                <a href="@Url.Action("Index")" class="inline-block mt-4 bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition">
+                    Browse Menu
+                </a>
+            </div>
+        }
+    </div>
+</div>

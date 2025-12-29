@@ -19,29 +19,39 @@ namespace RestaurantPOS.Controllers
             _connectionString = _configuration.GetConnectionString("DefaultConnection");
         }
 
-        public IActionResult Login()
+        public IActionResult Staff()
         {
-            // Check if user has "Remember Me" cookie
+            // If user is already logged in, redirect to dashboard
+            if (_httpContextAccessor.HttpContext.Session.GetInt32("UserId") != null)
+            {
+                return RedirectToAction("Index");
+            }
+
             var rememberedUsername = Request.Cookies["RememberUsername"];
-
-            var viewModel = new POSViewModel();
-
             if (!string.IsNullOrEmpty(rememberedUsername))
             {
                 ViewBag.RememberedUsername = rememberedUsername;
                 ViewBag.RememberMe = true;
             }
 
-            return View(viewModel);
+            return View(new POSViewModel());
+        }
+
+        [HttpGet]
+        public IActionResult Login()
+        {
+            // This action now simply shows the staff login page.
+            return RedirectToAction("Staff");
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(string username, string password, bool rememberMe = false)
         {
             if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
             {
                 TempData["Error"] = "Please enter both username and password";
-                return View(new POSViewModel());
+                return RedirectToAction("Staff");
             }
 
             var user = await GetUserByCredentials(username, password);
@@ -61,12 +71,10 @@ namespace RestaurantPOS.Controllers
                     };
 
                     Response.Cookies.Append("RememberUsername", username, cookieOptions);
-                    Response.Cookies.Append("RememberToken", Convert.ToBase64String(Guid.NewGuid().ToByteArray()), cookieOptions);
                 }
                 else
                 {
                     Response.Cookies.Delete("RememberUsername");
-                    Response.Cookies.Delete("RememberToken");
                 }
 
                 TempData["Success"] = $"Welcome back, {user.Name}!";
@@ -74,7 +82,9 @@ namespace RestaurantPOS.Controllers
             }
 
             TempData["Error"] = "Invalid username or password";
-            return View(new POSViewModel());
+            // Remember username if login fails but remember me was not checked
+            TempData["RememberedUsername"] = username;
+            return RedirectToAction("Staff");
         }
 
         [HttpPost]
@@ -82,6 +92,7 @@ namespace RestaurantPOS.Controllers
         {
             _httpContextAccessor.HttpContext.Session.Remove("UserId");
             _httpContextAccessor.HttpContext.Session.Remove("CurrentOrder");
+            Response.Cookies.Delete("RememberUsername");
             
             TempData["Success"] = "Logged out successfully";
             return RedirectToAction("Index");
@@ -120,32 +131,19 @@ namespace RestaurantPOS.Controllers
             
             if (userId == null)
             {
-                // User not logged in - show login form
-                // Check for remembered username
-                var rememberedUsername = Request.Cookies["RememberUsername"];
-                if (!string.IsNullOrEmpty(rememberedUsername))
-                {
-                    ViewBag.RememberedUsername = rememberedUsername;
-                    ViewBag.RememberMe = true;
-                }
-                
-                return View(new POSViewModel());
+                // User not logged in - show the main chooser/landing page
+                return View("Chooser", new POSViewModel());
             }
 
             var user = await GetUserById(userId.Value);
             if (user == null)
             {
-                // Check for remembered username
-                var rememberedUsername = Request.Cookies["RememberUsername"];
-                if (!string.IsNullOrEmpty(rememberedUsername))
-                {
-                    ViewBag.RememberedUsername = rememberedUsername;
-                    ViewBag.RememberMe = true;
-                }
-                
-                return View(new POSViewModel());
+                // User not found, clear session and show chooser
+                _httpContextAccessor.HttpContext.Session.Remove("UserId");
+                return View("Chooser", new POSViewModel());
             }
 
+            // User is logged in, show the main POS dashboard
             var viewModel = await CreatePOSViewModel(user);
             return View(viewModel);
         }

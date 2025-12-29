@@ -1,0 +1,43 @@
+﻿@model RestaurantPOS.Models.POSViewModel
+@{
+    ViewData["Title"] = "Welcome - Restaurant POS";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-700 via-gray-900 to-black">
+        <div class="max-w-2xl w-full space-y-8 p-8 text-center">
+            
+            <div class="text-center">
+                <div class="text-6xl mb-4">🍽️</div>
+                <h2 class="text-5xl font-bold text-white mb-2">@Model.RestaurantName</h2>
+                <p class="text-2xl text-gray-300 mb-12">Welcome! Please select your login type.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Manager/Staff Login -->
+                <a href="@Url.Action("Staff", "Login")" class="bg-blue-600 hover:bg-blue-700 text-white rounded-xl shadow-2xl p-10 transform hover:-translate-y-2 transition-all duration-300">
+                    <div class="text-5xl mb-4">🏪</div>
+                    <h3 class="text-2xl font-bold">Login as Manager</h3>
+                    <p class="text-blue-100 mt-2">Access the POS dashboard and manage the restaurant.</p>
+                </a>
+
+                <!-- Customer/User Login -->
+                <a href="@Url.Action("Index", "Delivery")" class="bg-green-600 hover:bg-green-700 text-white rounded-xl shadow-2xl p-10 transform hover:-translate-y-2 transition-all duration-300">
+                    <div class="text-5xl mb-4">🛵</div>
+                    <h3 class="text-2xl font-bold">Login as User</h3>
+                    <p class="text-green-100 mt-2">Place a new delivery order or view your order history.</p>
+                </a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
