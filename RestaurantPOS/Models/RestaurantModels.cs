@@ -108,7 +108,7 @@ namespace RestaurantPOS.Models
         [NotMapped]
         public decimal DisplayTotal => Price * Quantity;
     }
-   
+
 
     public class Table
     {
@@ -184,7 +184,7 @@ namespace RestaurantPOS.Models
         public List<Order> Orders { get; set; } = new List<Order>();
         public User CurrentUser { get; set; }
         public Order CurrentOrder { get; set; } = new Order();
-        public string RestaurantName { get; set; } 
+        public string RestaurantName { get; set; }
         public string ContactInfo { get; set; } = "123-456-7890 | 123 Main St";
 
         // Dashboard stats
@@ -200,13 +200,13 @@ namespace RestaurantPOS.Models
     public class Promotion
     {
         [Key]
-        public int Id { get; set; }                     
+        public int Id { get; set; }
         [StringLength(150)]
-        public string Title { get; set; }                
+        public string Title { get; set; }
         [Column(TypeName = "decimal(5,2)")]
-        public decimal DiscountPercentage { get; set; }  
+        public decimal DiscountPercentage { get; set; }
         [Column(TypeName = "datetime2(7)")]
-        public DateTime StartDate { get; set; }          
+        public DateTime StartDate { get; set; }
         [Column(TypeName = "datetime2(7)")]
         public DateTime? EndDate { get; set; }           // nullable datetime2(7)
         public bool IsActive { get; set; } = true;       // bit

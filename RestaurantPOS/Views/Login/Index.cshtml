@@ -36,13 +36,13 @@
             animation: slideIn 0.3s ease-out;
         }
 
-        .notification.success {
-            background-color: #10b981;
-        }
+            .notification.success {
+                background-color: #10b981;
+            }
 
-        .notification.error {
-            background-color: #ef4444;
-        }
+            .notification.error {
+                background-color: #ef4444;
+            }
 
         @@keyframes slideIn {
             from {
@@ -61,656 +61,692 @@
 <body class="bg-gray-100 min-h-screen">
     @if (Model.CurrentUser == null)
     {
-    <!-- Login View -->
-    <div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-800">
-        <div class="max-w-md w-full space-y-8 p-8">
-            <div class="text-center">
-                <div class="text-6xl mb-4">🏪</div>
-                <h2 class="text-4xl font-bold text-white mb-2">@Model.RestaurantName</h2>
-                <p class="text-xl text-blue-100 mb-8">POS System Login</p>
-            </div>
-            <div class="bg-white rounded-xl shadow-2xl p-8">
-                <form method="post" action="/Login/Login" class="space-y-6" id="loginForm">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">👤 Username</label>
-                        <input type="text" name="username" id="usernameInput" 
-                               class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" 
-                               placeholder="Enter username" 
-                               value="@(ViewBag.RememberedUsername ?? "")" required>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">🔒 Password</label>
-                        <input type="password" name="password" id="passwordInput" 
-                               class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" 
-                               placeholder="Enter password" required>
-                    </div>
-                    
-                    <!-- Remember Me Checkbox -->
-                    <div class="flex items-center justify-between">
-                        <div class="flex items-center">
-                            <input type="checkbox" name="rememberMe" id="rememberMe" value="true"
-                                   class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded cursor-pointer"
-                                   @(ViewBag.RememberMe == true ? "checked" : "")>
-                            <label for="rememberMe" class="ml-2 block text-sm text-gray-700 cursor-pointer">
-                                Remember me
-                            </label>
-                        </div>
-                        <div class="text-sm">
-                            <span class="text-gray-500">for 30 days</span>
-                        </div>
-                    </div>
-                    
-                    <button type="submit" class="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 rounded-lg hover:from-blue-700 hover:to-purple-700 font-bold shadow-lg transform hover:scale-105 transition-all">
-                        🚀 Login to POS System
-                    </button>
-                </form>
-
-                <!-- Customer Order Delivery Section -->
-                <div class="mt-6 pt-6 border-t border-gray-200">
-                    <div class="text-center mb-4">
-                        <p class="text-gray-600 text-sm">Want to place a delivery order?</p>
-                    </div>
-                    <a href="@Url.Action("Index", "Delivery")" 
-                       class="block w-full bg-gradient-to-r from-green-500 to-teal-500 text-white py-3 rounded-lg hover:from-green-600 hover:to-teal-600 font-bold shadow-lg transform hover:scale-105 transition-all text-center">
-                        🛵 Order Delivery
-                    </a>
+        <!-- Login View -->
+        <div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-800">
+            <div class="max-w-md w-full space-y-8 p-8">
+                <div class="text-center">
+                    <div class="text-6xl mb-4">🏪</div>
+                    <h2 class="text-4xl font-bold text-white mb-2">@Model.RestaurantName</h2>
+                    <p class="text-xl text-blue-100 mb-8">POS System Login</p>
                 </div>
+                <div class="bg-white rounded-xl shadow-2xl p-8">
+                    <form method="post" action="/Login/Login" class="space-y-6" id="loginForm">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">👤 Username</label>
+                            <input type="text" name="username" id="usernameInput"
+                                   class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                   placeholder="Enter username"
+                                   value="@(ViewBag.RememberedUsername ?? "")" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">🔒 Password</label>
+                            <input type="password" name="password" id="passwordInput"
+                                   class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                   placeholder="Enter password" required>
+                        </div>
 
-                <div class="mt-6 p-4 bg-gray-50 rounded-lg">
-                    <h4 class="font-bold text-gray-700 mb-2">Demo Credentials:</h4>
-                    <div class="text-sm text-gray-600 space-y-1">
-                        <p><strong>Admin:</strong> admin / admin123</p>
-                        <p><strong>Manager:</strong> manager / manager123</p>
-                        <p><strong>Owner:</strong> owner / owner123</p>
+                        <!-- Remember Me Checkbox -->
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center">
+                                <input type="checkbox" name="rememberMe" id="rememberMe" value="true"
+                                       class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded cursor-pointer"
+                                       @(ViewBag.RememberMe == true ? "checked" : "")>
+                                <label for="rememberMe" class="ml-2 block text-sm text-gray-700 cursor-pointer">
+                                    Remember me
+                                </label>
+                            </div>
+                            <div class="text-sm">
+                                <span class="text-gray-500">for 30 days</span>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 rounded-lg hover:from-blue-700 hover:to-purple-700 font-bold shadow-lg transform hover:scale-105 transition-all">
+                            🚀 Login to POS System
+                        </button>
+                    </form>
+
+                    <!-- Customer Order Delivery Section -->
+                    <div class="mt-6 pt-6 border-t border-gray-200">
+                        <div class="text-center mb-4">
+                            <p class="text-gray-600 text-sm">Want to place a delivery order?</p>
+                        </div>
+                        <a href="@Url.Action("Index", "Delivery")"
+                           class="block w-full bg-gradient-to-r from-green-500 to-teal-500 text-white py-3 rounded-lg hover:from-green-600 hover:to-teal-600 font-bold shadow-lg transform hover:scale-105 transition-all text-center">
+                            🛵 Order Delivery
+                        </a>
+                    </div>
+
+                    <div class="mt-6 p-4 bg-gray-50 rounded-lg">
+                        <h4 class="font-bold text-gray-700 mb-2">Demo Credentials:</h4>
+                        <div class="text-sm text-gray-600 space-y-1">
+                            <p><strong>Admin:</strong> admin / admin123</p>
+                            <p><strong>Manager:</strong> manager / manager123</p>
+                            <p><strong>Owner:</strong> owner / owner123</p>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-    
-    <script>
-        // Check if username was remembered and focus on password field
-        document.addEventListener('DOMContentLoaded', function() {
-            const usernameInput = document.getElementById('usernameInput');
-            const passwordInput = document.getElementById('passwordInput');
-            
-            if (usernameInput.value) {
-                // Username is pre-filled, focus on password
-                passwordInput.focus();
-            } else {
-                usernameInput.focus();
-            }
-        });
-    </script>
+
+        <script>
+            // Check if username was remembered and focus on password field
+            document.addEventListener('DOMContentLoaded', function() {
+                const usernameInput = document.getElementById('usernameInput');
+                const passwordInput = document.getElementById('passwordInput');
+
+                if (usernameInput.value) {
+                    // Username is pre-filled, focus on password
+                    passwordInput.focus();
+                } else {
+                    usernameInput.focus();
+                }
+            });
+        </script>
     }
     else
     {
-    <!-- Main Application -->
-    <div class="min-h-screen flex flex-col">
-        <!-- Header -->
-        <header class="bg-gray-800 text-white p-4">
-            <div class="flex justify-between items-center">
-                <div class="flex items-center space-x-4">
-                    <h1 class="text-2xl font-bold">@Model.RestaurantName</h1>
-                    <div class="text-sm opacity-75">@Model.ContactInfo</div>
+        <!-- Main Application -->
+        <div class="min-h-screen flex flex-col">
+            <!-- Header -->
+            <header class="bg-gray-800 text-white p-4">
+                <div class="flex justify-between items-center">
+                    <div class="flex items-center space-x-4">
+                        <h1 class="text-2xl font-bold">@Model.RestaurantName</h1>
+                        <div class="text-sm opacity-75">@Model.ContactInfo</div>
+                    </div>
+                    <div class="flex items-center space-x-6">
+                        <div class="text-right">
+                            <div class="text-sm opacity-75">Current User</div>
+                            <div class="font-bold">@Model.CurrentUser.Name (@Model.CurrentUser.Role)</div>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-sm opacity-75">Date & Time</div>
+                            <div class="font-bold" id="currentDateTime">@DateTime.Now.ToString("f")</div>
+                        </div>
+                        <form method="post" action="/Login/Logout">
+                            <button type="submit"
+                                    class="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg font-medium">
+                                🚪 Logout
+                            </button>
+                        </form>
+                    </div>
                 </div>
-                <div class="flex items-center space-x-6">
-                    <div class="text-right">
-                        <div class="text-sm opacity-75">Current User</div>
-                        <div class="font-bold">@Model.CurrentUser.Name (@Model.CurrentUser.Role)</div>
+            </header>
+
+            <!-- Navigation -->
+            <nav class="bg-white shadow-sm border-b">
+                <div class="flex space-x-1 p-4 overflow-x-auto">
+                    <button onclick="showView('dashboard')"
+                            class="nav-btn px-4 py-2 rounded-lg bg-blue-600 text-white font-medium">
+                        Dashboard
+                    </button>
+                    <button onclick="showView('tables')"
+                            class="nav-btn px-4 py-2 rounded-lg bg-gray-200 text-gray-700 font-medium">
+                        Tables
+                    </button>
+                    <button onclick="showView('orders')"
+                            class="nav-btn px-4 py-2 rounded-lg bg-gray-200 text-gray-700 font-medium">
+                        Orders
+                    </button>
+                    <button onclick="showView('menu')"
+                            class="nav-btn px-4 py-2 rounded-lg bg-gray-200 text-gray-700 font-medium">
+                        Menu & Orders
+                    </button>
+                    <button onclick="showView('kitchen')"
+                            class="nav-btn px-4 py-2 rounded-lg bg-gray-200 text-gray-700 font-medium">
+                        Kitchen
+                    </button>
+                    <button onclick="showView('reports')"
+                            class="nav-btn px-4 py-2 rounded-lg bg-gray-200 text-gray-700 font-medium">
+                        Reports
+                    </button>
+                </div>
+            </nav>
+
+            <!-- Main Content -->
+            <main class="flex-1 p-6">
+
+                <!-- ==================== DASHBOARD VIEW ==================== -->
+                <div id="dashboard-view" class="view">
+                    <div class="bg-gradient-to-r from-blue-600 to-purple-700 text-white p-8 rounded-xl shadow-xl mb-8">
+                        <h2 class="text-4xl font-bold mb-2">🏪 Welcome to Dashboard</h2>
+                        <p class="text-xl opacity-90">Real-time restaurant analytics</p>
                     </div>
-                    <div class="text-right">
-                        <div class="text-sm opacity-75">Date & Time</div>
-                        <div class="font-bold" id="currentDateTime">@DateTime.Now.ToString("f")</div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                        <div class="bg-gradient-to-br from-green-500 to-green-600 text-white p-6 rounded-xl shadow-xl">
+                            <p class="text-green-100 text-sm">💰 Today's Sales</p>
+                            <p class="text-4xl font-bold">$@Model.TodaySales.ToString("F2")</p>
+                        </div>
+                        <div class="bg-gradient-to-br from-orange-500 to-orange-600 text-white p-6 rounded-xl shadow-xl">
+                            <p class="text-orange-100 text-sm">🔥 Active Orders</p>
+                            <p class="text-4xl font-bold">@Model.ActiveOrdersCount</p>
+                        </div>
+                        <div class="bg-gradient-to-br from-blue-500 to-blue-600 text-white p-6 rounded-xl shadow-xl">
+                            <p class="text-blue-100 text-sm">🪑 Table Status</p>
+                            <p class="text-4xl font-bold">@Model.OccupiedTablesCount/@Model.Tables.Count</p>
+                        </div>
+                        <div class="bg-gradient-to-br from-purple-500 to-purple-600 text-white p-6 rounded-xl shadow-xl">
+                            <p class="text-purple-100 text-sm">🍽️ Menu Items</p>
+                            <p class="text-4xl font-bold">@Model.MenuItems.Count</p>
+                        </div>
                     </div>
-                    <form method="post" action="/Login/Logout">
-                        <button type="submit"
-                            class="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg font-medium">
-                            🚪 Logout
+                    <div class="bg-white p-6 rounded-xl shadow-xl">
+                        <h3 class="text-2xl font-bold mb-6 text-gray-800">⚡ Quick Actions</h3>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                            <button onclick="showView('tables')"
+                                    class="bg-blue-500 text-white p-4 rounded-lg hover:bg-blue-600">
+                                🪑 Manage Tables
+                            </button>
+                            <button onclick="showView('orders')"
+                                    class="bg-orange-500 text-white p-4 rounded-lg hover:bg-orange-600">
+                                📋 View Orders
+                            </button>
+                            <button onclick="showView('menu')"
+                                    class="bg-green-500 text-white p-4 rounded-lg hover:bg-green-600">
+                                🍽️ Manage Menu
+                            </button>
+                            <button onclick="showView('kitchen')"
+                                    class="bg-purple-500 text-white p-4 rounded-lg hover:bg-purple-600">
+                                👨‍🍳 Kitchen View
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ==================== TABLES VIEW ==================== -->
+                <div id="tables-view" class="view hidden">
+                    <div class="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-6 rounded-xl shadow-xl mb-6">
+                        <h2 class="text-3xl font-bold mb-2">🪑 Table Management</h2>
+                        <p class="text-blue-100">Click on a table to manage it</p>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                        <div class="bg-white p-4 rounded-lg shadow text-center">
+                            <div class="text-2xl font-bold text-gray-800">@Model.Tables.Count</div>
+                            <div class="text-sm text-gray-600">Total Tables</div>
+                        </div>
+                        <div class="bg-white p-4 rounded-lg shadow text-center">
+                            <div class="text-2xl font-bold text-green-600">@Model.Tables.Count(t => t.Status == "available")</div>
+                            <div class="text-sm text-gray-600">Available</div>
+                        </div>
+                        <div class="bg-white p-4 rounded-lg shadow text-center">
+                            <div class="text-2xl font-bold text-red-600">@Model.Tables.Count(t => t.Status == "occupied")</div>
+                            <div class="text-sm text-gray-600">Occupied</div>
+                        </div>
+                        <div class="bg-white p-4 rounded-lg shadow text-center">
+                            <div class="text-2xl font-bold text-yellow-600">@Model.Tables.Count(t => t.Status == "reserved")</div>
+                            <div class="text-sm text-gray-600">Reserved</div>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+                        @foreach (var table in Model.Tables)
+                        {
+                            <div onclick="handleTableClick(@table.Id, '@table.Status')"
+                                 class="table-item p-4 rounded-lg cursor-pointer transition-all hover:shadow-lg text-white
+                                        @(table.Status == "occupied" ? "table-occupied" : table.Status == "reserved" ? "table-reserved" : "table-available")">
+                                <div class="text-center">
+                                    <div class="text-2xl font-bold">T@(table.Id)</div>
+                                    <div class="text-sm capitalize">@table.Status</div>
+                                    @if (table.Capacity.HasValue)
+                                    {
+                                        <div class="text-xs">👥 @table.Capacity seats</div>
+                                    }
+                                    @if (table.CurrentOrder != null)
+                                    {
+                                        <div class="text-xs mt-1 font-semibold">$@table.CurrentOrder.Total.ToString("F2")</div>
+                                    }
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                <!-- ==================== ORDERS VIEW ==================== -->
+                <div id="orders-view" class="view hidden">
+                    <div class="bg-gradient-to-r from-orange-600 to-orange-700 text-white p-6 rounded-xl shadow-xl mb-6">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <h2 class="text-3xl font-bold mb-2">📋 Order Management</h2>
+                                <p class="text-orange-100">Manage all restaurant orders</p>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-sm opacity-90">Total Orders: <span id="totalOrdersCount">0</span></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                        <div class="bg-white p-4 rounded-lg shadow text-center cursor-pointer" onclick="filterOrders('all')">
+                            <div class="text-2xl font-bold text-gray-800" id="allOrdersCount">0</div>
+                            <div class="text-sm text-gray-600">All Orders</div>
+                        </div>
+                        <div class="bg-white p-4 rounded-lg shadow text-center cursor-pointer" onclick="filterOrders('dine-in')">
+                            <div class="text-2xl font-bold text-green-600" id="dineInOrdersCount">0</div>
+                            <div class="text-sm text-gray-600">Dine In</div>
+                        </div>
+                        <div class="bg-white p-4 rounded-lg shadow text-center cursor-pointer" onclick="filterOrders('delivery')">
+                            <div class="text-2xl font-bold text-purple-600" id="deliveryOrdersCount">0</div>
+                            <div class="text-sm text-gray-600">Delivery</div>
+                        </div>
+                        <div class="bg-white p-4 rounded-lg shadow text-center cursor-pointer" onclick="filterOrders('takeaway')">
+                            <div class="text-2xl font-bold text-orange-600" id="takeawayOrdersCount">0</div>
+                            <div class="text-sm text-gray-600">Take Away</div>
+                        </div>
+                    </div>
+                    <div class="bg-white p-4 rounded-lg shadow-lg mb-6">
+                        <div class="flex flex-wrap gap-4 items-center">
+                            <select id="orderTypeFilter" onchange="applyFilters()" class="p-2 border rounded-lg">
+                                <option value="all">All Types</option>
+                                <option value="dine-in">Dine In</option>
+                                <option value="delivery">Delivery</option>
+                                <option value="takeaway">Take Away</option>
+                            </select>
+                            <select id="orderStatusFilter" onchange="applyFilters()" class="p-2 border rounded-lg">
+                                <option value="all">All Statuses</option>
+                                <option value="pending">Pending</option>
+                                <option value="preparing">Preparing</option>
+                                <option value="ready">Ready</option>
+                                <option value="completed">Completed</option>
+                            </select>
+                            <button onclick="loadOrders()"
+                                    class="bg-orange-600 text-white px-4 py-2 rounded-lg hover:bg-orange-700">
+                                🔄 Refresh
+                            </button>
+                        </div>
+                    </div>
+                    <!-- ORDERS CONTAINER - THIS ID IS CRITICAL -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6" id="orders-container">
+                        <div class="text-center py-12 col-span-full">
+                            <div class="text-4xl mb-4">⏳</div>
+                            <p class="text-gray-500">Loading orders...</p>
+                        </div>
+                    </div>
+                    <div id="no-orders-message" class="hidden text-center py-12">
+                        <div class="text-6xl mb-4">📋</div>
+                        <h3 class="text-2xl font-bold text-gray-600 mb-2">No Orders Found</h3>
+                    </div>
+                </div>
+
+                <!-- ==================== MENU VIEW ==================== -->
+                <div id="menu-view" class="view hidden">
+                    <div class="bg-gradient-to-r from-purple-600 to-purple-700 text-white p-6 rounded-xl shadow-xl mb-6">
+                        <h3 class="text-2xl font-bold mb-2">🍽️ Menu & Orders</h3>
+                    </div>
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <div class="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4">
+                            @foreach (var item in Model.MenuItems)
+                            {
+                                <div class="bg-white p-4 rounded-lg shadow hover:shadow-lg border border-gray-200">
+                                    <div class="flex justify-between items-start mb-3">
+                                        <h4 class="font-bold text-lg text-gray-800">@item.Name</h4>
+                                        <span class="text-sm text-gray-500 bg-gray-100 px-2 py-1 rounded">@item.Category</span>
+                                    </div>
+                                    <div class="flex justify-between items-center">
+                                        <p class="text-xl font-bold text-green-600">$@item.Price.ToString("F2")</p>
+                                        <button onclick="addToOrder(@item.Id, '@item.Name')"
+                                                class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700">
+                                            ➕ Add
+                                        </button>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                        <div class="bg-white p-6 rounded-lg shadow-lg sticky top-4">
+                            <h3 class="text-xl font-bold mb-4">🛒 Current Order</h3>
+                            <div class="mb-4 border border-gray-200 rounded-lg p-3 bg-gray-50 min-h-[100px]"
+                                 id="current-order-items">
+                                @if (Model.CurrentOrder?.Items?.Any() == true)
+                                {
+                                    @foreach (var item in Model.CurrentOrder.Items)
+                                    {
+                                        <div class="flex justify-between items-center py-2 border-b last:border-b-0">
+                                            <div>
+                                                <div class="font-medium">@item.Name</div>
+                                                <div class="text-sm text-gray-600">
+                                                    $@item.Price.ToString("F2") × @item.Quantity
+                                                </div>
+                                            </div>
+                                            <div class="flex items-center space-x-2">
+                                                <button onclick="updateQuantity(@item.MenuItemId, -1)"
+                                                        class="bg-red-500 text-white w-6 h-6 rounded-full">
+                                                    −
+                                                </button>
+                                                <span class="font-bold">@item.Quantity</span>
+                                                <button onclick="updateQuantity(@item.MenuItemId, 1)"
+                                                        class="bg-green-500 text-white w-6 h-6 rounded-full">
+                                                    +
+                                                </button>
+                                            </div>
+                                        </div>
+                                    }
+                                }
+                                else
+                                {
+                                    <div class="text-center py-4 text-gray-500">No items added</div>
+                                }
+                            </div>
+                            <div class="border-t pt-4">
+                                <div class="flex justify-between text-xl font-bold mb-4">
+                                    <span>Total:</span>
+                                    <span id="current-order-total" class="text-green-600">$@(Model.CurrentOrder?.Total.ToString("F2") ?? "0.00")</span>
+                                </div>
+                                <form id="process-order-form" class="space-y-3">
+                                    @Html.AntiForgeryToken()
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Order Type</label>
+                                        <select name="orderType" id="orderTypeSelect" onchange="toggleTableSelection()"
+                                                class="w-full p-2 border rounded-lg" required>
+                                            <option value="">Select order type</option>
+                                            <option value="dine-in">🍽️ Dine In</option>
+                                            <option value="takeaway">🥡 Takeaway</option>
+                                            <option value="delivery">🚚 Delivery</option>
+                                        </select>
+                                    </div>
+                                    <!-- TABLE SELECTION FOR DINE-IN -->
+                                    <div id="tableSelectionDiv" class="hidden">
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Select Table</label>
+                                        <select name="tableId" id="tableSelect" class="w-full p-2 border rounded-lg">
+                                            <option value="">Select a table</option>
+                                            @foreach (var table in Model.Tables.Where(t => t.Status == "available"))
+                                            {
+                                                <option value="@table.Id">Table @table.Id (@table.Capacity seats)</option>
+                                            }
+                                        </select>
+                                        <p class="text-xs text-gray-500 mt-1">Only available tables are shown</p>
+                                    </div>
+                                    <input type="text" name="customerName" placeholder="Customer Name"
+                                           class="w-full p-2 border rounded-lg" required>
+                                    <input type="text" name="customerPhone" placeholder="Phone (optional)"
+                                           class="w-full p-2 border rounded-lg">
+                                    <button type="submit"
+                                            class="w-full bg-green-600 text-white py-3 rounded-lg font-bold"
+                                            @(Model.CurrentOrder?.Items?.Any() != true ? "disabled" : "")>
+                                        💳 Process Order
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ==================== KITCHEN VIEW ==================== -->
+                <div id="kitchen-view" class="view hidden">
+                    <div class="bg-gradient-to-r from-orange-600 to-orange-700 text-white p-6 rounded-xl shadow-xl mb-6">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <h2 class="text-3xl font-bold mb-2">👨‍🍳 Kitchen Display System</h2>
+                                <p class="text-orange-100">Pending and preparing orders</p>
+                            </div>
+                            <button onclick="loadKitchenOrders()"
+                                    class="bg-white text-orange-600 px-6 py-3 rounded-lg font-bold">
+                                🔄 Refresh
+                            </button>
+                        </div>
+                    </div>
+                    <div id="kitchen-orders-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <div class="col-span-full text-center py-12">
+                            <div class="text-4xl mb-4">⏳</div>
+                            <p class="text-gray-500">Loading kitchen orders...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ==================== REPORTS VIEW ==================== -->
+                <div id="reports-view" class="view hidden">
+                    <div class="bg-gradient-to-r from-green-600 to-green-700 text-white p-6 rounded-xl shadow-xl mb-6">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <h2 class="text-3xl font-bold mb-2">📊 Daily Reports</h2>
+                                <p class="text-green-100">Real-time sales analytics</p>
+                            </div>
+                            <button onclick="loadReports()"
+                                    class="bg-white text-green-600 px-6 py-3 rounded-lg font-bold">
+                                🔄 Refresh
+                            </button>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                        <div class="bg-white p-6 rounded-lg shadow-lg text-center">
+                            <h3 class="text-lg font-semibold text-gray-600">Today's Sales</h3>
+                            <p class="text-3xl font-bold text-green-600" id="reports-today-sales">$0.00</p>
+                        </div>
+                        <div class="bg-white p-6 rounded-lg shadow-lg text-center">
+                            <h3 class="text-lg font-semibold text-gray-600">Completed Orders</h3>
+                            <p class="text-3xl font-bold text-blue-600" id="reports-completed">0</p>
+                        </div>
+                        <div class="bg-white p-6 rounded-lg shadow-lg text-center">
+                            <h3 class="text-lg font-semibold text-gray-600">Pending Orders</h3>
+                            <p class="text-3xl font-bold text-orange-600" id="reports-pending">0</p>
+                        </div>
+                        <div class="bg-white p-6 rounded-lg shadow-lg text-center">
+                            <h3 class="text-lg font-semibold text-gray-600">Total Orders</h3>
+                            <p class="text-3xl font-bold text-purple-600" id="reports-total">0</p>
+                        </div>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-lg">
+                        <h3 class="text-xl font-bold mb-6">📋 Recent Orders</h3>
+                        <div class="overflow-x-auto">
+                            <table class="w-full">
+                                <thead>
+                                    <tr class="border-b-2">
+                                        <th class="text-left py-3 px-4 font-bold">ID</th>
+                                        <th class="text-left py-3 px-4 font-bold">Customer</th>
+                                        <th class="text-left py-3 px-4 font-bold">Type</th>
+                                        <th class="text-left py-3 px-4 font-bold">Total</th>
+                                        <th class="text-left py-3 px-4 font-bold">Status</th>
+                                        <th class="text-left py-3 px-4 font-bold">Time</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="reports-table-body">
+                                    <tr>
+                                        <td colspan="6" class="text-center py-8 text-gray-500">Loading...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            </main>
+        </div>
+
+        <!-- ==================== TABLE OPTIONS MODAL ==================== -->
+        <div id="tableOptionsModal"
+             class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+            <div class="bg-white rounded-xl shadow-2xl max-w-md w-full mx-4">
+                <div class="bg-blue-600 text-white p-6 rounded-t-xl">
+                    <div class="flex justify-between items-center">
+                        <h2 class="text-2xl font-bold">Table <span id="tableOptionsNumber">1</span></h2>
+                        <button onclick="closeModal('tableOptionsModal')"
+                                class="text-white text-2xl">
+                            ✕
                         </button>
+                    </div>
+                    <div class="mt-2">
+                        <span class="text-blue-100">Status: </span>
+                        <span id="tableCurrentStatus"
+                              class="bg-white text-blue-700 px-2 py-1 rounded text-sm font-bold">Available</span>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <input type="hidden" id="tableOptionsTableId" value="">
+                    <input type="hidden" id="tableOptionsStatus" value="">
+
+                    <!-- Action Buttons -->
+                    <div class="grid grid-cols-2 gap-3 mb-4">
+                        <button onclick="startTableOrder()" id="startOrderBtn"
+                                class="bg-green-600 text-white py-3 rounded-lg font-bold hover:bg-green-700">
+                            🛒 Start Order
+                        </button>
+                        <button onclick="openTableSettings()"
+                                class="bg-purple-600 text-white py-3 rounded-lg font-bold hover:bg-purple-700">
+                            ⚙️ Settings
+                        </button>
+                    </div>
+
+                    <!-- Set Available Button (shown for occupied tables) -->
+                    <div id="setAvailableSection" class="hidden mb-4">
+                        <button onclick="setTableAvailable()"
+                                class="w-full bg-yellow-500 text-white py-3 rounded-lg font-bold hover:bg-yellow-600">
+                            ✅ Set Table Available
+                        </button>
+                        <p class="text-xs text-gray-500 mt-1 text-center">
+                            This will free up the table for new customers
+                        </p>
+                    </div>
+
+                    <button onclick="closeModal('tableOptionsModal')"
+                            class="w-full bg-gray-500 text-white py-3 rounded-lg font-bold hover:bg-gray-600">
+                        Close
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== TABLE SETTINGS MODAL ==================== -->
+        <div id="tableSettingsModal"
+             class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+            <div class="bg-white rounded-xl shadow-2xl max-w-md w-full mx-4">
+                <div class="bg-purple-600 text-white p-6 rounded-t-xl">
+                    <div class="flex justify-between items-center">
+                        <h2 class="text-2xl font-bold">⚙️ Table Settings</h2>
+                        <button onclick="closeModal('tableSettingsModal')"
+                                class="text-white text-2xl">
+                            ✕
+                        </button>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <form id="tableSettingsForm" class="space-y-4">
+                        <input type="hidden" id="settingsTableId" value="">
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Capacity</label>
+                            <select id="settingsCapacity" class="w-full p-2 border rounded-lg">
+                                <option value="2">2 seats</option>
+                                <option value="4" selected>4 seats</option>
+                                <option value="6">6 seats</option>
+                                <option value="8">8 seats</option>
+                                <option value="10">10 seats</option>
+                                <option value="12">12 seats</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Location</label>
+                            <select id="settingsLocation" class="w-full p-2 border rounded-lg">
+                                <option value="Main Dining">Main Dining</option>
+                                <option value="Window Side">Window Side</option>
+                                <option value="Patio">Patio</option>
+                                <option value="Private Room">Private Room</option>
+                                <option value="Bar Area">Bar Area</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Type</label>
+                            <select id="settingsType" class="w-full p-2 border rounded-lg">
+                                <option value="Regular">Regular Table</option>
+                                <option value="Booth">Booth</option>
+                                <option value="High Top">High Top</option>
+                                <option value="Round">Round Table</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Status</label>
+                            <select id="settingsStatus" class="w-full p-2 border rounded-lg">
+                                <option value="available">Available</option>
+                                <option value="occupied">Occupied</option>
+                                <option value="reserved">Reserved</option>
+                            </select>
+                            <p id="statusWarning" class="text-xs text-red-500 mt-1 hidden">⚠️ Table has active order</p>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Notes</label>
+                            <textarea id="settingsNotes" class="w-full p-2 border rounded-lg" rows="2"
+                                  placeholder="Any special notes..."></textarea>
+                        </div>
+
+                        <div class="flex space-x-3 pt-4">
+                            <button type="submit"
+                                    class="flex-1 bg-purple-600 text-white py-3 rounded-lg font-bold hover:bg-purple-700">
+                                💾 Save Changes
+                            </button>
+                            <button type="button" onclick="closeModal('tableSettingsModal')"
+                                    class="flex-1 bg-gray-500 text-white py-3 rounded-lg font-bold hover:bg-gray-600">
+                                Cancel
+                            </button>
+                        </div>
                     </form>
                 </div>
             </div>
-        </header>
+        </div>
 
-        <!-- Navigation -->
-        <nav class="bg-white shadow-sm border-b">
-            <div class="flex space-x-1 p-4 overflow-x-auto">
-                <button onclick="showView('dashboard')"
-                    class="nav-btn px-4 py-2 rounded-lg bg-blue-600 text-white font-medium">Dashboard</button>
-                <button onclick="showView('tables')"
-                    class="nav-btn px-4 py-2 rounded-lg bg-gray-200 text-gray-700 font-medium">Tables</button>
-                <button onclick="showView('orders')"
-                    class="nav-btn px-4 py-2 rounded-lg bg-gray-200 text-gray-700 font-medium">Orders</button>
-                <button onclick="showView('menu')"
-                    class="nav-btn px-4 py-2 rounded-lg bg-gray-200 text-gray-700 font-medium">Menu & Orders</button>
-                <button onclick="showView('kitchen')"
-                    class="nav-btn px-4 py-2 rounded-lg bg-gray-200 text-gray-700 font-medium">Kitchen</button>
-                <button onclick="showView('reports')"
-                    class="nav-btn px-4 py-2 rounded-lg bg-gray-200 text-gray-700 font-medium">Reports</button>
-            </div>
-        </nav>
-
-        <!-- Main Content -->
-        <main class="flex-1 p-6">
-
-            <!-- ==================== DASHBOARD VIEW ==================== -->
-            <div id="dashboard-view" class="view">
-                <div class="bg-gradient-to-r from-blue-600 to-purple-700 text-white p-8 rounded-xl shadow-xl mb-8">
-                    <h2 class="text-4xl font-bold mb-2">🏪 Welcome to Dashboard</h2>
-                    <p class="text-xl opacity-90">Real-time restaurant analytics</p>
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                    <div class="bg-gradient-to-br from-green-500 to-green-600 text-white p-6 rounded-xl shadow-xl">
-                        <p class="text-green-100 text-sm">💰 Today's Sales</p>
-                        <p class="text-4xl font-bold">$@Model.TodaySales.ToString("F2")</p>
-                    </div>
-                    <div class="bg-gradient-to-br from-orange-500 to-orange-600 text-white p-6 rounded-xl shadow-xl">
-                        <p class="text-orange-100 text-sm">🔥 Active Orders</p>
-                        <p class="text-4xl font-bold">@Model.ActiveOrdersCount</p>
-                    </div>
-                    <div class="bg-gradient-to-br from-blue-500 to-blue-600 text-white p-6 rounded-xl shadow-xl">
-                        <p class="text-blue-100 text-sm">🪑 Table Status</p>
-                        <p class="text-4xl font-bold">@Model.OccupiedTablesCount/@Model.Tables.Count</p>
-                    </div>
-                    <div class="bg-gradient-to-br from-purple-500 to-purple-600 text-white p-6 rounded-xl shadow-xl">
-                        <p class="text-purple-100 text-sm">🍽️ Menu Items</p>
-                        <p class="text-4xl font-bold">@Model.MenuItems.Count</p>
-                    </div>
-                </div>
-                <div class="bg-white p-6 rounded-xl shadow-xl">
-                    <h3 class="text-2xl font-bold mb-6 text-gray-800">⚡ Quick Actions</h3>
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                        <button onclick="showView('tables')"
-                            class="bg-blue-500 text-white p-4 rounded-lg hover:bg-blue-600">🪑 Manage Tables</button>
-                        <button onclick="showView('orders')"
-                            class="bg-orange-500 text-white p-4 rounded-lg hover:bg-orange-600">📋 View Orders</button>
-                        <button onclick="showView('menu')"
-                            class="bg-green-500 text-white p-4 rounded-lg hover:bg-green-600">🍽️ Manage Menu</button>
-                        <button onclick="showView('kitchen')"
-                            class="bg-purple-500 text-white p-4 rounded-lg hover:bg-purple-600">👨‍🍳 Kitchen View</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- ==================== TABLES VIEW ==================== -->
-            <div id="tables-view" class="view hidden">
-                <div class="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-6 rounded-xl shadow-xl mb-6">
-                    <h2 class="text-3xl font-bold mb-2">🪑 Table Management</h2>
-                    <p class="text-blue-100">Click on a table to manage it</p>
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-                    <div class="bg-white p-4 rounded-lg shadow text-center">
-                        <div class="text-2xl font-bold text-gray-800">@Model.Tables.Count</div>
-                        <div class="text-sm text-gray-600">Total Tables</div>
-                    </div>
-                    <div class="bg-white p-4 rounded-lg shadow text-center">
-                        <div class="text-2xl font-bold text-green-600">@Model.Tables.Count(t => t.Status == "available")</div>
-                        <div class="text-sm text-gray-600">Available</div>
-                    </div>
-                    <div class="bg-white p-4 rounded-lg shadow text-center">
-                        <div class="text-2xl font-bold text-red-600">@Model.Tables.Count(t => t.Status == "occupied")</div>
-                        <div class="text-sm text-gray-600">Occupied</div>
-                    </div>
-                    <div class="bg-white p-4 rounded-lg shadow text-center">
-                        <div class="text-2xl font-bold text-yellow-600">@Model.Tables.Count(t => t.Status == "reserved")</div>
-                        <div class="text-sm text-gray-600">Reserved</div>
-                    </div>
-                </div>
-                <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-                    @foreach (var table in Model.Tables)
-                    {
-                    <div onclick="handleTableClick(@table.Id, '@table.Status')"
-                        class="table-item p-4 rounded-lg cursor-pointer transition-all hover:shadow-lg text-white
-                                @(table.Status == "occupied" ? "table-occupied" : table.Status == "reserved" ? "table-reserved" : "table-available")">
-                        <div class="text-center">
-                            <div class="text-2xl font-bold">T@(table.Id)</div>
-                            <div class="text-sm capitalize">@table.Status</div>
-                            @if (table.Capacity.HasValue)
-                            {
-                            <div class="text-xs">👥 @table.Capacity seats</div>
-                            }
-                            @if (table.CurrentOrder != null)
-                            {
-                            <div class="text-xs mt-1 font-semibold">$@table.CurrentOrder.Total.ToString("F2")</div>
-                            }
-                        </div>
-                    </div>
-                    }
-                </div>
-            </div>
-
-            <!-- ==================== ORDERS VIEW ==================== -->
-            <div id="orders-view" class="view hidden">
-                <div class="bg-gradient-to-r from-orange-600 to-orange-700 text-white p-6 rounded-xl shadow-xl mb-6">
+        <!-- ==================== ADD TABLE MODAL ==================== -->
+        <div id="addTableModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+            <div class="bg-white rounded-xl shadow-2xl max-w-md w-full mx-4">
+                <div class="bg-green-600 text-white p-6 rounded-t-xl">
                     <div class="flex justify-between items-center">
+                        <h2 class="text-2xl font-bold">➕ Add New Table</h2>
+                        <button onclick="closeModal('addTableModal')" class="text-white text-2xl">✕</button>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <form id="addTableForm" class="space-y-4">
                         <div>
-                            <h2 class="text-3xl font-bold mb-2">📋 Order Management</h2>
-                            <p class="text-orange-100">Manage all restaurant orders</p>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Table Number *</label>
+                            <input type="number" id="newTableNumber" min="1" class="w-full p-2 border rounded-lg"
+                                   placeholder="e.g., 15" required>
                         </div>
-                        <div class="text-right">
-                            <div class="text-sm opacity-90">Total Orders: <span id="totalOrdersCount">0</span></div>
-                        </div>
-                    </div>
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-                    <div class="bg-white p-4 rounded-lg shadow text-center cursor-pointer" onclick="filterOrders('all')">
-                        <div class="text-2xl font-bold text-gray-800" id="allOrdersCount">0</div>
-                        <div class="text-sm text-gray-600">All Orders</div>
-                    </div>
-                    <div class="bg-white p-4 rounded-lg shadow text-center cursor-pointer" onclick="filterOrders('dine-in')">
-                        <div class="text-2xl font-bold text-green-600" id="dineInOrdersCount">0</div>
-                        <div class="text-sm text-gray-600">Dine In</div>
-                    </div>
-                    <div class="bg-white p-4 rounded-lg shadow text-center cursor-pointer" onclick="filterOrders('delivery')">
-                        <div class="text-2xl font-bold text-purple-600" id="deliveryOrdersCount">0</div>
-                        <div class="text-sm text-gray-600">Delivery</div>
-                    </div>
-                    <div class="bg-white p-4 rounded-lg shadow text-center cursor-pointer" onclick="filterOrders('takeaway')">
-                        <div class="text-2xl font-bold text-orange-600" id="takeawayOrdersCount">0</div>
-                        <div class="text-sm text-gray-600">Take Away</div>
-                    </div>
-                </div>
-                <div class="bg-white p-4 rounded-lg shadow-lg mb-6">
-                    <div class="flex flex-wrap gap-4 items-center">
-                        <select id="orderTypeFilter" onchange="applyFilters()" class="p-2 border rounded-lg">
-                            <option value="all">All Types</option>
-                            <option value="dine-in">Dine In</option>
-                            <option value="delivery">Delivery</option>
-                            <option value="takeaway">Take Away</option>
-                        </select>
-                        <select id="orderStatusFilter" onchange="applyFilters()" class="p-2 border rounded-lg">
-                            <option value="all">All Statuses</option>
-                            <option value="pending">Pending</option>
-                            <option value="preparing">Preparing</option>
-                            <option value="ready">Ready</option>
-                            <option value="completed">Completed</option>
-                        </select>
-                        <button onclick="loadOrders()"
-                            class="bg-orange-600 text-white px-4 py-2 rounded-lg hover:bg-orange-700">🔄 Refresh
-                        </button>
-                    </div>
-                </div>
-                <!-- ORDERS CONTAINER - THIS ID IS CRITICAL -->
-                <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6" id="orders-container">
-                    <div class="text-center py-12 col-span-full">
-                        <div class="text-4xl mb-4">⏳</div>
-                        <p class="text-gray-500">Loading orders...</p>
-                    </div>
-                </div>
-                <div id="no-orders-message" class="hidden text-center py-12">
-                    <div class="text-6xl mb-4">📋</div>
-                    <h3 class="text-2xl font-bold text-gray-600 mb-2">No Orders Found</h3>
-                </div>
-            </div>
-
-            <!-- ==================== MENU VIEW ==================== -->
-            <div id="menu-view" class="view hidden">
-                <div class="bg-gradient-to-r from-purple-600 to-purple-700 text-white p-6 rounded-xl shadow-xl mb-6">
-                    <h3 class="text-2xl font-bold mb-2">🍽️ Menu & Orders</h3>
-                </div>
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <div class="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4">
-                        @foreach (var item in Model.MenuItems)
-                        {
-                        <div class="bg-white p-4 rounded-lg shadow hover:shadow-lg border border-gray-200">
-                            <div class="flex justify-between items-start mb-3">
-                                <h4 class="font-bold text-lg text-gray-800">@item.Name</h4>
-                                <span class="text-sm text-gray-500 bg-gray-100 px-2 py-1 rounded">@item.Category</span>
-                            </div>
-                            <div class="flex justify-between items-center">
-                                <p class="text-xl font-bold text-green-600">$@item.Price.ToString("F2")</p>
-                                <button onclick="addToOrder(@item.Id, '@item.Name')"
-                                    class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700">➕ Add
-                                </button>
-                            </div>
-                        </div>
-                        }
-                    </div>
-                    <div class="bg-white p-6 rounded-lg shadow-lg sticky top-4">
-                        <h3 class="text-xl font-bold mb-4">🛒 Current Order</h3>
-                        <div class="mb-4 border border-gray-200 rounded-lg p-3 bg-gray-50 min-h-[100px]"
-                            id="current-order-items">
-                            @if (Model.CurrentOrder?.Items?.Any() == true)
-                            {
-                            @foreach (var item in Model.CurrentOrder.Items)
-                            {
-                            <div class="flex justify-between items-center py-2 border-b last:border-b-0">
-                                <div>
-                                    <div class="font-medium">@item.Name</div>
-                                    <div class="text-sm text-gray-600">$@item.Price.ToString("F2") × @item.Quantity
-                                    </div>
-                                </div>
-                                <div class="flex items-center space-x-2">
-                                    <button onclick="updateQuantity(@item.MenuItemId, -1)"
-                                        class="bg-red-500 text-white w-6 h-6 rounded-full">−</button>
-                                    <span class="font-bold">@item.Quantity</span>
-                                    <button onclick="updateQuantity(@item.MenuItemId, 1)"
-                                        class="bg-green-500 text-white w-6 h-6 rounded-full">+</button>
-                                </div>
-                            </div>
-                            }
-                            }
-                            else
-                            {
-                            <div class="text-center py-4 text-gray-500">No items added</div>
-                            }
-                        </div>
-                        <div class="border-t pt-4">
-                            <div class="flex justify-between text-xl font-bold mb-4">
-                                <span>Total:</span>
-                                <span id="current-order-total" class="text-green-600">$@(Model.CurrentOrder?.Total.ToString("F2") ?? "0.00")</span>
-                            </div>
-                            <form id="process-order-form" class="space-y-3">
-                                @Html.AntiForgeryToken()
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">Order Type</label>
-                                    <select name="orderType" id="orderTypeSelect" onchange="toggleTableSelection()"
-                                        class="w-full p-2 border rounded-lg" required>
-                                        <option value="">Select order type</option>
-                                        <option value="dine-in">🍽️ Dine In</option>
-                                        <option value="takeaway">🥡 Takeaway</option>
-                                        <option value="delivery">🚚 Delivery</option>
-                                    </select>
-                                </div>
-                                <!-- TABLE SELECTION FOR DINE-IN -->
-                                <div id="tableSelectionDiv" class="hidden">
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">Select Table</label>
-                                    <select name="tableId" id="tableSelect" class="w-full p-2 border rounded-lg">
-                                        <option value="">Select a table</option>
-                                        @foreach (var table in Model.Tables.Where(t => t.Status == "available"))
-                                        {
-                                        <option value="@table.Id">Table @table.Id (@table.Capacity seats)</option>
-                                        }
-                                    </select>
-                                    <p class="text-xs text-gray-500 mt-1">Only available tables are shown</p>
-                                </div>
-                                <input type="text" name="customerName" placeholder="Customer Name"
-                                    class="w-full p-2 border rounded-lg" required>
-                                <input type="text" name="customerPhone" placeholder="Phone (optional)"
-                                    class="w-full p-2 border rounded-lg">
-                                <button type="submit"
-                                    class="w-full bg-green-600 text-white py-3 rounded-lg font-bold"
-                                    @(Model.CurrentOrder?.Items?.Any() != true ? "disabled" : "")>
-                                    💳 Process Order
-                                </button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- ==================== KITCHEN VIEW ==================== -->
-            <div id="kitchen-view" class="view hidden">
-                <div class="bg-gradient-to-r from-orange-600 to-orange-700 text-white p-6 rounded-xl shadow-xl mb-6">
-                    <div class="flex justify-between items-center">
                         <div>
-                            <h2 class="text-3xl font-bold mb-2">👨‍🍳 Kitchen Display System</h2>
-                            <p class="text-orange-100">Pending and preparing orders</p>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Capacity *</label>
+                            <select id="newTableCapacity" class="w-full p-2 border rounded-lg" required>
+                                <option value="2">2 seats</option>
+                                <option value="4" selected>4 seats</option>
+                                <option value="6">6 seats</option>
+                                <option value="8">8 seats</option>
+                                <option value="10">10 seats</option>
+                                <option value="12">12 seats</option>
+                            </select>
                         </div>
-                        <button onclick="loadKitchenOrders()"
-                            class="bg-white text-orange-600 px-6 py-3 rounded-lg font-bold">🔄 Refresh</button>
-                    </div>
-                </div>
-                <div id="kitchen-orders-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <div class="col-span-full text-center py-12">
-                        <div class="text-4xl mb-4">⏳</div>
-                        <p class="text-gray-500">Loading kitchen orders...</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- ==================== REPORTS VIEW ==================== -->
-            <div id="reports-view" class="view hidden">
-                <div class="bg-gradient-to-r from-green-600 to-green-700 text-white p-6 rounded-xl shadow-xl mb-6">
-                    <div class="flex justify-between items-center">
                         <div>
-                            <h2 class="text-3xl font-bold mb-2">📊 Daily Reports</h2>
-                            <p class="text-green-100">Real-time sales analytics</p>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Location</label>
+                            <select id="newTableLocation" class="w-full p-2 border rounded-lg">
+                                <option value="Main Dining">Main Dining</option>
+                                <option value="Window Side">Window Side</option>
+                                <option value="Patio">Patio</option>
+                                <option value="Private Room">Private Room</option>
+                                <option value="Bar Area">Bar Area</option>
+                            </select>
                         </div>
-                        <button onclick="loadReports()"
-                            class="bg-white text-green-600 px-6 py-3 rounded-lg font-bold">🔄 Refresh</button>
-                    </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Table Type</label>
+                            <select id="newTableType" class="w-full p-2 border rounded-lg">
+                                <option value="Regular">Regular Table</option>
+                                <option value="Booth">Booth</option>
+                                <option value="High Top">High Top</option>
+                                <option value="Round">Round Table</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Notes (Optional)</label>
+                            <textarea id="newTableNotes" class="w-full p-2 border rounded-lg" rows="2"
+                                  placeholder="Any special notes..."></textarea>
+                        </div>
+                        <div class="flex space-x-3 pt-4">
+                            <button type="submit"
+                                    class="flex-1 bg-green-600 text-white py-3 rounded-lg font-bold hover:bg-green-700">
+                                ✅ Create Table
+                            </button>
+                            <button type="button" onclick="closeModal('addTableModal')"
+                                    class="flex-1 bg-gray-500 text-white py-3 rounded-lg font-bold hover:bg-gray-600">
+                                Cancel
+                            </button>
+                        </div>
+                    </form>
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-                    <div class="bg-white p-6 rounded-lg shadow-lg text-center">
-                        <h3 class="text-lg font-semibold text-gray-600">Today's Sales</h3>
-                        <p class="text-3xl font-bold text-green-600" id="reports-today-sales">$0.00</p>
-                    </div>
-                    <div class="bg-white p-6 rounded-lg shadow-lg text-center">
-                        <h3 class="text-lg font-semibold text-gray-600">Completed Orders</h3>
-                        <p class="text-3xl font-bold text-blue-600" id="reports-completed">0</p>
-                    </div>
-                    <div class="bg-white p-6 rounded-lg shadow-lg text-center">
-                        <h3 class="text-lg font-semibold text-gray-600">Pending Orders</h3>
-                        <p class="text-3xl font-bold text-orange-600" id="reports-pending">0</p>
-                    </div>
-                    <div class="bg-white p-6 rounded-lg shadow-lg text-center">
-                        <h3 class="text-lg font-semibold text-gray-600">Total Orders</h3>
-                        <p class="text-3xl font-bold text-purple-600" id="reports-total">0</p>
-                    </div>
-                </div>
-                <div class="bg-white p-6 rounded-lg shadow-lg">
-                    <h3 class="text-xl font-bold mb-6">📋 Recent Orders</h3>
-                    <div class="overflow-x-auto">
-                        <table class="w-full">
-                            <thead>
-                                <tr class="border-b-2">
-                                    <th class="text-left py-3 px-4 font-bold">ID</th>
-                                    <th class="text-left py-3 px-4 font-bold">Customer</th>
-                                    <th class="text-left py-3 px-4 font-bold">Type</th>
-                                    <th class="text-left py-3 px-4 font-bold">Total</th>
-                                    <th class="text-left py-3 px-4 font-bold">Status</th>
-                                    <th class="text-left py-3 px-4 font-bold">Time</th>
-                                </tr>
-                            </thead>
-                            <tbody id="reports-table-body">
-                                <tr>
-                                    <td colspan="6" class="text-center py-8 text-gray-500">Loading...</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-        </main>
-    </div>
-
-    <!-- ==================== TABLE OPTIONS MODAL ==================== -->
-    <div id="tableOptionsModal"
-        class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
-        <div class="bg-white rounded-xl shadow-2xl max-w-md w-full mx-4">
-            <div class="bg-blue-600 text-white p-6 rounded-t-xl">
-                <div class="flex justify-between items-center">
-                    <h2 class="text-2xl font-bold">Table <span id="tableOptionsNumber">1</span></h2>
-                    <button onclick="closeModal('tableOptionsModal')"
-                        class="text-white text-2xl">✕</button>
-                </div>
-                <div class="mt-2">
-                    <span class="text-blue-100">Status: </span>
-                    <span id="tableCurrentStatus"
-                        class="bg-white text-blue-700 px-2 py-1 rounded text-sm font-bold">Available</span>
-                </div>
-            </div>
-            <div class="p-6">
-                <input type="hidden" id="tableOptionsTableId" value="">
-                <input type="hidden" id="tableOptionsStatus" value="">
-
-                <!-- Action Buttons -->
-                <div class="grid grid-cols-2 gap-3 mb-4">
-                    <button onclick="startTableOrder()" id="startOrderBtn"
-                        class="bg-green-600 text-white py-3 rounded-lg font-bold hover:bg-green-700">
-                        🛒 Start Order
-                    </button>
-                    <button onclick="openTableSettings()"
-                        class="bg-purple-600 text-white py-3 rounded-lg font-bold hover:bg-purple-700">
-                        ⚙️ Settings
-                    </button>
-                </div>
-
-                <!-- Set Available Button (shown for occupied tables) -->
-                <div id="setAvailableSection" class="hidden mb-4">
-                    <button onclick="setTableAvailable()"
-                        class="w-full bg-yellow-500 text-white py-3 rounded-lg font-bold hover:bg-yellow-600">
-                        ✅ Set Table Available
-                    </button>
-                    <p class="text-xs text-gray-500 mt-1 text-center">This will free up the table for new customers
-                    </p>
-                </div>
-
-                <button onclick="closeModal('tableOptionsModal')"
-                    class="w-full bg-gray-500 text-white py-3 rounded-lg font-bold hover:bg-gray-600">
-                    Close
-                </button>
             </div>
         </div>
-    </div>
-
-    <!-- ==================== TABLE SETTINGS MODAL ==================== -->
-    <div id="tableSettingsModal"
-        class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
-        <div class="bg-white rounded-xl shadow-2xl max-w-md w-full mx-4">
-            <div class="bg-purple-600 text-white p-6 rounded-t-xl">
-                <div class="flex justify-between items-center">
-                    <h2 class="text-2xl font-bold">⚙️ Table Settings</h2>
-                    <button onclick="closeModal('tableSettingsModal')"
-                        class="text-white text-2xl">✕</button>
-                </div>
-            </div>
-            <div class="p-6">
-                <form id="tableSettingsForm" class="space-y-4">
-                    <input type="hidden" id="settingsTableId" value="">
-
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Capacity</label>
-                        <select id="settingsCapacity" class="w-full p-2 border rounded-lg">
-                            <option value="2">2 seats</option>
-                            <option value="4" selected>4 seats</option>
-                            <option value="6">6 seats</option>
-                            <option value="8">8 seats</option>
-                            <option value="10">10 seats</option>
-                            <option value="12">12 seats</option>
-                        </select>
-                    </div>
-
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Location</label>
-                        <select id="settingsLocation" class="w-full p-2 border rounded-lg">
-                            <option value="Main Dining">Main Dining</option>
-                            <option value="Window Side">Window Side</option>
-                            <option value="Patio">Patio</option>
-                            <option value="Private Room">Private Room</option>
-                            <option value="Bar Area">Bar Area</option>
-                        </select>
-                    </div>
-
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Type</label>
-                        <select id="settingsType" class="w-full p-2 border rounded-lg">
-                            <option value="Regular">Regular Table</option>
-                            <option value="Booth">Booth</option>
-                            <option value="High Top">High Top</option>
-                            <option value="Round">Round Table</option>
-                        </select>
-                    </div>
-
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Status</label>
-                        <select id="settingsStatus" class="w-full p-2 border rounded-lg">
-                            <option value="available">Available</option>
-                            <option value="occupied">Occupied</option>
-                            <option value="reserved">Reserved</option>
-                        </select>
-                        <p id="statusWarning" class="text-xs text-red-500 mt-1 hidden">⚠️ Table has active order</p>
-                    </div>
-
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Notes</label>
-                        <textarea id="settingsNotes" class="w-full p-2 border rounded-lg" rows="2"
-                            placeholder="Any special notes..."></textarea>
-                    </div>
-
-                    <div class="flex space-x-3 pt-4">
-                        <button type="submit"
-                            class="flex-1 bg-purple-600 text-white py-3 rounded-lg font-bold hover:bg-purple-700">
-                            💾 Save Changes
-                        </button>
-                        <button type="button" onclick="closeModal('tableSettingsModal')"
-                            class="flex-1 bg-gray-500 text-white py-3 rounded-lg font-bold hover:bg-gray-600">
-                            Cancel
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <!-- ==================== ADD TABLE MODAL ==================== -->
-    <div id="addTableModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
-        <div class="bg-white rounded-xl shadow-2xl max-w-md w-full mx-4">
-            <div class="bg-green-600 text-white p-6 rounded-t-xl">
-                <div class="flex justify-between items-center">
-                    <h2 class="text-2xl font-bold">➕ Add New Table</h2>
-                    <button onclick="closeModal('addTableModal')" class="text-white text-2xl">✕</button>
-                </div>
-            </div>
-            <div class="p-6">
-                <form id="addTableForm" class="space-y-4">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Table Number *</label>
-                        <input type="number" id="newTableNumber" min="1" class="w-full p-2 border rounded-lg"
-                            placeholder="e.g., 15" required>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Capacity *</label>
-                        <select id="newTableCapacity" class="w-full p-2 border rounded-lg" required>
-                            <option value="2">2 seats</option>
-                            <option value="4" selected>4 seats</option>
-                            <option value="6">6 seats</option>
-                            <option value="8">8 seats</option>
-                            <option value="10">10 seats</option>
-                            <option value="12">12 seats</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Location</label>
-                        <select id="newTableLocation" class="w-full p-2 border rounded-lg">
-                            <option value="Main Dining">Main Dining</option>
-                            <option value="Window Side">Window Side</option>
-                            <option value="Patio">Patio</option>
-                            <option value="Private Room">Private Room</option>
-                            <option value="Bar Area">Bar Area</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Table Type</label>
-                        <select id="newTableType" class="w-full p-2 border rounded-lg">
-                            <option value="Regular">Regular Table</option>
-                            <option value="Booth">Booth</option>
-                            <option value="High Top">High Top</option>
-                            <option value="Round">Round Table</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Notes (Optional)</label>
-                        <textarea id="newTableNotes" class="w-full p-2 border rounded-lg" rows="2"
-                            placeholder="Any special notes..."></textarea>
-                    </div>
-                    <div class="flex space-x-3 pt-4">
-                        <button type="submit"
-                            class="flex-1 bg-green-600 text-white py-3 rounded-lg font-bold hover:bg-green-700">
-                            ✅ Create Table
-                        </button>
-                        <button type="button" onclick="closeModal('addTableModal')"
-                            class="flex-1 bg-gray-500 text-white py-3 rounded-lg font-bold hover:bg-gray-600">
-                            Cancel
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
     }
     <script>
         // ==================== GLOBAL VARIABLES ====================

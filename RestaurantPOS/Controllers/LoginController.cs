@@ -41,7 +41,7 @@ namespace RestaurantPOS.Controllers
         public IActionResult Login()
         {
             // This action now simply shows the staff login page.
-            return RedirectToAction("Staff");
+            return RedirectToAction("Index", "Home");
         }
 
         [HttpPost]
@@ -57,6 +57,14 @@ namespace RestaurantPOS.Controllers
             var user = await GetUserByCredentials(username, password);
             if (user != null)
             {
+                // Role check to prevent role confusion
+                if (user.Role != "Manager" && user.Role != "Staff")
+                {
+                    TempData["Error"] = "You do not have permission to access this page.";
+                    TempData["RememberedUsername"] = username;
+                    return RedirectToAction("Staff");
+                }
+
                 _httpContextAccessor.HttpContext.Session.SetInt32("UserId", user.Id);
 
                 // Handle Remember Me
@@ -93,7 +101,7 @@ namespace RestaurantPOS.Controllers
             _httpContextAccessor.HttpContext.Session.Remove("UserId");
             _httpContextAccessor.HttpContext.Session.Remove("CurrentOrder");
             Response.Cookies.Delete("RememberUsername");
-            
+
             TempData["Success"] = "Logged out successfully";
             return RedirectToAction("Index");
         }
@@ -128,7 +136,7 @@ namespace RestaurantPOS.Controllers
         public async Task<IActionResult> Index()
         {
             var userId = _httpContextAccessor.HttpContext.Session.GetInt32("UserId");
-            
+
             if (userId == null)
             {
                 // User not logged in - show the main chooser/landing page

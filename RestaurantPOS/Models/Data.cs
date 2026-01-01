@@ -120,9 +120,9 @@ namespace RestaurantPOS.Data
         {
             // Seed Users
             modelBuilder.Entity<User>().HasData(
-                new User { Id = 1, Username = "admin", Password = "admin123", Name = "Admin User", Role = "Admin", CreatedAt = DateTime.Now, IsActive = true },
-                new User { Id = 2, Username = "manager", Password = "manager123", Name = "Restaurant Manager", Role = "Manager", CreatedAt = DateTime.Now, IsActive = true },
-                new User { Id = 3, Username = "owner", Password = "owner123", Name = "Restaurant Owner", Role = "Owner", CreatedAt = DateTime.Now, IsActive = true }
+                new User { Id = 1, Username = "manager", Password = "12345", Name = "Restaurant Manager", Role = "Manager", CreatedAt = DateTime.Now, IsActive = true },
+                new User { Id = 2, Username = "staff", Password = "12345", Name = "Restaurant Staff", Role = "Staff", CreatedAt = DateTime.Now, IsActive = true },
+                new User { Id = 3, Username = "user", Password = "12345", Name = "Customer User", Role = "User", CreatedAt = DateTime.Now, IsActive = true }
             );
 
             // Seed Menu Items
