@@ -112,34 +112,36 @@ namespace RestaurantPOS.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Register(string username, string password, string name)
+        public async Task<IActionResult> Register(string username, string password, string name, string phone)
         {
-            if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password) || string.IsNullOrWhiteSpace(name))
+            if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password) || string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(phone))
             {
                 TempData["Error"] = "All fields are required for registration.";
-                return RedirectToAction("Index");
+                return RedirectToAction("Login");
             }
 
             using var connection = new SqlConnection(_connectionString);
             await connection.OpenAsync();
 
-            var checkUserCmd = new SqlCommand("SELECT COUNT(*) FROM Users WHERE Username = @Username", connection);
+            var checkUserCmd = new SqlCommand("SELECT COUNT(*) FROM Users WHERE Username = @Username OR Phone = @Phone", connection);
             checkUserCmd.Parameters.AddWithValue("@Username", username);
+            checkUserCmd.Parameters.AddWithValue("@Phone", phone);
             if ((int)await checkUserCmd.ExecuteScalarAsync() > 0)
             {
-                TempData["Error"] = "Username already exists. Please choose another or log in.";
-                return RedirectToAction("Index");
+                TempData["Error"] = "Username or phone number already exists. Please choose another or log in.";
+                return RedirectToAction("Login");
             }
 
             var insertUserSql = @"
-                INSERT INTO Users (Username, Password, Name, Role, IsActive, CreatedAt)
-                VALUES (@Username, @Password, @Name, 'User', 1, @CreatedAt);
+                INSERT INTO Users (Username, Password, Name, Phone, Role, IsActive, CreatedAt)
+                VALUES (@Username, @Password, @Name, @Phone, 'User', 1, @CreatedAt);
                 SELECT CAST(SCOPE_IDENTITY() as int);";
 
             using var command = new SqlCommand(insertUserSql, connection);
             command.Parameters.AddWithValue("@Username", username);
             command.Parameters.AddWithValue("@Password", password); // Note: Passwords should be hashed in a real application
             command.Parameters.AddWithValue("@Name", name);
+            command.Parameters.AddWithValue("@Phone", phone);
             command.Parameters.AddWithValue("@CreatedAt", DateTime.Now);
 
             var newUserId = (int)await command.ExecuteScalarAsync();
@@ -151,18 +153,18 @@ namespace RestaurantPOS.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Login(string username, string password)
+        public async Task<IActionResult> Login(string loginIdentifier, string password)
         {
-            if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
+            if (string.IsNullOrWhiteSpace(loginIdentifier) || string.IsNullOrWhiteSpace(password))
             {
-                TempData["Error"] = "Username and password are required.";
-                return RedirectToAction("Index");
+                TempData["Error"] = "Username/phone and password are required.";
+                return RedirectToAction("Login");
             }
 
             using var connection = new SqlConnection(_connectionString);
             await connection.OpenAsync();
-            var command = new SqlCommand("SELECT Id, Name FROM Users WHERE Username = @Username AND Password = @Password AND Role = 'User' AND IsActive = 1", connection);
-            command.Parameters.AddWithValue("@Username", username);
+            var command = new SqlCommand("SELECT Id, Name FROM Users WHERE (Username = @LoginIdentifier OR Phone = @LoginIdentifier) AND Password = @Password AND Role = 'User' AND IsActive = 1", connection);
+            command.Parameters.AddWithValue("@LoginIdentifier", loginIdentifier);
             command.Parameters.AddWithValue("@Password", password);
 
             using var reader = await command.ExecuteReaderAsync();
@@ -174,8 +176,8 @@ namespace RestaurantPOS.Controllers
                 return RedirectToAction("Index");
             }
 
-            TempData["Error"] = "Invalid username or password.";
-            return RedirectToAction("Index");
+            TempData["Error"] = "Invalid credentials.";
+            return RedirectToAction("Login");
         }
 
         [HttpPost]
@@ -370,6 +372,89 @@ namespace RestaurantPOS.Controllers
                 subtotal = order.Total,
                 itemCount = order.Items.Sum(i => i.Quantity)
             });
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> OrderHistory()
+        {
+            var userId = _httpContextAccessor.HttpContext?.Session.GetInt32("CustomerId");
+            if (!userId.HasValue)
+            {
+                return RedirectToAction("Login");
+            }
+
+            var user = await GetUserById(userId.Value);
+            if (user == null)
+            {
+                return RedirectToAction("Login");
+            }
+
+            var orders = await GetOrdersByUserId(userId.Value);
+
+            var viewModel = new OrderHistoryViewModel
+            {
+                CustomerName = user.Name,
+                Orders = orders
+            };
+
+            return View(viewModel);
+        }
+
+        private async Task<List<Order>> GetOrdersByUserId(int userId)
+        {
+            var orders = new List<Order>();
+            var orderItemsMap = new Dictionary<int, List<OrderItem>>();
+
+            using var connection = new SqlConnection(_connectionString);
+            await connection.OpenAsync();
+
+            var ordersSql = "SELECT * FROM Orders WHERE UserId = @UserId ORDER BY CreatedAt DESC";
+            using var ordersCommand = new SqlCommand(ordersSql, connection);
+            ordersCommand.Parameters.AddWithValue("@UserId", userId);
+
+            using (var reader = await ordersCommand.ExecuteReaderAsync())
+            {
+                while (await reader.ReadAsync())
+                {
+                    var order = new Order
+                    {
+                        Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                        OrderNumber = reader.GetString(reader.GetOrdinal("OrderNumber")),
+                        Total = reader.GetDecimal(reader.GetOrdinal("Total")),
+                        Status = reader.GetString(reader.GetOrdinal("Status")),
+                        CreatedAt = reader.GetDateTime(reader.GetOrdinal("CreatedAt")),
+                        Items = new List<OrderItem>()
+                    };
+                    orders.Add(order);
+                    orderItemsMap[order.Id] = order.Items;
+                }
+            }
+
+            if (orders.Any())
+            {
+                var orderIds = orders.Select(o => o.Id).ToList();
+                var itemsSql = $"SELECT * FROM OrderItems WHERE OrderId IN ({string.Join(",", orderIds)})";
+                using var itemsCommand = new SqlCommand(itemsSql, connection);
+
+                using (var reader = await itemsCommand.ExecuteReaderAsync())
+                {
+                    while (await reader.ReadAsync())
+                    {
+                        var orderId = reader.GetInt32(reader.GetOrdinal("OrderId"));
+                        if (orderItemsMap.TryGetValue(orderId, out var items))
+                        {
+                            items.Add(new OrderItem
+                            {
+                                Name = reader.GetString(reader.GetOrdinal("Name")),
+                                Quantity = reader.GetInt32(reader.GetOrdinal("Quantity")),
+                                Price = reader.GetDecimal(reader.GetOrdinal("Price"))
+                            });
+                        }
+                    }
+                }
+            }
+
+            return orders;
         }
     }
 }

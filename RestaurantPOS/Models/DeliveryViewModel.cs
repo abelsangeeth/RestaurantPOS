@@ -9,8 +9,12 @@ namespace RestaurantPOS.Models
         public DeliveryCustomer Customer { get; set; }
         public List<MenuItem> MenuItems { get; set; } = new List<MenuItem>();
         public Order CurrentOrder { get; set; } = new Order();
-        public List<Order> OrderHistory { get; set; } = new List<Order>();
         public string RestaurantName { get; set; }
-        public List<CartItemViewModel> CartItems { get; set; } = new List<CartItemViewModel>();
+    }
+
+    public class OrderHistoryViewModel
+    {
+        public string CustomerName { get; set; }
+        public List<Order> Orders { get; set; } = new List<Order>();
     }
 }
