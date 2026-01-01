@@ -99,6 +99,13 @@
             document.getElementById('login-tab-btn').classList.remove('border-orange-500', 'text-orange-500');
             document.getElementById('login-tab-btn').classList.add('text-gray-400');
         });
+
+        @if (TempData["Error"] != null)
+        {
+            <text>
+            alert('@Html.Raw(TempData["Error"])');
+            </text>
+        }
     </script>
 </body>
 </html>
