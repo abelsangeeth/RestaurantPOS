@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using RestaurantPOS.Models; // Add this if CartItemViewModel is in this namespace
+using RestaurantPOS.Models; 
 
 namespace RestaurantPOS.Models
 {
