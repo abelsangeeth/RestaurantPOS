@@ -216,6 +216,7 @@ namespace RestaurantPOS.Controllers
                 MenuItems = menuItems,
                 Tables = tables,
                 Orders = orders,
+                RecentOrders = orders.Take(2).ToList(),
                 CurrentOrder = GetCurrentOrder(),
                 TodaySales = todayOrders.Where(o => o.Status == "completed").Sum(o => o.Total),
                 ActiveOrdersCount = orders.Count(o => o.Status == "pending" || o.Status == "preparing" || o.Status == "ready"),

@@ -188,7 +188,7 @@ namespace RestaurantPOS.Models
         public User CurrentUser { get; set; }
         public Order CurrentOrder { get; set; } = new Order();
         public string RestaurantName { get; set; }
-        public string ContactInfo { get; set; } = "123-456-7890 | 123 Main St";
+        public string ContactInfo { get; set; } = "123-456-7890 | AL Farwaniyah Kuwait";
 
         // Dashboard stats
         public decimal TodaySales { get; set; }
@@ -199,6 +199,21 @@ namespace RestaurantPOS.Models
         public int PreparingOrdersCount { get; set; }
         public int ReadyOrdersCount { get; set; }
         public int CompletedOrdersCount { get; set; }
+
+        public decimal SalesChange { get; set; }
+        public int AveragePrepTime { get; set; }
+        public int ReservedTablesCount { get; set; }
+        public string TopSellingItem { get; set; }
+
+        public List<Order> RecentOrders { get; set; }
+
+        public int PeakHour { get; set; }
+        public decimal AverageOrderValue { get; set; }
+        public int CustomerSatisfaction { get; set; }
+
+        // Add this property to avoid division by zero
+        public int TotalTables => Tables?.Count ?? 0;
+
     }
     public class Promotion
     {
