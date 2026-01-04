@@ -1,14 +1,14 @@
 ﻿<script>
     // ==================== VIEW NAVIGATION ====================
-    function showView(viewName) {
+    function showView(viewName, clickedButton) {
         console.log('Switching to view:', viewName);
         const views = document.querySelectorAll('.view');
         views.forEach(view => view.classList.add('hidden'));
-        
+
         const activeView = document.getElementById(viewName + '-view');
         if (activeView) {
             activeView.classList.remove('hidden');
-            
+
             // Trigger data load based on view
             if (viewName === 'orders') loadOrders();
             if (viewName === 'kitchen') loadKitchenOrders();
@@ -20,11 +20,11 @@
             btn.classList.remove('bg-blue-600', 'text-white');
             btn.classList.add('bg-gray-200', 'text-gray-700');
         });
-        
-        // Highlight active button
-        if (event && event.target && event.target.classList.contains('nav-btn')) {
-            event.target.classList.remove('bg-gray-200', 'text-gray-700');
-            event.target.classList.add('bg-blue-600', 'text-white');
+
+        // Highlight active button if provided
+        if (clickedButton) {
+            clickedButton.classList.remove('bg-gray-200', 'text-gray-700');
+            clickedButton.classList.add('bg-blue-600', 'text-white');
         }
     }
 
@@ -36,7 +36,7 @@
             console.log('Fetching orders...');
             const response = await fetch('/POS/GetAllOrders');
             const result = await response.json();
-            
+
             if (result.success) {
                 allOrders = result.orders;
                 renderOrders(allOrders);
@@ -52,7 +52,7 @@
         if (!container) return; // Guard clause if view not loaded
 
         container.innerHTML = '';
-        
+
         if (orders.length === 0) {
             document.getElementById('no-orders-message')?.classList.remove('hidden');
             return;
@@ -62,7 +62,7 @@
         orders.forEach(order => {
             const card = document.createElement('div');
             card.className = 'bg-white rounded-lg shadow-lg p-4 border border-gray-200';
-            
+
             // Status styling
             let statusClass = 'bg-gray-100 text-gray-800';
             if (order.status === 'pending') statusClass = 'bg-yellow-100 text-yellow-800';
@@ -90,11 +90,11 @@
     }
 
     function getActionButtons(order) {
-        if (order.status === 'pending') 
+        if (order.status === 'pending')
             return `<button onclick="updateStatus(${order.id}, 'preparing')" class="bg-blue-600 text-white px-3 py-1 rounded text-sm">Start</button>`;
-        if (order.status === 'preparing') 
+        if (order.status === 'preparing')
             return `<button onclick="updateStatus(${order.id}, 'ready')" class="bg-green-600 text-white px-3 py-1 rounded text-sm">Ready</button>`;
-        if (order.status === 'ready') 
+        if (order.status === 'ready')
             return `<button onclick="updateStatus(${order.id}, 'completed')" class="bg-purple-600 text-white px-3 py-1 rounded text-sm">Complete</button>`;
         return '';
     }
@@ -123,7 +123,7 @@
         if (type === 'all') renderOrders(allOrders);
         else renderOrders(allOrders.filter(o => o.orderType === type));
     }
-    
+
     function refreshOrders() { loadOrders(); }
 
     // ==================== KITCHEN LOGIC ====================
@@ -132,7 +132,7 @@
             const response = await fetch('/POS/GetKitchenOrders');
             const orders = await response.json();
             const container = document.getElementById('kitchen-orders-container');
-            
+
             if (!container) return;
             container.innerHTML = '';
 
@@ -166,7 +166,7 @@
         try {
             const response = await fetch('/POS/GetReports');
             const data = await response.json();
-            
+
             // Update Cards
             if(document.querySelector('.reports-today-sales')) {
                 document.querySelector('.reports-today-sales').textContent = '$' + data.todaySales.toFixed(2);
@@ -200,7 +200,7 @@
         document.body.appendChild(div);
         setTimeout(() => div.remove(), 3000);
     }
-    
+
     // Initial load check
     document.addEventListener('DOMContentLoaded', () => {
         if(!document.getElementById('orders-view').classList.contains('hidden')) loadOrders();
