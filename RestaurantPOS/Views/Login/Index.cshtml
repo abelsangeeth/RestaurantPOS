@@ -156,7 +156,14 @@
                 </div>
             </header>
 
-
+            <!-- Navigation -->
+            <nav class="bg-white shadow-sm border-b">
+                <div class="flex space-x-1 p-4 overflow-x-auto">
+                    <button onclick="showView('dashboard')"
+                            class="nav-btn px-4 py-2 rounded-lg bg-blue-600 text-white font-medium">
+                        Dashboard
+                    </button>
+            </nav>
 
             <!-- Main Content -->
             <main class="flex-1 p-6">
@@ -336,11 +343,26 @@
                                 <span class="text-xl mr-3">📅</span>
                                 <span>Reservations</span>
                             </button>
-                            <button onclick="showView('staff')"
-                                    class="flex items-center justify-center bg-gray-100 text-gray-700 p-4 rounded-lg hover:bg-gray-200">
-                                <span class="text-xl mr-3">👥</span>
-                                <span>Staff Management</span>
-                            </button>
+                            @if (Model.CurrentUser?.Role == "Manager")
+                            {
+                                <button onclick="showView('staff')"
+                                        class="flex items-center justify-center bg-gray-100 text-gray-700 p-4 rounded-lg hover:bg-gray-200">
+                                    <span class="text-xl mr-3">👥</span>
+                                    <span>Staff Management</span>
+                                </button>
+                            }
+                            else
+                            {
+                                <!-- Optional: Show a disabled button or leave empty -->
+                                <div class="opacity-50">
+                                    <button disabled
+                                            class="flex items-center justify-center bg-gray-100 text-gray-400 p-4 rounded-lg cursor-not-allowed w-full">
+                                        <span class="text-xl mr-3">👥</span>
+                                        <span>Staff Management</span>
+                                    </button>
+                                    <p class="text-xs text-gray-500 text-center mt-1">Manager only</p>
+                                </div>
+                            }
                         </div>
                     </div>
 
