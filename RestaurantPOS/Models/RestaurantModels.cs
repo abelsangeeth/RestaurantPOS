@@ -115,6 +115,9 @@ namespace RestaurantPOS.Models
         [Key]
         public int Id { get; set; }
 
+        [StringLength(50)]
+        public string TableName { get; set; }
+
         [Required]
         [StringLength(20)]
         public string Status { get; set; } = "available";

@@ -71,6 +71,7 @@
                 </div>
                 <div class="bg-white rounded-xl shadow-2xl p-8">
                     <form method="post" action="/Login/Login" class="space-y-6" id="loginForm">
+                        @Html.AntiForgeryToken()
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">👤 Username</label>
                             <input type="text" name="username" id="usernameInput"
@@ -255,9 +256,16 @@
 
                 <!-- ==================== TABLES VIEW ==================== -->
                 <div id="tables-view" class="view hidden">
-                    <div class="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-6 rounded-xl shadow-xl mb-6">
-                        <h2 class="text-3xl font-bold mb-2">🪑 Table Management</h2>
-                        <p class="text-blue-100">Click on a table to manage it</p>
+                    <div class="flex justify-between items-center bg-gradient-to-r from-blue-600 to-blue-700 text-white p-6 rounded-xl shadow-xl mb-6">
+                        <div>
+                            <h2 class="text-3xl font-bold mb-2">🪑 Table Management</h2>
+                            <p class="text-blue-100">Click on a table to manage it</p>
+                        </div>
+                        <form method="post" action="/Login/AddTable">
+                            <button type="submit" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-lg shadow-lg transform hover:scale-105 transition-all">
+                                ➕ Add New Table
+                            </button>
+                        </form>
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
                         <div class="bg-white p-4 rounded-lg shadow text-center">
@@ -284,7 +292,7 @@
                                  class="table-item p-4 rounded-lg cursor-pointer transition-all hover:shadow-lg text-white
                                         @(table.Status == "occupied" ? "table-occupied" : table.Status == "reserved" ? "table-reserved" : "table-available")">
                                 <div class="text-center">
-                                    <div class="text-2xl font-bold">T@(table.Id)</div>
+                                    <div class="text-2xl font-bold">@table.TableName</div>
                                     <div class="text-sm capitalize">@table.Status</div>
                                     @if (table.Capacity.HasValue)
                                     {

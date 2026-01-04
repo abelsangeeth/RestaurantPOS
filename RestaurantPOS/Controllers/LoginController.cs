@@ -156,6 +156,24 @@ namespace RestaurantPOS.Controllers
             return View(viewModel);
         }
 
+        [HttpPost]
+        public async Task<IActionResult> AddTable()
+        {
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                await connection.OpenAsync();
+                // Get the last table ID to determine the new table name
+                var lastIdCommand = new SqlCommand("SELECT ISNULL(MAX(Id), 0) FROM Tables", connection);
+                var lastId = (int)await lastIdCommand.ExecuteScalarAsync();
+                var newTableName = "T" + (lastId + 1);
+
+                var insertCommand = new SqlCommand("INSERT INTO Tables (TableName, Status, Capacity, Location,CreatedAt) VALUES (@TableName, 'Available', 4, 'Main Dining', GETDATE())", connection);
+                insertCommand.Parameters.AddWithValue("@TableName", newTableName);
+                await insertCommand.ExecuteNonQueryAsync();
+            }
+            return RedirectToAction("Index");
+        }
+
         private async Task<User> GetUserById(int id)
         {
             using var connection = new SqlConnection(_connectionString);
@@ -359,6 +377,7 @@ namespace RestaurantPOS.Controllers
                 var table = new Table
                 {
                     Id = reader.GetInt32("Id"),
+                    TableName = reader.IsDBNull("TableName") ? "T" + reader.GetInt32("Id") : reader.GetString("TableName"),
                     Status = reader.GetString("Status"),
                     Capacity = reader.IsDBNull("Capacity") ? null : reader.GetInt32("Capacity"),
                     Location = reader.IsDBNull("Location") ? null : reader.GetString("Location"),
