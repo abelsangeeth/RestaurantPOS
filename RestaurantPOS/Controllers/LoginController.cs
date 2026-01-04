@@ -405,5 +405,295 @@ namespace RestaurantPOS.Controllers
 
             return tables;
         }
+
+        // ==================== STAFF MANAGEMENT METHODS ====================
+
+        [HttpGet]
+        public async Task<IActionResult> GetAllStaff()
+        {
+            try
+            {
+                using var connection = new SqlConnection(_connectionString);
+                await connection.OpenAsync();
+
+                var staffList = new List<object>();
+                var sql = @"
+                    SELECT Id, Username, Name, Role, Phone, CreatedAt, IsActive 
+                    FROM Users 
+                    WHERE Role IN ('Manager', 'Staff')
+                    ORDER BY Role, Name";
+
+                using (var cmd = new SqlCommand(sql, connection))
+                using (var reader = await cmd.ExecuteReaderAsync())
+                {
+                    while (await reader.ReadAsync())
+                    {
+                        staffList.Add(new
+                        {
+                            id = reader.GetInt32("Id"),
+                            username = reader.GetString("Username"),
+                            name = reader.GetString("Name"),
+                            role = reader.GetString("Role"),
+                            phone = reader.IsDBNull("Phone") ? "" : reader.GetString("Phone"),
+                            createdAt = reader.GetDateTime("CreatedAt").ToString("yyyy-MM-dd"),
+                            isActive = reader.GetBoolean("IsActive")
+                        });
+                    }
+                }
+
+                return Json(new { success = true, staff = staffList });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = $"Error loading staff: {ex.Message}" });
+            }
+        }
+
+        [HttpPost]
+        [IgnoreAntiforgeryToken]
+        public async Task<IActionResult> AddStaff([FromBody] AddStaffRequest request)
+        {
+            try
+            {
+                // Validate input
+                if (string.IsNullOrEmpty(request.Username) || string.IsNullOrEmpty(request.Password) ||
+                    string.IsNullOrEmpty(request.Name) || string.IsNullOrEmpty(request.Role))
+                {
+                    return Json(new { success = false, message = "All required fields must be filled" });
+                }
+
+                // Check if username already exists
+                using var connection = new SqlConnection(_connectionString);
+                await connection.OpenAsync();
+
+                var checkSql = "SELECT COUNT(*) FROM Users WHERE Username = @Username";
+                using (var checkCmd = new SqlCommand(checkSql, connection))
+                {
+                    checkCmd.Parameters.AddWithValue("@Username", request.Username);
+                    var exists = Convert.ToInt32(await checkCmd.ExecuteScalarAsync());
+                    if (exists > 0)
+                    {
+                        return Json(new { success = false, message = "Username already exists" });
+                    }
+                }
+
+                // Insert new staff
+                var insertSql = @"
+                    INSERT INTO Users (Username, Password, Name, Role, Phone, IsActive, CreatedAt)
+                    VALUES (@Username, @Password, @Name, @Role, @Phone, @IsActive, @CreatedAt);
+                    SELECT CAST(SCOPE_IDENTITY() as int)";
+
+                using var insertCmd = new SqlCommand(insertSql, connection);
+                insertCmd.Parameters.AddWithValue("@Username", request.Username);
+                insertCmd.Parameters.AddWithValue("@Password", request.Password);
+                insertCmd.Parameters.AddWithValue("@Name", request.Name);
+                insertCmd.Parameters.AddWithValue("@Role", request.Role);
+                insertCmd.Parameters.AddWithValue("@Phone", string.IsNullOrWhiteSpace(request.Phone) ? (object)DBNull.Value : request.Phone);
+                insertCmd.Parameters.AddWithValue("@IsActive", true);
+                insertCmd.Parameters.AddWithValue("@CreatedAt", DateTime.Now);
+
+                var newId = await insertCmd.ExecuteScalarAsync();
+
+                return Json(new
+                {
+                    success = true,
+                    message = $"{request.Role} added successfully",
+                    staffId = newId
+                });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = $"Error adding staff: {ex.Message}" });
+            }
+        }
+
+        [HttpPost]
+        [IgnoreAntiforgeryToken]
+        public async Task<IActionResult> UpdateStaff([FromBody] UpdateStaffRequest request)
+        {
+            try
+            {
+                using var connection = new SqlConnection(_connectionString);
+                await connection.OpenAsync();
+
+                var updateSql = @"
+                    UPDATE Users 
+                    SET Name = @Name,
+                        Role = @Role,
+                        Phone = @Phone,
+                        IsActive = @IsActive,
+                        UpdatedAt = @UpdatedAt
+                    WHERE Id = @Id";
+
+                using var cmd = new SqlCommand(updateSql, connection);
+                cmd.Parameters.AddWithValue("@Id", request.Id);
+                cmd.Parameters.AddWithValue("@Name", request.Name);
+                cmd.Parameters.AddWithValue("@Role", request.Role);
+                cmd.Parameters.AddWithValue("@Phone", string.IsNullOrWhiteSpace(request.Phone) ? (object)DBNull.Value : request.Phone);
+                cmd.Parameters.AddWithValue("@IsActive", request.IsActive);
+                cmd.Parameters.AddWithValue("@UpdatedAt", DateTime.Now);
+
+                var rowsAffected = await cmd.ExecuteNonQueryAsync();
+
+                if (rowsAffected > 0)
+                {
+                    return Json(new { success = true, message = "Staff updated successfully" });
+                }
+                else
+                {
+                    return Json(new { success = false, message = "Staff not found or cannot be updated" });
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = $"Error updating staff: {ex.Message}" });
+            }
+        }
+
+        [HttpPost]
+        [IgnoreAntiforgeryToken]
+        public async Task<IActionResult> DeleteStaff([FromBody] DeleteStaffRequest request)
+        {
+            try
+            {
+                // Prevent deleting self
+                var currentUserId = _httpContextAccessor.HttpContext.Session.GetInt32("UserId");
+                if (currentUserId.HasValue && currentUserId.Value == request.Id)
+                {
+                    return Json(new { success = false, message = "Cannot delete your own account" });
+                }
+
+                using var connection = new SqlConnection(_connectionString);
+                await connection.OpenAsync();
+
+                // Instead of deleting, deactivate the account
+                var deactivateSql = "UPDATE Users SET IsActive = 0 WHERE Id = @Id";
+                using var deactivateCmd = new SqlCommand(deactivateSql, connection);
+                deactivateCmd.Parameters.AddWithValue("@Id", request.Id);
+
+                var rowsAffected = await deactivateCmd.ExecuteNonQueryAsync();
+
+                if (rowsAffected > 0)
+                {
+                    return Json(new { success = true, message = "Staff deactivated successfully" });
+                }
+                else
+                {
+                    return Json(new { success = false, message = "Staff not found" });
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = $"Error deleting staff: {ex.Message}" });
+            }
+        }
+
+        [HttpPost]
+        [IgnoreAntiforgeryToken]
+        public async Task<IActionResult> ResetStaffPassword([FromBody] ResetPasswordRequest request)
+        {
+            try
+            {
+                using var connection = new SqlConnection(_connectionString);
+                await connection.OpenAsync();
+
+                var updateSql = "UPDATE Users SET Password = @Password, UpdatedAt = @UpdatedAt WHERE Id = @Id";
+                using var cmd = new SqlCommand(updateSql, connection);
+                cmd.Parameters.AddWithValue("@Id", request.Id);
+                cmd.Parameters.AddWithValue("@Password", request.NewPassword);
+                cmd.Parameters.AddWithValue("@UpdatedAt", DateTime.Now);
+
+                var rowsAffected = await cmd.ExecuteNonQueryAsync();
+
+                if (rowsAffected > 0)
+                {
+                    return Json(new { success = true, message = "Password reset successfully" });
+                }
+                else
+                {
+                    return Json(new { success = false, message = "Staff not found" });
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = $"Error resetting password: {ex.Message}" });
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetStaffStats()
+        {
+            try
+            {
+                using var connection = new SqlConnection(_connectionString);
+                await connection.OpenAsync();
+
+                var stats = new
+                {
+                    totalStaff = 0,
+                    managers = 0,
+                    staffMembers = 0,
+                    active = 0
+                };
+
+                var sql = @"
+                    SELECT 
+                        COUNT(*) as Total,
+                        SUM(CASE WHEN Role = 'Manager' THEN 1 ELSE 0 END) as Managers,
+                        SUM(CASE WHEN Role = 'Staff' THEN 1 ELSE 0 END) as StaffMembers,
+                        SUM(CASE WHEN IsActive = 1 THEN 1 ELSE 0 END) as Active
+                    FROM Users 
+                    WHERE Role IN ('Manager', 'Staff')";
+
+                using var cmd = new SqlCommand(sql, connection);
+                using var reader = await cmd.ExecuteReaderAsync();
+                if (await reader.ReadAsync())
+                {
+                    stats = new
+                    {
+                        totalStaff = reader.GetInt32("Total"),
+                        managers = reader.GetInt32("Managers"),
+                        staffMembers = reader.GetInt32("StaffMembers"),
+                        active = reader.GetInt32("Active")
+                    };
+                }
+
+                return Json(new { success = true, stats = stats });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = $"Error loading staff stats: {ex.Message}" });
+            }
+        }
+
+        // Request models
+        public class AddStaffRequest
+        {
+            public string Username { get; set; } = "";
+            public string Password { get; set; } = "";
+            public string Name { get; set; } = "";
+            public string Role { get; set; } = "";
+            public string? Phone { get; set; }
+        }
+
+        public class UpdateStaffRequest
+        {
+            public int Id { get; set; }
+            public string Name { get; set; } = "";
+            public string Role { get; set; } = "";
+            public string? Phone { get; set; }
+            public bool IsActive { get; set; }
+        }
+
+        public class DeleteStaffRequest
+        {
+            public int Id { get; set; }
+        }
+
+        public class ResetPasswordRequest
+        {
+            public int Id { get; set; }
+            public string NewPassword { get; set; } = "";
+        }
     }
 }

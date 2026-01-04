@@ -33,6 +33,7 @@ namespace RestaurantPOS.Models
         public string Role { get; set; }
 
         public DateTime CreatedAt { get; set; } = DateTime.Now;
+        public DateTime? UpdatedAt { get; set; }
         public bool IsActive { get; set; } = true;
     }
 
