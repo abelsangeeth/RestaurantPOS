@@ -61,6 +61,8 @@ namespace RestaurantPOS.Models
         public bool IsAvailable { get; set; } = true;
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         public DateTime? UpdatedAt { get; set; }
+
+        public string itempicture { get; set; }
     }
 
     public class Order

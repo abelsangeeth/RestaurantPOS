@@ -204,7 +204,8 @@ namespace RestaurantPOS.Controllers
                     Name = reader.GetString(reader.GetOrdinal("Name")),
                     Price = reader.GetDecimal(reader.GetOrdinal("Price")),
                     Category = reader.GetString(reader.GetOrdinal("Category")),
-                    Description = reader.IsDBNull(reader.GetOrdinal("Description")) ? null : reader.GetString(reader.GetOrdinal("Description"))
+                    Description = reader.IsDBNull(reader.GetOrdinal("Description")) ? null : reader.GetString(reader.GetOrdinal("Description")),
+                    itempicture = reader.IsDBNull(reader.GetOrdinal("itempicture")) ? string.Empty : reader.GetString(reader.GetOrdinal("itempicture"))
                 });
             }
             return menuItems;
