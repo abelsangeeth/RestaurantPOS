@@ -1,33 +1,4 @@
 ﻿<script>
-    // ==================== VIEW NAVIGATION ====================
-    function showView(viewName, clickedButton) {
-        console.log('Switching to view:', viewName);
-        const views = document.querySelectorAll('.view');
-        views.forEach(view => view.classList.add('hidden'));
-
-        const activeView = document.getElementById(viewName + '-view');
-        if (activeView) {
-            activeView.classList.remove('hidden');
-
-            // Trigger data load based on view
-            if (viewName === 'orders') loadOrders();
-            if (viewName === 'kitchen') loadKitchenOrders();
-            if (viewName === 'reports') loadReports();
-        }
-
-        // Update navigation buttons
-        document.querySelectorAll('.nav-btn').forEach(btn => {
-            btn.classList.remove('bg-blue-600', 'text-white');
-            btn.classList.add('bg-gray-200', 'text-gray-700');
-        });
-
-        // Highlight active button if provided
-        if (clickedButton) {
-            clickedButton.classList.remove('bg-gray-200', 'text-gray-700');
-            clickedButton.classList.add('bg-blue-600', 'text-white');
-        }
-    }
-
     // ==================== ORDERS LOGIC ====================
     let allOrders = [];
 
@@ -126,71 +97,8 @@
 
     function refreshOrders() { loadOrders(); }
 
-    // ==================== KITCHEN LOGIC ====================
-    async function loadKitchenOrders() {
-        try {
-            const response = await fetch('/POS/GetKitchenOrders');
-            const orders = await response.json();
-            const container = document.getElementById('kitchen-orders-container');
 
-            if (!container) return;
-            container.innerHTML = '';
 
-            if (orders.length === 0) {
-                container.innerHTML = '<div class="col-span-full text-center py-10 text-gray-500">No active orders</div>';
-                return;
-            }
-
-            orders.forEach(order => {
-                const card = document.createElement('div');
-                card.className = 'bg-white border-l-4 border-blue-500 shadow-md rounded p-4';
-                card.innerHTML = `
-                    <div class="flex justify-between font-bold text-xl mb-2">
-                        <span>${order.ticket}</span>
-                        <span class="text-blue-600">${order.time}</span>
-                    </div>
-                    <div class="mb-4">
-                        <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded text-sm uppercase">${order.status}</span>
-                    </div>
-                    <button onclick="updateStatus(${order.id}, 'ready')" class="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700">
-                        ✅ Mark Ready
-                    </button>
-                `;
-                container.appendChild(card);
-            });
-        } catch (e) { console.error(e); }
-    }
-
-    // ==================== REPORTS LOGIC ====================
-    async function loadReports() {
-        try {
-            const response = await fetch('/POS/GetReports');
-            const data = await response.json();
-
-            // Update Cards
-            if(document.querySelector('.reports-today-sales')) {
-                document.querySelector('.reports-today-sales').textContent = '$' + data.todaySales.toFixed(2);
-                document.querySelector('.reports-completed').textContent = data.completed;
-                document.querySelector('.reports-pending').textContent = data.pending;
-                document.querySelector('.reports-total').textContent = data.total;
-            }
-
-            // Update Table
-            const tbody = document.getElementById('reports-table-body');
-            if (tbody && data.recent) {
-                tbody.innerHTML = data.recent.map(o => `
-                    <tr class="border-b hover:bg-gray-50">
-                        <td class="p-3">${o.id}</td>
-                        <td class="p-3">${o.customer}</td>
-                        <td class="p-3">${o.type}</td>
-                        <td class="p-3">$${o.total.toFixed(2)}</td>
-                        <td class="p-3"><span class="bg-gray-200 px-2 py-1 rounded text-sm">${o.status}</span></td>
-                        <td class="p-3">${o.time}</td>
-                    </tr>
-                `).join('');
-            }
-        } catch (e) { console.error(e); }
-    }
 
     // ==================== COMMON ====================
     function showNotification(msg, type) {
