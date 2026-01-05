@@ -742,7 +742,215 @@
                 </div>
             </div>
         </div>
+                <!-- ==================== STAFF VIEW ==================== -->
+                <div id="staff-view" class="view hidden">
+                    <div class="bg-gradient-to-r from-blue-600 to-purple-700 text-white p-8 rounded-xl shadow-xl mb-8">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <h2 class="text-4xl font-bold mb-2">👥 Staff Management</h2>
+                                <p class="text-xl opacity-90">Manage restaurant staff members</p>
+                            </div>
+                            <button onclick="showView('dashboard')"
+                                    class="bg-white/20 hover:bg-white/30 text-white px-6 py-3 rounded-lg transition-all">
+                                ← Back to Dashboard
+                            </button>
+                        </div>
+                    </div>
 
+                    <!-- Stats Cards -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                        <div class="bg-gradient-to-br from-blue-500 to-blue-600 text-white p-6 rounded-xl shadow-xl">
+                            <p class="text-blue-100 text-sm">Total Staff</p>
+                            <p class="text-4xl font-bold" id="total-staff">0</p>
+                        </div>
+                        <div class="bg-gradient-to-br from-green-500 to-green-600 text-white p-6 rounded-xl shadow-xl">
+                            <p class="text-green-100 text-sm">Managers</p>
+                            <p class="text-4xl font-bold" id="manager-count">0</p>
+                        </div>
+                        <div class="bg-gradient-to-br from-orange-500 to-orange-600 text-white p-6 rounded-xl shadow-xl">
+                            <p class="text-orange-100 text-sm">Staff Members</p>
+                            <p class="text-4xl font-bold" id="staff-count">0</p>
+                        </div>
+                        <div class="bg-gradient-to-br from-purple-500 to-purple-600 text-white p-6 rounded-xl shadow-xl">
+                            <p class="text-purple-100 text-sm">Active</p>
+                            <p class="text-4xl font-bold" id="active-count">0</p>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="bg-white p-6 rounded-xl shadow-xl mb-8">
+                        <div class="flex flex-col sm:flex-row justify-between items-center gap-4">
+                            <h3 class="text-2xl font-bold text-gray-800">Staff Members</h3>
+                            <div class="flex gap-3">
+                                <button onclick="loadStaff()"
+                                        class="flex items-center bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg">
+                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                                    </svg>
+                                    Refresh
+                                </button>
+                                <button onclick="openAddStaffModal()"
+                                        class="flex items-center bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg font-semibold">
+                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                                    </svg>
+                                    Add New Staff
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Staff Table -->
+                    <div class="bg-white rounded-xl shadow-xl overflow-hidden">
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Username</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Phone</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="staff-table-body" class="bg-white divide-y divide-gray-200">
+                                    <tr id="loading-row">
+                                        <td colspan="8" class="px-6 py-12 text-center">
+                                            <div class="flex justify-center items-center">
+                                                <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+                                                <span class="ml-3 text-gray-600">Loading staff data...</span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Add/Edit Staff Modal -->
+                <div id="staff-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+                    <div class="bg-white rounded-xl shadow-2xl w-full max-w-md">
+                        <div class="p-6">
+                            <div class="flex justify-between items-center mb-6">
+                                <h3 class="text-2xl font-bold text-gray-800" id="modal-title">Add New Staff</h3>
+                                <button onclick="closeStaffModal()" class="text-gray-400 hover:text-gray-600 text-2xl">&times;</button>
+                            </div>
+
+                            <form id="staff-form">
+                                <input type="hidden" id="staff-id" value="">
+
+                                <div class="space-y-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Username *</label>
+                                        <input type="text" id="username" required
+                                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                               placeholder="e.g., john.doe">
+                                    </div>
+
+                                    <div id="password-field">
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Password *</label>
+                                        <input type="password" id="password" required
+                                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                               placeholder="Minimum 6 characters">
+                                    </div>
+
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Full Name *</label>
+                                        <input type="text" id="full-name" required
+                                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                               placeholder="e.g., John Doe">
+                                    </div>
+
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Role *</label>
+                                        <select id="role" required
+                                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                            <option value="">Select Role</option>
+                                            <option value="Manager">Manager</option>
+                                            <option value="Staff">Staff</option>
+                                        </select>
+                                    </div>
+
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Phone</label>
+                                        <input type="tel" id="phone"
+                                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                               placeholder="e.g., 1234567890">
+                                    </div>
+
+                                    <div id="status-field" class="hidden">
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Status</label>
+                                        <div class="flex items-center space-x-4">
+                                            <label class="inline-flex items-center">
+                                                <input type="radio" id="status-active" name="status" value="true" checked
+                                                       class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300">
+                                                <span class="ml-2 text-gray-700">Active</span>
+                                            </label>
+                                            <label class="inline-flex items-center">
+                                                <input type="radio" id="status-inactive" name="status" value="false"
+                                                       class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300">
+                                                <span class="ml-2 text-gray-700">Inactive</span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="mt-8 flex justify-end space-x-3">
+                                    <button type="button" onclick="closeStaffModal()"
+                                            class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50">
+                                        Cancel
+                                    </button>
+                                    <button type="submit"
+                                            class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-semibold">
+                                        Save Staff
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Reset Password Modal -->
+                <div id="reset-password-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 p-4">
+                    <div class="bg-white rounded-xl shadow-2xl w-full max-w-md">
+                        <div class="p-6">
+                            <div class="flex justify-between items-center mb-6">
+                                <h3 class="text-2xl font-bold text-gray-800">Reset Password</h3>
+                                <button onclick="closeResetPasswordModal()" class="text-gray-400 hover:text-gray-600 text-2xl">&times;</button>
+                            </div>
+
+                            <form id="reset-password-form">
+                                <input type="hidden" id="reset-staff-id">
+
+                                <div class="mb-4">
+                                    <p class="text-gray-600 mb-2" id="reset-staff-name">Staff member name</p>
+                                </div>
+
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">New Password *</label>
+                                    <input type="password" id="new-password" required
+                                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                           placeholder="Enter new password">
+                                </div>
+
+                                <div class="mt-8 flex justify-end space-x-3">
+                                    <button type="button" onclick="closeResetPasswordModal()"
+                                            class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50">
+                                        Cancel
+                                    </button>
+                                    <button type="submit"
+                                            class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 font-semibold">
+                                        Reset Password
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
         <!-- ==================== TABLE SETTINGS MODAL ==================== -->
         <div id="tableSettingsModal"
              class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
@@ -889,215 +1097,7 @@
                 </div>
             </div>
         </div>
-        <!-- ==================== STAFF VIEW ==================== -->
-        <div id="staff-view" class="view hidden">
-            <div class="bg-gradient-to-r from-blue-600 to-purple-700 text-white p-8 rounded-xl shadow-xl mb-8">
-                <div class="flex justify-between items-center">
-                    <div>
-                        <h2 class="text-4xl font-bold mb-2">👥 Staff Management</h2>
-                        <p class="text-xl opacity-90">Manage restaurant staff members</p>
-                    </div>
-                    <button onclick="showView('dashboard')"
-                            class="bg-white/20 hover:bg-white/30 text-white px-6 py-3 rounded-lg transition-all">
-                        ← Back to Dashboard
-                    </button>
-                </div>
-            </div>
-
-            <!-- Stats Cards -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                <div class="bg-gradient-to-br from-blue-500 to-blue-600 text-white p-6 rounded-xl shadow-xl">
-                    <p class="text-blue-100 text-sm">Total Staff</p>
-                    <p class="text-4xl font-bold" id="total-staff">0</p>
-                </div>
-                <div class="bg-gradient-to-br from-green-500 to-green-600 text-white p-6 rounded-xl shadow-xl">
-                    <p class="text-green-100 text-sm">Managers</p>
-                    <p class="text-4xl font-bold" id="manager-count">0</p>
-                </div>
-                <div class="bg-gradient-to-br from-orange-500 to-orange-600 text-white p-6 rounded-xl shadow-xl">
-                    <p class="text-orange-100 text-sm">Staff Members</p>
-                    <p class="text-4xl font-bold" id="staff-count">0</p>
-                </div>
-                <div class="bg-gradient-to-br from-purple-500 to-purple-600 text-white p-6 rounded-xl shadow-xl">
-                    <p class="text-purple-100 text-sm">Active</p>
-                    <p class="text-4xl font-bold" id="active-count">0</p>
-                </div>
-            </div>
-
-            <!-- Action Buttons -->
-            <div class="bg-white p-6 rounded-xl shadow-xl mb-8">
-                <div class="flex flex-col sm:flex-row justify-between items-center gap-4">
-                    <h3 class="text-2xl font-bold text-gray-800">Staff Members</h3>
-                    <div class="flex gap-3">
-                        <button onclick="loadStaff()"
-                                class="flex items-center bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg">
-                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
-                            </svg>
-                            Refresh
-                        </button>
-                        <button onclick="openAddStaffModal()"
-                                class="flex items-center bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg font-semibold">
-                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-                            </svg>
-                            Add New Staff
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Staff Table -->
-            <div class="bg-white rounded-xl shadow-xl overflow-hidden">
-                <div class="overflow-x-auto">
-                    <table class="min-w-full divide-y divide-gray-200">
-                        <thead class="bg-gray-50">
-                            <tr>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Username</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Phone</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="staff-table-body" class="bg-white divide-y divide-gray-200">
-                            <tr id="loading-row">
-                                <td colspan="8" class="px-6 py-12 text-center">
-                                    <div class="flex justify-center items-center">
-                                        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
-                                        <span class="ml-3 text-gray-600">Loading staff data...</span>
-                                    </div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-
-        <!-- Add/Edit Staff Modal -->
-        <div id="staff-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 p-4">
-            <div class="bg-white rounded-xl shadow-2xl w-full max-w-md">
-                <div class="p-6">
-                    <div class="flex justify-between items-center mb-6">
-                        <h3 class="text-2xl font-bold text-gray-800" id="modal-title">Add New Staff</h3>
-                        <button onclick="closeStaffModal()" class="text-gray-400 hover:text-gray-600 text-2xl">&times;</button>
-                    </div>
-
-                    <form id="staff-form">
-                        <input type="hidden" id="staff-id" value="">
-
-                        <div class="space-y-4">
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Username *</label>
-                                <input type="text" id="username" required
-                                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                       placeholder="e.g., john.doe">
-                            </div>
-
-                            <div id="password-field">
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Password *</label>
-                                <input type="password" id="password" required
-                                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                       placeholder="Minimum 6 characters">
-                            </div>
-
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Full Name *</label>
-                                <input type="text" id="full-name" required
-                                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                       placeholder="e.g., John Doe">
-                            </div>
-
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Role *</label>
-                                <select id="role" required
-                                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                                    <option value="">Select Role</option>
-                                    <option value="Manager">Manager</option>
-                                    <option value="Staff">Staff</option>
-                                </select>
-                            </div>
-
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Phone</label>
-                                <input type="tel" id="phone"
-                                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                       placeholder="e.g., 1234567890">
-                            </div>
-
-                            <div id="status-field" class="hidden">
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Status</label>
-                                <div class="flex items-center space-x-4">
-                                    <label class="inline-flex items-center">
-                                        <input type="radio" id="status-active" name="status" value="true" checked
-                                               class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300">
-                                        <span class="ml-2 text-gray-700">Active</span>
-                                    </label>
-                                    <label class="inline-flex items-center">
-                                        <input type="radio" id="status-inactive" name="status" value="false"
-                                               class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300">
-                                        <span class="ml-2 text-gray-700">Inactive</span>
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="mt-8 flex justify-end space-x-3">
-                            <button type="button" onclick="closeStaffModal()"
-                                    class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50">
-                                Cancel
-                            </button>
-                            <button type="submit"
-                                    class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-semibold">
-                                Save Staff
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-
-        <!-- Reset Password Modal -->
-        <div id="reset-password-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 p-4">
-            <div class="bg-white rounded-xl shadow-2xl w-full max-w-md">
-                <div class="p-6">
-                    <div class="flex justify-between items-center mb-6">
-                        <h3 class="text-2xl font-bold text-gray-800">Reset Password</h3>
-                        <button onclick="closeResetPasswordModal()" class="text-gray-400 hover:text-gray-600 text-2xl">&times;</button>
-                    </div>
-
-                    <form id="reset-password-form">
-                        <input type="hidden" id="reset-staff-id">
-
-                        <div class="mb-4">
-                            <p class="text-gray-600 mb-2" id="reset-staff-name">Staff member name</p>
-                        </div>
-
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">New Password *</label>
-                            <input type="password" id="new-password" required
-                                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                   placeholder="Enter new password">
-                        </div>
-
-                        <div class="mt-8 flex justify-end space-x-3">
-                            <button type="button" onclick="closeResetPasswordModal()"
-                                    class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50">
-                                Cancel
-                            </button>
-                            <button type="submit"
-                                    class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 font-semibold">
-                                Reset Password
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
+        
 
     }
     <script>
