@@ -81,6 +81,7 @@ namespace RestaurantPOS.Models
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         public DateTime? UpdatedAt { get; set; }
         public DateTime? CompletedAt { get; set; }
+        public string Notes { get; set; }
 
         public void CalculateAndSetTotal()
         {
@@ -102,6 +103,7 @@ namespace RestaurantPOS.Models
         public decimal Price { get; set; }
         public int Quantity { get; set; }
         public decimal Total { get; set; }
+        public DateTime CreatedAt { get; set; }
 
         public void CalculateAndSetTotal()
         {

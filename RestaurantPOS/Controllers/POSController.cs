@@ -2,8 +2,10 @@
 using Microsoft.Data.SqlClient;
 using RestaurantPOS.Models;
 using System.Data;
-using System.Text.Json;
 using System.Text;
+using System.Text.Json;
+using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Http;
 
 namespace RestaurantPOS.Controllers
 {
@@ -12,13 +14,19 @@ namespace RestaurantPOS.Controllers
         private readonly IConfiguration _configuration;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly string _connectionString;
+        private readonly ILogger<POSController> _logger;
 
-        public POSController(IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
+        public POSController(
+            IConfiguration configuration,
+            IHttpContextAccessor httpContextAccessor,
+            ILogger<POSController> logger
+        )
         {
             _configuration = configuration;
             _httpContextAccessor = httpContextAccessor;
             _connectionString = _configuration.GetConnectionString("DefaultConnection")
                 ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+            _logger = logger;
         }
 
         // Helper method to get current order from session
@@ -498,7 +506,7 @@ namespace RestaurantPOS.Controllers
                     message = $"Order #{orderNumber} processed successfully! Total: ${orderTotal:F2}",
                     orderNumber = orderNumber,
                     tableId = tableId,
-                    redirectUrl = "/Login/Index"  // Changed to correct URL
+                    redirectUrl = "/Login/Index"
                 });
             }
             catch (Exception ex)
@@ -619,7 +627,7 @@ namespace RestaurantPOS.Controllers
                             total = reader.GetDecimal("Total"),
                             date = created.ToString("yyyy-MM-dd"),
                             time = created.ToString("HH:mm"),
-                            items = "" // populate if you need item summaries
+                            items = ""
                         });
                     }
                 }
@@ -632,7 +640,6 @@ namespace RestaurantPOS.Controllers
             }
         }
 
-        // Add this method alongside the existing GetOrders method
         [HttpGet]
         public async Task<IActionResult> GetAllOrders()
         {
@@ -677,7 +684,6 @@ namespace RestaurantPOS.Controllers
             }
         }
 
-        // keep signature, but include fields expected by JS
         [HttpGet]
         public async Task<IActionResult> GetKitchenOrders()
         {
@@ -688,10 +694,10 @@ namespace RestaurantPOS.Controllers
 
                 var orders = new List<object>();
                 var sql = @"
-            SELECT o.Id, o.OrderNumber, o.OrderType, o.Status, o.CreatedAt
-            FROM Orders o
-            WHERE o.Status IN ('pending','preparing')
-            ORDER BY o.CreatedAt ASC";
+                    SELECT o.Id, o.OrderNumber, o.OrderType, o.Status, o.CreatedAt
+                    FROM Orders o
+                    WHERE o.Status IN ('pending','preparing')
+                    ORDER BY o.CreatedAt ASC";
 
                 using (var cmd = new SqlCommand(sql, connection))
                 using (var reader = await cmd.ExecuteReaderAsync())
@@ -706,7 +712,7 @@ namespace RestaurantPOS.Controllers
                             id = orderId,
                             ticket = reader.GetString("OrderNumber"),
                             status = reader.GetString("Status"),
-                            items = orderItems, // Changed from itemsHtml to items
+                            items = orderItems,
                             time = reader.GetDateTime("CreatedAt").ToString("HH:mm")
                         });
                     }
@@ -787,53 +793,288 @@ namespace RestaurantPOS.Controllers
             }
         }
 
-        // Test endpoint to check if API is working
+        [HttpGet]
+        public async Task<IActionResult> GetOrderDetails(int id)
+        {
+            try
+            {
+                using var connection = new SqlConnection(_connectionString);
+                await connection.OpenAsync();
+
+                var query = @"
+                    SELECT o.Id, o.OrderNumber, o.CustomerName, o.OrderType, o.Notes, o.Total, o.Status,
+                           oi.Id as OrderItemId, oi.MenuItemId, oi.Name, oi.Price, oi.Quantity
+                    FROM Orders o
+                    LEFT JOIN OrderItems oi ON o.Id = oi.OrderId
+                    WHERE o.Id = @Id";
+
+                using var command = new SqlCommand(query, connection);
+                command.Parameters.AddWithValue("@Id", id);
+
+                using var reader = await command.ExecuteReaderAsync();
+
+                if (!reader.HasRows)
+                {
+                    return Json(new { success = false, message = "Order not found" });
+                }
+
+                Order? order = null;
+                var items = new List<object>();
+
+                while (await reader.ReadAsync())
+                {
+                    if (order == null)
+                    {
+                        order = new Order
+                        {
+                            Id = reader.GetInt32("Id"),
+                            OrderNumber = reader.GetString("OrderNumber"),
+                            CustomerName = reader.IsDBNull(reader.GetOrdinal("CustomerName")) ? "" : reader.GetString("CustomerName"),
+                            OrderType = reader.IsDBNull(reader.GetOrdinal("OrderType")) ? "" : reader.GetString("OrderType"),
+                            Notes = reader.IsDBNull(reader.GetOrdinal("Notes")) ? "" : reader.GetString("Notes"),
+                            Total = reader.GetDecimal("Total"),
+                            Status = reader.GetString("Status")
+                        };
+                    }
+
+                    if (!reader.IsDBNull(reader.GetOrdinal("OrderItemId")))
+                    {
+                        items.Add(new
+                        {
+                            menuItemId = reader.GetInt32("MenuItemId"),
+                            name = reader.GetString("Name"),
+                            price = reader.GetDecimal("Price"),
+                            quantity = reader.GetInt32("Quantity")
+                        });
+                    }
+                }
+
+                if (order == null)
+                {
+                    return Json(new { success = false, message = "Order not found" });
+                }
+
+                if (order.Status != "pending" && order.Status != "Pending")
+                {
+                    return Json(new { success = false, message = "Only pending orders can be modified." });
+                }
+
+                var orderDetails = new
+                {
+                    id = order.Id,
+                    orderNumber = order.OrderNumber,
+                    customerName = order.CustomerName,
+                    orderType = order.OrderType,
+                    notes = order.Notes,
+                    total = order.Total,
+                    originalTotal = order.Total,
+                    items = items,
+                    
+                };
+
+                return Json(new { success = true, order = orderDetails });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting order details");
+                return Json(new { success = false, message = "Error loading order details" });
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetMenuItemsForModify()
+        {
+            try
+            {
+                using var connection = new SqlConnection(_connectionString);
+                await connection.OpenAsync();
+
+                var query = "SELECT Id, Name, Price, Category FROM MenuItems WHERE IsAvailable = 1";
+                using var command = new SqlCommand(query, connection);
+
+                var menuItems = new List<object>();
+
+                using var reader = await command.ExecuteReaderAsync();
+                while (await reader.ReadAsync())
+                {
+                    menuItems.Add(new
+                    {
+                        id = reader.GetInt32("Id"),
+                        name = reader.GetString("Name"),
+                        price = reader.GetDecimal("Price"),
+                        category = reader.GetString("Category")
+                    });
+                }
+
+                return Json(new { success = true, items = menuItems });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting menu items for modify");
+                return Json(new { success = false, message = "Error loading menu items" });
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateOrder([FromBody] UpdateOrderRequest request)
+        {
+            using var connection = new SqlConnection(_connectionString);
+            await connection.OpenAsync();
+
+            using var transaction = connection.BeginTransaction();
+
+            try
+            {
+                // Check if order exists and can be modified
+                var checkQuery = "SELECT Status, TableId, OrderType FROM Orders WHERE Id = @OrderId";
+                using var checkCmd = new SqlCommand(checkQuery, connection, transaction);
+                checkCmd.Parameters.AddWithValue("@OrderId", request.OrderId);
+
+                string? status = null;
+                int? tableId = null;
+                string? orderType = null;
+
+                using (var reader = await checkCmd.ExecuteReaderAsync())
+                {
+                    if (!await reader.ReadAsync())
+                    {
+                        await transaction.RollbackAsync();
+                        return Json(new { success = false, message = "Order not found" });
+                    }
+
+                    status = reader.GetString("Status");
+                    tableId = reader.IsDBNull("TableId") ? null : (int?)reader.GetInt32("TableId");
+                    orderType = reader.IsDBNull("OrderType") ? null : reader.GetString("OrderType");
+                }
+
+                if (status != "pending" && status != "Pending")
+                {
+                    await transaction.RollbackAsync();
+                    return Json(new
+                    {
+                        success = false,
+                        message = "Only pending orders can be modified"
+                    });
+                }
+
+                if (request.Items == null || !request.Items.Any())
+                {
+                    await transaction.RollbackAsync();
+                    return Json(new { success = false, message = "Order must have at least one item" });
+                }
+
+                // Remove existing order items
+                var deleteQuery = "DELETE FROM OrderItems WHERE OrderId = @OrderId";
+                using var deleteCmd = new SqlCommand(deleteQuery, connection, transaction);
+                deleteCmd.Parameters.AddWithValue("@OrderId", request.OrderId);
+                await deleteCmd.ExecuteNonQueryAsync();
+
+                // Add new order items
+                foreach (var item in request.Items)
+                {
+                    var insertQuery = @"
+                        INSERT INTO OrderItems (OrderId, MenuItemId, Name, Price, Quantity, Total)
+                        VALUES (@OrderId, @MenuItemId, @Name, @Price, @Quantity, @Total)";
+
+                    using var insertCmd = new SqlCommand(insertQuery, connection, transaction);
+                    insertCmd.Parameters.AddWithValue("@OrderId", request.OrderId);
+                    insertCmd.Parameters.AddWithValue("@MenuItemId", item.MenuItemId);
+                    insertCmd.Parameters.AddWithValue("@Name", item.Name);
+                    insertCmd.Parameters.AddWithValue("@Price", item.Price);
+                    insertCmd.Parameters.AddWithValue("@Quantity", item.Quantity);
+                    insertCmd.Parameters.AddWithValue("@Total", item.Price * item.Quantity);
+
+                    await insertCmd.ExecuteNonQueryAsync();
+                }
+
+                // Update order notes and total
+                var updateOrderQuery = @"
+                    UPDATE Orders 
+                    SET Notes = @Notes,
+                        Total = @Total,
+                        UpdatedAt = @UpdatedAt
+                    WHERE Id = @OrderId";
+
+                using var updateCmd = new SqlCommand(updateOrderQuery, connection, transaction);
+                updateCmd.Parameters.AddWithValue("@Notes", string.IsNullOrEmpty(request.Notes) ? (object)DBNull.Value : request.Notes);
+                updateCmd.Parameters.AddWithValue("@Total", request.Total);
+                updateCmd.Parameters.AddWithValue("@UpdatedAt", DateTime.UtcNow);
+                updateCmd.Parameters.AddWithValue("@OrderId", request.OrderId);
+
+                await updateCmd.ExecuteNonQueryAsync();
+
+                await transaction.CommitAsync();
+
+                // Get order number for response
+                var orderNumberQuery = "SELECT OrderNumber FROM Orders WHERE Id = @OrderId";
+                using var orderNumberCmd = new SqlCommand(orderNumberQuery, connection);
+                orderNumberCmd.Parameters.AddWithValue("@OrderId", request.OrderId);
+                var orderNumber = await orderNumberCmd.ExecuteScalarAsync() as string;
+
+                _logger.LogInformation($"Order {request.OrderId} modified. New total: {request.Total}");
+
+                return Json(new
+                {
+                    success = true,
+                    message = "Order updated successfully",
+                    orderNumber = orderNumber,
+                    newTotal = request.Total
+                });
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+                _logger.LogError(ex, "Error updating order");
+                return Json(new { success = false, message = "Error updating order: " + ex.Message });
+            }
+        }
+
         [HttpGet]
         public IActionResult TestOrders()
         {
-            // Create a list of anonymous objects
             var testOrders = new List<object>
-    {
-        new
-        {
-            id = 1,
-            orderNumber = "ORD-20240115-123456",
-            orderType = "dine-in",
-            customerName = "John Doe",
-            customerPhone = "555-1234",
-            tableId = 5,
-            status = "pending",
-            total = 45.99m,
-            createdAt = DateTime.Now.AddHours(-1).ToString("yyyy-MM-dd HH:mm:ss")
-        },
-        new
-        {
-            id = 2,
-            orderNumber = "ORD-20240115-789012",
-            orderType = "delivery",
-            customerName = "Jane Smith",
-            customerPhone = "555-5678",
-            tableId = (int?)null,
-            status = "preparing",
-            total = 32.50m,
-            createdAt = DateTime.Now.AddMinutes(-30).ToString("yyyy-MM-dd HH:mm:ss")
-        },
-        new
-        {
-            id = 3,
-            orderNumber = "ORD-20240115-345678",
-            orderType = "takeaway",
-            customerName = "Bob Johnson",
-            customerPhone = "555-9012",
-            tableId = (int?)null,
-            status = "completed",
-            total = 28.75m,
-            createdAt = DateTime.Now.AddHours(-2).ToString("yyyy-MM-dd HH:mm:ss")
-        }
-    };
+            {
+                new
+                {
+                    id = 1,
+                    orderNumber = "ORD-20240115-123456",
+                    orderType = "dine-in",
+                    customerName = "John Doe",
+                    customerPhone = "555-1234",
+                    tableId = 5,
+                    status = "pending",
+                    total = 45.99m,
+                    createdAt = DateTime.Now.AddHours(-1).ToString("yyyy-MM-dd HH:mm:ss")
+                },
+                new
+                {
+                    id = 2,
+                    orderNumber = "ORD-20240115-789012",
+                    orderType = "delivery",
+                    customerName = "Jane Smith",
+                    customerPhone = "555-5678",
+                    tableId = (int?)null,
+                    status = "preparing",
+                    total = 32.50m,
+                    createdAt = DateTime.Now.AddMinutes(-30).ToString("yyyy-MM-dd HH:mm:ss")
+                },
+                new
+                {
+                    id = 3,
+                    orderNumber = "ORD-20240115-345678",
+                    orderType = "takeaway",
+                    customerName = "Bob Johnson",
+                    customerPhone = "555-9012",
+                    tableId = (int?)null,
+                    status = "completed",
+                    total = 28.75m,
+                    createdAt = DateTime.Now.AddHours(-2).ToString("yyyy-MM-dd HH:mm:ss")
+                }
+            };
 
             return Json(new { success = true, orders = testOrders });
-        }        // Simple endpoint that always works for testing
+        }
+
         [HttpGet]
         public IActionResult Ping()
         {
@@ -846,7 +1087,7 @@ namespace RestaurantPOS.Controllers
         }
 
         [HttpPost]
-        [IgnoreAntiforgeryToken] // ensure JSON fetches without an antiforgery token still get a JSON body
+        [IgnoreAntiforgeryToken]
         public async Task<IActionResult> AddTable([FromBody] AddTableRequest request)
         {
             if (request == null || request.Capacity <= 0)
@@ -882,15 +1123,6 @@ namespace RestaurantPOS.Controllers
             }
         }
 
-        public class AddTableRequest
-        {
-            public int TableNumber { get; set; }
-            public int Capacity { get; set; }
-            public string? Location { get; set; }
-            public string? Type { get; set; }
-            public string? Notes { get; set; }
-        }
-
         [HttpPost]
         [IgnoreAntiforgeryToken]
         public async Task<IActionResult> StartTableOrder([FromBody] StartTableOrderRequest request)
@@ -905,7 +1137,6 @@ namespace RestaurantPOS.Controllers
                 using var connection = new SqlConnection(_connectionString);
                 await connection.OpenAsync();
 
-                // Check if table exists and is available
                 const string checkTableSql = "SELECT Id, Status FROM Tables WHERE Id = @TableId";
                 using var checkCmd = new SqlCommand(checkTableSql, connection);
                 checkCmd.Parameters.AddWithValue("@TableId", request.TableId);
@@ -924,7 +1155,6 @@ namespace RestaurantPOS.Controllers
                     return Json(new { success = false, message = "Table is already occupied." });
                 }
 
-                // Update table status to occupied (order will be created when items are added)
                 const string updateSql = @"
                     UPDATE Tables 
                     SET Status = 'occupied', UpdatedAt = @UpdatedAt
@@ -936,7 +1166,6 @@ namespace RestaurantPOS.Controllers
 
                 await updateCmd.ExecuteNonQueryAsync();
 
-                // Store the selected table in session for the current order
                 var currentOrder = GetCurrentOrder();
                 currentOrder.TableId = request.TableId;
                 SaveCurrentOrder(currentOrder);
@@ -949,11 +1178,6 @@ namespace RestaurantPOS.Controllers
             }
         }
 
-        public class StartTableOrderRequest
-        {
-            public int TableId { get; set; }
-        }
-
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CompletePayment(int orderId, string paymentMethod)
@@ -963,7 +1187,6 @@ namespace RestaurantPOS.Controllers
                 using var connection = new SqlConnection(_connectionString);
                 await connection.OpenAsync();
 
-                // Get order details including tableId and orderType
                 int? tableId = null;
                 string? orderType = null;
                 string? currentStatus = null;
@@ -982,13 +1205,11 @@ namespace RestaurantPOS.Controllers
                     currentStatus = reader.IsDBNull("Status") ? null : reader.GetString("Status");
                 }
 
-                // Check if order is already completed
                 if (currentStatus == "completed")
                 {
                     return Json(new { success = false, message = "Order is already completed" });
                 }
 
-                // Update order status to completed and set payment method
                 var updateOrderSql = @"
                     UPDATE Orders 
                     SET Status = 'completed', 
@@ -1011,7 +1232,6 @@ namespace RestaurantPOS.Controllers
                     }
                 }
 
-                // Free up the table if it's a dine-in order with an assigned table
                 if (tableId.HasValue && orderType == "dine-in")
                 {
                     var freeTableSql = @"
@@ -1053,14 +1273,6 @@ namespace RestaurantPOS.Controllers
 
             return await CompletePayment(request.OrderId, request.PaymentMethod ?? "cash");
         }
-
-        public class CompletePaymentRequest
-        {
-            public int OrderId { get; set; }
-            public string? PaymentMethod { get; set; }
-        }
-
-        // ==================== TABLE SETTINGS ENDPOINTS ====================
 
         [HttpGet]
         public async Task<IActionResult> GetTableDetails(int tableId)
@@ -1126,7 +1338,6 @@ namespace RestaurantPOS.Controllers
                 using var connection = new SqlConnection(_connectionString);
                 await connection.OpenAsync();
 
-                // Check if table exists
                 var checkSql = "SELECT Id, Status, CurrentOrderId FROM Tables WHERE Id = @TableId";
                 string? currentStatus = null;
                 int? currentOrderId = null;
@@ -1143,7 +1354,6 @@ namespace RestaurantPOS.Controllers
                     currentOrderId = reader.IsDBNull("CurrentOrderId") ? null : (int?)reader.GetInt32("CurrentOrderId");
                 }
 
-                // If trying to set status to 'available' and table has an active order, warn the user
                 if (request.Status == "available" && currentOrderId.HasValue)
                 {
                     return Json(new
@@ -1153,7 +1363,6 @@ namespace RestaurantPOS.Controllers
                     });
                 }
 
-                // Update table
                 var updateSql = @"
                     UPDATE Tables 
                     SET Capacity = @Capacity,
@@ -1204,7 +1413,6 @@ namespace RestaurantPOS.Controllers
                 using var connection = new SqlConnection(_connectionString);
                 await connection.OpenAsync();
 
-                // Check if table has an active order
                 var checkSql = "SELECT CurrentOrderId FROM Tables WHERE Id = @TableId";
                 using (var checkCmd = new SqlCommand(checkSql, connection))
                 {
@@ -1221,7 +1429,6 @@ namespace RestaurantPOS.Controllers
                     }
                 }
 
-                // Set table to available
                 var updateSql = @"
                     UPDATE Tables 
                     SET Status = 'available',
@@ -1264,7 +1471,6 @@ namespace RestaurantPOS.Controllers
                 using var connection = new SqlConnection(_connectionString);
                 await connection.OpenAsync();
 
-                // Check if table has any orders (current or historical)
                 var checkSql = "SELECT COUNT(*) FROM Orders WHERE TableId = @TableId";
                 using (var checkCmd = new SqlCommand(checkSql, connection))
                 {
@@ -1281,7 +1487,6 @@ namespace RestaurantPOS.Controllers
                     }
                 }
 
-                // Delete table
                 var deleteSql = "DELETE FROM Tables WHERE Id = @TableId";
                 using var deleteCmd = new SqlCommand(deleteSql, connection);
                 deleteCmd.Parameters.AddWithValue("@TableId", request.TableId);
@@ -1301,33 +1506,6 @@ namespace RestaurantPOS.Controllers
             {
                 return Json(new { success = false, message = $"Error deleting table: {ex.Message}" });
             }
-        }
-
-        public class UpdateTableRequest
-        {
-            public int TableId { get; set; }
-            public int Capacity { get; set; }
-            public string? Location { get; set; }
-            public string? Type { get; set; }
-            public string? Status { get; set; }
-            public string? Notes { get; set; }
-        }
-
-        public class TableIdRequest
-        {
-            public int TableId { get; set; }
-        }
-
-        // Request/Response classes
-        public class ReservationRequest
-        {
-            public int TableId { get; set; }
-            public string CustomerName { get; set; } = "";
-            public string CustomerPhone { get; set; } = "";
-            public string ReservationDate { get; set; } = "";
-            public string ReservationTime { get; set; } = "";
-            public int PartySize { get; set; }
-            public string? SpecialRequests { get; set; }
         }
 
         [HttpGet]
@@ -1373,6 +1551,69 @@ namespace RestaurantPOS.Controllers
             }
 
             return items;
+        }
+
+        // Request/Response classes
+        public class AddTableRequest
+        {
+            public int TableNumber { get; set; }
+            public int Capacity { get; set; }
+            public string? Location { get; set; }
+            public string? Type { get; set; }
+            public string? Notes { get; set; }
+        }
+
+        public class StartTableOrderRequest
+        {
+            public int TableId { get; set; }
+        }
+
+        public class CompletePaymentRequest
+        {
+            public int OrderId { get; set; }
+            public string? PaymentMethod { get; set; }
+        }
+
+        public class UpdateTableRequest
+        {
+            public int TableId { get; set; }
+            public int Capacity { get; set; }
+            public string? Location { get; set; }
+            public string? Type { get; set; }
+            public string? Status { get; set; }
+            public string? Notes { get; set; }
+        }
+
+        public class TableIdRequest
+        {
+            public int TableId { get; set; }
+        }
+
+        public class UpdateOrderRequest
+        {
+            public int OrderId { get; set; }
+            public List<OrderItemUpdate> Items { get; set; }
+            public string Notes { get; set; }
+            public decimal Total { get; set; }
+        }
+
+        public class OrderItemUpdate
+        {
+            public int MenuItemId { get; set; }
+            public string Name { get; set; }
+            public decimal Price { get; set; }
+            public int Quantity { get; set; }
+        }
+
+        public class ReservationRequest
+        {
+            public int TableId { get; set; }
+            public string CustomerName { get; set; } = "";
+            public string CustomerPhone { get; set; } = "";
+            public string ReservationDate { get; set; } = "";
+            public string ReservationTime { get; set; } = "";
+            public int PartySize { get; set; }
+            public string? SpecialRequests { get; set; }
         }
     }
 }
