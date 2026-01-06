@@ -688,22 +688,25 @@ namespace RestaurantPOS.Controllers
 
                 var orders = new List<object>();
                 var sql = @"
-                    SELECT o.Id, o.OrderNumber, o.OrderType, o.Status, o.CreatedAt
-                    FROM Orders o
-                    WHERE o.Status IN ('pending','preparing')
-                    ORDER BY o.CreatedAt ASC";
+            SELECT o.Id, o.OrderNumber, o.OrderType, o.Status, o.CreatedAt
+            FROM Orders o
+            WHERE o.Status IN ('pending','preparing')
+            ORDER BY o.CreatedAt ASC";
 
                 using (var cmd = new SqlCommand(sql, connection))
                 using (var reader = await cmd.ExecuteReaderAsync())
                 {
                     while (await reader.ReadAsync())
                     {
+                        var orderId = reader.GetInt32("Id");
+                        var orderItems = await GetOrderItems(orderId);
+
                         orders.Add(new
                         {
-                            id = reader.GetInt32("Id"),
+                            id = orderId,
                             ticket = reader.GetString("OrderNumber"),
                             status = reader.GetString("Status"),
-                            itemsHtml = "", // fill if needed
+                            items = orderItems, // Changed from itemsHtml to items
                             time = reader.GetDateTime("CreatedAt").ToString("HH:mm")
                         });
                     }
@@ -1347,6 +1350,29 @@ namespace RestaurantPOS.Controllers
             {
                 return Json(new { success = false, message = ex.Message });
             }
+        }
+
+        private async Task<List<OrderItem>> GetOrderItems(int orderId)
+        {
+            var items = new List<OrderItem>();
+            using var connection = new SqlConnection(_connectionString);
+            await connection.OpenAsync();
+
+            var query = "SELECT Name, Quantity FROM OrderItems WHERE OrderId = @OrderId";
+            using var command = new SqlCommand(query, connection);
+            command.Parameters.AddWithValue("@OrderId", orderId);
+
+            using var reader = await command.ExecuteReaderAsync();
+            while (await reader.ReadAsync())
+            {
+                items.Add(new OrderItem
+                {
+                    Name = reader.GetString("Name"),
+                    Quantity = reader.GetInt32("Quantity")
+                });
+            }
+
+            return items;
         }
     }
 }
