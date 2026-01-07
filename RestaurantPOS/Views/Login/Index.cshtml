@@ -12,6 +12,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"]</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Add Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         .table-occupied {
             background-color: #ef4444;
@@ -67,6 +69,316 @@
 
         #addItemDetails {
             transition: all 0.3s ease;
+        }
+
+        /* Payment Modal Styles */
+        .payment-methods {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .payment-option {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+            .payment-option:hover {
+                border-color: #007bff;
+                background-color: #f8f9fa;
+            }
+
+            .payment-option.selected {
+                border-color: #28a745;
+                background-color: #f0fff4;
+            }
+
+        .payment-icon {
+            font-size: 24px;
+            color: #6c757d;
+            margin-right: 15px;
+            width: 40px;
+            text-align: center;
+        }
+
+        .payment-option.selected .payment-icon {
+            color: #28a745;
+        }
+
+        .payment-info {
+            flex: 1;
+        }
+
+            .payment-info h6 {
+                margin: 0;
+                font-weight: 600;
+            }
+
+            .payment-info p {
+                margin: 0;
+                font-size: 12px;
+                color: #6c757d;
+            }
+
+        .payment-check {
+            color: #28a745;
+            font-size: 18px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .payment-option.selected .payment-check {
+            opacity: 1;
+        }
+
+        /* Order Card Styles */
+        .order-card {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+            transition: transform 0.3s ease;
+        }
+
+            .order-card:hover {
+                transform: translateY(-5px);
+            }
+
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #eee;
+        }
+
+        .order-number {
+            font-weight: bold;
+            color: #333;
+            font-size: 14px;
+        }
+
+        .order-status {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .status-pending {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+
+        .status-preparing {
+            background-color: #cce5ff;
+            color: #004085;
+        }
+
+        .status-ready {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .status-completed {
+            background-color: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .status-cancelled {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        .order-body {
+            padding: 15px;
+        }
+
+        .customer-info {
+            margin-bottom: 10px;
+        }
+
+        .customer-name {
+            font-weight: bold;
+            font-size: 16px;
+            color: #333;
+        }
+
+        .phone-info {
+            font-size: 13px;
+            color: #666;
+            margin-top: 2px;
+        }
+
+        .order-type-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .order-type {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            background: #e9ecef;
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 13px;
+        }
+
+        .order-type-icon {
+            color: #6c757d;
+        }
+
+        .table-info {
+            background: #d4edda;
+            color: #155724;
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        .order-details {
+            font-size: 13px;
+            color: #666;
+        }
+
+        .order-time {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .order-footer {
+            padding: 15px;
+            border-top: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .order-total {
+            font-size: 20px;
+            font-weight: bold;
+            color: #28a745;
+        }
+
+        .order-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .btn-complete {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+            .btn-complete:hover {
+                background-color: #218838;
+            }
+
+            .btn-complete:disabled {
+                background-color: #6c757d;
+                cursor: not-allowed;
+            }
+
+        .btn-modify {
+            background-color: #ffc107;
+            color: #000;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-update-status {
+            background-color: #17a2b8;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-view-details {
+            background-color: #6c757d;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .orders-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            padding: 20px 0;
+        }
+
+        /* Toast notifications */
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            min-width: 300px;
+        }
+
+        /* Filter styles */
+        .filter-container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .filter-row {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            min-width: 150px;
+        }
+
+        .filter-label {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .filter-select {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background: white;
         }
     </style>
 </head>
@@ -174,33 +486,6 @@
                             class="nav-btn px-4 py-2 rounded-lg bg-blue-600 text-white font-medium">
                         Dashboard
                     </button>
-                    <button onclick="showView('tables')"
-                            class="nav-btn px-4 py-2 rounded-lg bg-gray-200 text-gray-700 font-medium">
-                        Tables
-                    </button>
-                    <button onclick="showView('orders')"
-                            class="nav-btn px-4 py-2 rounded-lg bg-gray-200 text-gray-700 font-medium">
-                        Orders
-                    </button>
-                    <button onclick="showView('menu')"
-                            class="nav-btn px-4 py-2 rounded-lg bg-gray-200 text-gray-700 font-medium">
-                        Menu
-                    </button>
-                    <button onclick="showView('kitchen')"
-                            class="nav-btn px-4 py-2 rounded-lg bg-gray-200 text-gray-700 font-medium">
-                        Kitchen
-                    </button>
-                    <button onclick="showView('reports')"
-                            class="nav-btn px-4 py-2 rounded-lg bg-gray-200 text-gray-700 font-medium">
-                        Reports
-                    </button>
-                    @if (Model.CurrentUser?.Role == "Manager")
-                    {
-                        <button onclick="showView('staff')"
-                                class="nav-btn px-4 py-2 rounded-lg bg-gray-200 text-gray-700 font-medium">
-                            Staff
-                        </button>
-                    }
                 </div>
             </nav>
 
@@ -460,7 +745,7 @@
                         {
                             <div onclick="handleTableClick(@table.Id, '@table.Status')"
                                  class="table-item p-4 rounded-lg cursor-pointer transition-all hover:shadow-lg text-white
-                                                        @(table.Status == "occupied" ? "table-occupied" : table.Status == "reserved" ? "table-reserved" : "table-available")">
+                                                                @(table.Status == "occupied" ? "table-occupied" : table.Status == "reserved" ? "table-reserved" : "table-available")">
                                 <div class="text-center">
                                     <div class="text-2xl font-bold">@table.TableName</div>
                                     <div class="text-sm capitalize">@table.Status</div>
@@ -491,6 +776,41 @@
                             </div>
                         </div>
                     </div>
+
+                    <!-- Filter Container -->
+                    <div class="filter-container">
+                        <div class="filter-row">
+                            <div class="filter-group">
+                                <label class="filter-label">Order Type</label>
+                                <select id="orderTypeFilter" class="filter-select">
+                                    <option value="all">All Types</option>
+                                    <option value="dine-in">Dine In</option>
+                                    <option value="takeaway">Takeaway</option>
+                                    <option value="delivery">Delivery</option>
+                                </select>
+                            </div>
+
+                            <div class="filter-group">
+                                <label class="filter-label">Status</label>
+                                <select id="orderStatusFilter" class="filter-select">
+                                    <option value="all">All Statuses</option>
+                                    <option value="pending">Pending</option>
+                                    <option value="preparing">Preparing</option>
+                                    <option value="ready">Ready</option>
+                                    <option value="completed">Completed</option>
+                                    <option value="cancelled">Cancelled</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <button onclick="loadOrders()" class="bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded-lg">
+                                    <i class="fas fa-sync-alt mr-2"></i> Refresh
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Orders Summary Stats -->
                     <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
                         <div class="bg-white p-4 rounded-lg shadow text-center cursor-pointer" onclick="filterOrders('all')">
                             <div class="text-2xl font-bold text-gray-800" id="allOrdersCount">0</div>
@@ -509,34 +829,15 @@
                             <div class="text-sm text-gray-600">Take Away</div>
                         </div>
                     </div>
-                    <div class="bg-white p-4 rounded-lg shadow-lg mb-6">
-                        <div class="flex flex-wrap gap-4 items-center">
-                            <select id="orderTypeFilter" onchange="applyFilters()" class="p-2 border rounded-lg">
-                                <option value="all">All Types</option>
-                                <option value="dine-in">Dine In</option>
-                                <option value="delivery">Delivery</option>
-                                <option value="takeaway">Take Away</option>
-                            </select>
-                            <select id="orderStatusFilter" onchange="applyFilters()" class="p-2 border rounded-lg">
-                                <option value="all">All Statuses</option>
-                                <option value="pending">Pending</option>
-                                <option value="preparing">Preparing</option>
-                                <option value="ready">Ready</option>
-                                <option value="completed">Completed</option>
-                            </select>
-                            <button onclick="loadOrders()"
-                                    class="bg-orange-600 text-white px-4 py-2 rounded-lg hover:bg-orange-700">
-                                🔄 Refresh
-                            </button>
-                        </div>
-                    </div>
-                    <!-- ORDERS CONTAINER - THIS ID IS CRITICAL -->
-                    <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6" id="orders-container">
+
+                    <!-- Orders Container -->
+                    <div class="orders-container" id="orders-container">
                         <div class="text-center py-12 col-span-full">
                             <div class="text-4xl mb-4">⏳</div>
                             <p class="text-gray-500">Loading orders...</p>
                         </div>
                     </div>
+
                     <div id="no-orders-message" class="hidden text-center py-12">
                         <div class="text-6xl mb-4">📋</div>
                         <h3 class="text-2xl font-bold text-gray-600 mb-2">No Orders Found</h3>
@@ -813,6 +1114,98 @@
                 </div>
 
             </main>
+        </div>
+
+        <!-- ==================== PAYMENT METHOD MODAL ==================== -->
+        <div id="paymentModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden p-4">
+            <div class="bg-white rounded-xl shadow-2xl w-full max-w-md">
+                <div class="bg-green-600 text-white p-6 rounded-t-xl">
+                    <div class="flex justify-between items-center">
+                        <h2 class="text-2xl font-bold">💳 Complete Payment</h2>
+                        <button onclick="closeModal('paymentModal')" class="text-white text-2xl hover:text-gray-200">
+                            ✕
+                        </button>
+                    </div>
+                    <div class="mt-2">
+                        <p id="paymentOrderInfo">Order #</p>
+                        <p class="text-green-100" id="paymentTotalAmount">Total: $0.00</p>
+                    </div>
+                </div>
+
+                <div class="p-6">
+                    <!-- Payment Methods -->
+                    <div class="payment-methods">
+                        <div class="payment-option selected" data-payment="cash" onclick="selectPaymentMethod('cash')">
+                            <div class="payment-icon">
+                                <i class="fas fa-money-bill-wave"></i>
+                            </div>
+                            <div class="payment-info">
+                                <h6>Cash</h6>
+                                <p>Pay with cash at counter</p>
+                            </div>
+                            <div class="payment-check">
+                                <i class="fas fa-check"></i>
+                            </div>
+                        </div>
+
+                        <div class="payment-option" data-payment="card" onclick="selectPaymentMethod('card')">
+                            <div class="payment-icon">
+                                <i class="fas fa-credit-card"></i>
+                            </div>
+                            <div class="payment-info">
+                                <h6>Card</h6>
+                                <p>Credit/Debit card payment</p>
+                            </div>
+                            <div class="payment-check">
+                                <i class="fas fa-check"></i>
+                            </div>
+                        </div>
+
+                        <div class="payment-option" data-payment="mobile" onclick="selectPaymentMethod('mobile')">
+                            <div class="payment-icon">
+                                <i class="fas fa-mobile-alt"></i>
+                            </div>
+                            <div class="payment-info">
+                                <h6>Mobile Payment</h6>
+                                <p>Apple Pay, Google Pay, etc.</p>
+                            </div>
+                            <div class="payment-check">
+                                <i class="fas fa-check"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Amount Tendered (for cash payments) -->
+                    <div id="cashPaymentSection" class="mt-4">
+                        <div class="form-group">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Amount Tendered *</label>
+                            <input type="number" step="0.01" class="form-control w-full p-2 border rounded-lg" id="amountTendered"
+                                   placeholder="Enter amount received">
+                            <small class="form-text text-muted mt-1 block text-xs text-gray-500">Required for cash payments</small>
+                        </div>
+
+                        <div id="changeAmount" class="alert alert-info mt-2 p-3 bg-blue-50 rounded-lg" style="display: none;">
+                            <div class="flex justify-between items-center">
+                                <span class="font-medium">Change:</span>
+                                <span class="font-bold text-green-600">$<span id="changeValue">0.00</span></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-gray-100 p-6 rounded-b-xl border-t">
+                    <div class="flex justify-between space-x-3">
+                        <button onclick="closeModal('paymentModal')"
+                                class="px-6 py-3 bg-gray-500 text-white rounded-lg hover:bg-gray-600 font-semibold">
+                            Cancel
+                        </button>
+                        <button onclick="completePaymentAction()" id="confirmPayment"
+                                class="px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 font-semibold">
+                            <i class="fas fa-check-circle mr-2"></i> Complete Payment
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- ==================== TABLE OPTIONS MODAL ==================== -->
@@ -1230,12 +1623,18 @@
             </div>
         </div>
 
+        <!-- Notification Container -->
+        <div id="notificationContainer" class="toast-container"></div>
+
     }
 
     <script>
         // ==================== GLOBAL VARIABLES ====================
         let allOrders = [];
         let currentOrderItems = [];
+        let currentPaymentOrderId = null;
+        let currentPaymentOrderTotal = 0;
+        let selectedPaymentMethod = 'cash';
 
         // ==================== VIEW NAVIGATION ====================
         function showView(viewName) {
@@ -1259,6 +1658,112 @@
             if (viewName === 'kitchen') loadKitchenOrders();
             if (viewName === 'reports') loadReports();
             if (viewName === 'staff') loadStaff();
+        }
+
+        // ==================== PAYMENT FUNCTIONS ====================
+        function showPaymentModal(orderId, orderTotal, orderNumber) {
+            currentPaymentOrderId = orderId;
+            currentPaymentOrderTotal = orderTotal;
+            selectedPaymentMethod = 'cash'; // Default selection
+
+            // Reset modal state
+            document.querySelectorAll('.payment-option').forEach(option => {
+                option.classList.remove('selected');
+            });
+            document.querySelector('.payment-option[data-payment="cash"]').classList.add('selected');
+            document.getElementById('amountTendered').value = '';
+            document.getElementById('changeAmount').style.display = 'none';
+            document.getElementById('cashPaymentSection').style.display = 'block';
+
+            // Update modal info
+            document.getElementById('paymentOrderInfo').textContent = `Order #${orderNumber || orderId}`;
+            document.getElementById('paymentTotalAmount').textContent = `Total: $${orderTotal.toFixed(2)}`;
+
+            // Show modal
+            document.getElementById('paymentModal').classList.remove('hidden');
+        }
+
+        function selectPaymentMethod(method) {
+            selectedPaymentMethod = method;
+
+            // Update UI
+            document.querySelectorAll('.payment-option').forEach(option => {
+                option.classList.remove('selected');
+            });
+            document.querySelector(`.payment-option[data-payment="${method}"]`).classList.add('selected');
+
+            // Show/hide cash amount section
+            const cashSection = document.getElementById('cashPaymentSection');
+            if (method === 'cash') {
+                cashSection.style.display = 'block';
+            } else {
+                cashSection.style.display = 'none';
+                document.getElementById('changeAmount').style.display = 'none';
+            }
+        }
+
+        function calculateChange() {
+            if (selectedPaymentMethod !== 'cash') return;
+
+            const amountTendered = parseFloat(document.getElementById('amountTendered').value) || 0;
+            const change = amountTendered - currentPaymentOrderTotal;
+
+            const changeAmount = document.getElementById('changeAmount');
+            const changeValue = document.getElementById('changeValue');
+
+            if (change > 0) {
+                changeValue.textContent = change.toFixed(2);
+                changeAmount.style.display = 'block';
+            } else {
+                changeAmount.style.display = 'none';
+            }
+        }
+
+        async function completePaymentAction() {
+            if (!currentPaymentOrderId) return;
+
+            const paymentMethod = selectedPaymentMethod;
+            const amountTendered = document.getElementById('amountTendered').value;
+
+            // Validate cash payment
+            if (paymentMethod === 'cash') {
+                if (!amountTendered || parseFloat(amountTendered) < currentPaymentOrderTotal) {
+                    showNotification('Amount tendered must be greater than or equal to the order total for cash payments.', 'error');
+                    return;
+                }
+            }
+
+            // Disable button and show loading
+            const confirmBtn = document.getElementById('confirmPayment');
+            confirmBtn.disabled = true;
+            confirmBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Processing...';
+
+            try {
+                const response = await fetch('/POS/CompletePaymentJson', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        OrderId: currentPaymentOrderId,
+                        PaymentMethod: paymentMethod,
+                        AmountTendered: paymentMethod === 'cash' && amountTendered ? parseFloat(amountTendered) : null
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showNotification(result.message || 'Payment completed successfully!', 'success');
+                    closeModal('paymentModal');
+                    loadOrders(); // Refresh orders list
+                } else {
+                    showNotification(result.message || 'Payment failed!', 'error');
+                }
+            } catch (error) {
+                showNotification('Error completing payment: ' + error.message, 'error');
+            } finally {
+                confirmBtn.disabled = false;
+                confirmBtn.innerHTML = '<i class="fas fa-check-circle mr-2"></i> Complete Payment';
+            }
         }
 
         // ==================== TABLE FUNCTIONS ====================
@@ -1455,32 +1960,68 @@
             }
 
             noOrdersMsg?.classList.add('hidden');
+
             container.innerHTML = orders.map(order => {
-                let statusClass = 'bg-gray-100 text-gray-800';
-                if (order.status === 'pending') statusClass = 'bg-yellow-100 text-yellow-800';
-                if (order.status === 'preparing') statusClass = 'bg-blue-100 text-blue-800';
-                if (order.status === 'ready') statusClass = 'bg-green-100 text-green-800';
+                const statusClass = getStatusClass(order.status);
+                const statusText = getStatusText(order.status);
+                const customerName = order.customerName || 'Walk-in';
+
+                let tableInfo = '';
+                if (order.orderType === 'dine-in' && order.tableId) {
+                    tableInfo = `<div class="table-info">Table ${order.tableId}</div>`;
+                }
+
+                // Check if order can be completed (not already completed/cancelled)
+                const canComplete = order.status.toLowerCase() !== 'completed' &&
+                                   order.status.toLowerCase() !== 'cancelled';
 
                 return `
-                    <div class="bg-white rounded-lg shadow-lg p-4 border border-gray-200">
-                        <div class="flex justify-between mb-2">
-                            <h3 class="font-bold text-lg">${order.orderNumber || '#' + order.id}</h3>
-                            <span class="px-2 py-1 rounded-full text-sm ${statusClass}">${order.status}</span>
+                    <div class="order-card" data-order-id="${order.id}">
+                        <div class="order-header">
+                            <div class="order-number">${order.orderNumber || '#' + order.id}</div>
+                            <div class="order-status ${statusClass}">${statusText}</div>
                         </div>
-                        <div class="mb-2">
-                            <p class="text-gray-600">👤 ${order.customerName || 'Walk-in'}</p>
-                            <p class="text-gray-600">🍽️ ${order.orderType || 'N/A'}</p>
-                            ${order.tableId ? `<p class="text-gray-600">🪑 Table ${order.tableId}</p>` : ''}
-                        </div>
-                        <div class="flex justify-between items-center mt-3 pt-3 border-t">
-                            <span class="font-bold text-green-600">$${(order.total || 0).toFixed(2)}</span>
-                            <div class="space-x-1">
-                                <!-- Modify button - only for pending orders -->
-                                ${order.status === 'pending' ? `<button onclick="openModifyOrderModal(${order.id})" class="bg-yellow-600 text-white px-3 py-1 rounded text-sm">Modify</button>` : ''}
 
-                                ${order.status === 'pending' ? `<button onclick="updateOrderStatus(${order.id}, 'preparing')" class="bg-blue-600 text-white px-3 py-1 rounded text-sm">Start</button>` : ''}
-                                ${order.status === 'preparing' ? `<button onclick="updateOrderStatus(${order.id}, 'ready')" class="bg-green-600 text-white px-3 py-1 rounded text-sm">Ready</button>` : ''}
-                                ${order.status === 'ready' ? `<button onclick="updateOrderStatus(${order.id}, 'completed')" class="bg-purple-600 text-white px-3 py-1 rounded text-sm">Complete</button>` : ''}
+                        <div class="order-body">
+                            <div class="customer-info">
+                                <div class="customer-name">${customerName}</div>
+                                ${order.customerPhone ? `<div class="phone-info">${order.customerPhone}</div>` : ''}
+                            </div>
+
+                            <div class="order-type-info">
+                                <div class="order-type">
+                                    <span class="order-type-icon">${getOrderTypeIcon(order.orderType)}</span>
+                                    ${order.orderType || 'Unknown'}
+                                </div>
+                                ${tableInfo}
+                            </div>
+
+                            <div class="order-details">
+                                <div class="order-time">
+                                    <i class="far fa-clock"></i>
+                                    ${formatDateTime(order.createdAt)}
+                                </div>
+                                <div class="order-payment">
+                                    ${order.paymentMethod ? `Paid via ${order.paymentMethod}` : 'Not paid'}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="order-footer">
+                            <div class="order-total">
+                                $${(order.total || 0).toFixed(2)}
+                            </div>
+
+                            <div class="order-actions">
+                                ${canComplete ?
+                                    `<button class="btn-complete" onclick="showPaymentModal(${order.id}, ${order.total}, '${order.orderNumber || order.id}')">
+                                        <i class="fas fa-check-circle"></i> Complete
+                                    </button>` : ''}
+
+                                ${order.status === 'pending' || order.status === 'Pending' ?
+                                    '<button class="btn-modify" onclick="openModifyOrderModal(' + order.id + ')">Modify</button>' : ''}
+
+                                <button class="btn-view-details" onclick="viewOrderDetails(' + order.id + ')">View</button>
                             </div>
                         </div>
                     </div>
@@ -1488,25 +2029,43 @@
             }).join('');
         }
 
-        async function updateOrderStatus(orderId, status) {
-            if (!confirm('Update order status to ' + status + '?')) return;
+        function getStatusClass(status) {
+            switch(status?.toLowerCase()) {
+                case 'pending': return 'status-pending';
+                case 'preparing': return 'status-preparing';
+                case 'ready': return 'status-ready';
+                case 'completed': return 'status-completed';
+                case 'cancelled': return 'status-cancelled';
+                default: return 'status-unknown';
+            }
+        }
+
+        function getStatusText(status) {
+            switch(status?.toLowerCase()) {
+                case 'pending': return 'Pending';
+                case 'preparing': return 'Preparing';
+                case 'ready': return 'Ready';
+                case 'completed': return 'Completed';
+                case 'cancelled': return 'Cancelled';
+                default: return 'Unknown';
+            }
+        }
+
+        function getOrderTypeIcon(orderType) {
+            switch(orderType?.toLowerCase()) {
+                case 'dine-in': return '<i class="fas fa-utensils"></i>';
+                case 'takeaway': return '<i class="fas fa-shopping-bag"></i>';
+                case 'delivery': return '<i class="fas fa-truck"></i>';
+                default: return '<i class="fas fa-question-circle"></i>';
+            }
+        }
+
+        function formatDateTime(dateTimeStr) {
             try {
-                const token = document.querySelector('input[name="__RequestVerificationToken"]')?.value;
-                const response = await fetch('/POS/UpdateOrderStatus', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'RequestVerificationToken': token || '' },
-                    body: `orderId=${orderId}&status=${status}`
-                });
-                const result = await response.json();
-                if (result.success) {
-                    showNotification(result.message, 'success');
-                    loadOrders();
-                    loadKitchenOrders();
-                } else {
-                    showNotification(result.message, 'error');
-                }
-            } catch (error) {
-                showNotification('Error: ' + error.message, 'error');
+                const date = new Date(dateTimeStr);
+                return date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            } catch (e) {
+                return dateTimeStr;
             }
         }
 
@@ -1762,6 +2321,7 @@
             }
         }
 
+        // ==================== STAFF FUNCTIONS ====================
         let currentEditId = null;
 
         function loadStaff() {
@@ -1953,7 +2513,7 @@
             });
         }
 
-        // Form submission
+        // Staff form submission
         document.getElementById('staff-form').addEventListener('submit', function(e) {
             e.preventDefault();
 
@@ -2019,6 +2579,7 @@
             });
         });
 
+        // Reset password form submission
         document.getElementById('reset-password-form').addEventListener('submit', function(e) {
             e.preventDefault();
 
@@ -2084,24 +2645,24 @@
 
                 container.innerHTML = orders.map(order => {
                     const isPending = order.status === 'pending';
-                    const itemsHtml = order.items.map(item => `
+                    const itemsHtml = Array.isArray(order.items) ? order.items.map(item => `
                         <li class="flex justify-between py-2 border-b border-gray-200 last:border-b-0">
-                            <span class="font-semibold text-gray-700">${item.Name}</span>
-                            <span class="text-gray-600">x${item.Quantity}</span>
+                            <span class="font-semibold text-gray-700">${item.Name || item.name}</span>
+                            <span class="text-gray-600">x${item.Quantity || item.quantity}</span>
                         </li>
-                    `).join('');
+                    `).join('') : '';
 
                     return `
                         <div class="${isPending ? 'bg-red-50 border-red-300' : 'bg-blue-50 border-blue-300'} border-4 rounded-lg p-6 shadow-lg">
                             <div class="flex justify-between items-start mb-4">
                                 <div>
-                                    <h3 class="text-3xl font-bold text-gray-800">${order.ticket}</h3>
+                                    <h3 class="text-3xl font-bold text-gray-800">${order.ticket || order.orderNumber}</h3>
                                     <p class="text-sm ${isPending ? 'text-red-600' : 'text-blue-600'} font-bold mt-1">
                                         ${isPending ? '🚨 PENDING' : '⏳ PREPARING'}
                                     </p>
                                 </div>
                                 <div class="text-right">
-                                    <p class="text-sm text-gray-600">🕐 ${order.time}</p>
+                                    <p class="text-sm text-gray-600">🕐 ${order.time || ''}</p>
                                 </div>
                             </div>
                             <div class="border-t border-gray-200 pt-4 mb-4">
@@ -2358,6 +2919,19 @@
             if (addItemQuantity) {
                 addItemQuantity.addEventListener('input', updateAddItemDetails);
             }
+
+            // Payment modal event listeners
+            const amountTendered = document.getElementById('amountTendered');
+            if (amountTendered) {
+                amountTendered.addEventListener('input', calculateChange);
+            }
+
+            // Initialize payment method selection
+            document.querySelectorAll('.payment-option').forEach(option => {
+                option.addEventListener('click', function() {
+                    selectPaymentMethod(this.dataset.payment);
+                });
+            });
         });
 
         // ==================== UTILITY FUNCTIONS ====================
@@ -2395,6 +2969,38 @@
                     }
                 }, 300);
             }, 5000);
+        }
+
+        // View order details (placeholder function)
+        function viewOrderDetails(orderId) {
+            // This function can be implemented to show detailed order information
+            alert('View order details for ID: ' + orderId);
+        }
+
+        // Update order status function
+        async function updateOrderStatus(orderId, status) {
+            if (!confirm('Update order status to ' + status + '?')) return;
+            try {
+                const token = document.querySelector('input[name="__RequestVerificationToken"]')?.value;
+                const response = await fetch('/POS/UpdateOrderStatus', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'RequestVerificationToken': token || ''
+                    },
+                    body: `orderId=${orderId}&status=${status}`
+                });
+                const result = await response.json();
+                if (result.success) {
+                    showNotification(result.message, 'success');
+                    loadOrders();
+                    loadKitchenOrders();
+                } else {
+                    showNotification(result.message, 'error');
+                }
+            } catch (error) {
+                showNotification('Error: ' + error.message, 'error');
+            }
         }
     </script>
 </body>
