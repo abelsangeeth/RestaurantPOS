@@ -136,8 +136,9 @@
 
         .payment-option.selected .payment-check {
             opacity: 1;
-        }.
+        }
 
+        .
         /* Order Card Styles */
         .order-card {
             background: white;
@@ -147,9 +148,9 @@
             transition: transform 0.3s ease;
         }
 
-            .order-card:hover {
-                transform: translateY(-5px);
-            }
+        .order-card:hover {
+            transform: translateY(-5px);
+        }
 
         .order-header {
             display: flex;
@@ -745,7 +746,7 @@
                         {
                             <div onclick="handleTableClick(@table.Id, '@table.Status')"
                                  class="table-item p-4 rounded-lg cursor-pointer transition-all hover:shadow-lg text-white
-                                                                @(table.Status == "occupied" ? "table-occupied" : table.Status == "reserved" ? "table-reserved" : "table-available")">
+                                                                        @(table.Status == "occupied" ? "table-occupied" : table.Status == "reserved" ? "table-reserved" : "table-available")">
                                 <div class="text-center">
                                     <div class="text-2xl font-bold">@table.TableName</div>
                                     <div class="text-sm capitalize">@table.Status</div>
@@ -803,7 +804,7 @@
                             </div>
 
                             <div>
-                                <button onclick="loadOrders()" class="bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded-lg">
+                                <button id="refreshOrdersBtn" class="bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded-lg">
                                     <i class="fas fa-sync-alt mr-2"></i> Refresh
                                 </button>
                             </div>
@@ -1912,7 +1913,7 @@
                 if (result.success && result.orders) {
                     allOrders = result.orders;
                     updateOrderStats();
-                    renderOrders(allOrders);
+                    applyFilters(); // Apply filters after loading
                 } else {
                     console.error('Failed to load orders:', result.message);
                     document.getElementById('orders-container').innerHTML = '<div class="col-span-full text-center py-12 text-red-500">Error loading orders</div>';
@@ -2932,6 +2933,11 @@
                     selectPaymentMethod(this.dataset.payment);
                 });
             });
+
+            // Order filter event listeners
+            document.getElementById('orderTypeFilter')?.addEventListener('change', applyFilters);
+            document.getElementById('orderStatusFilter')?.addEventListener('change', applyFilters);
+            document.getElementById('refreshOrdersBtn')?.addEventListener('click', loadOrders);
         });
 
         // ==================== UTILITY FUNCTIONS ====================
