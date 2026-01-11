@@ -136,7 +136,7 @@
 
         .payment-option.selected .payment-check {
             opacity: 1;
-        }
+        }.
 
         /* Order Card Styles */
         .order-card {
@@ -2002,7 +2002,7 @@
                                     ${formatDateTime(order.createdAt)}
                                 </div>
                                 <div class="order-payment">
-                                    ${order.paymentMethod ? `Paid via ${order.paymentMethod}` : 'Not paid'}
+                                    ${order.paymentMethod ? `Paid via ${order.paymentMethod}` : ''}
                                 </div>
                             </div>
                         </div>
